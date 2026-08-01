@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dinamik SEO Etiketleri İçeri Alındı -->
+    <meta name="description" content="Yaptığınız ürünleri veya yapılışını merak ettiğiniz modelleri aşağıdaki linkten bize gönderebilirsiniz.  Link (facebook kullanıyorsanız): m.me/marifet...">
+    <meta name="keywords"
+        content="iğne oyası, mekik oyası, oya çiçeği, Mekik Oyası Yapılışı, çeyizlik modeller, el işi, Mekik ve İğne Oyası İle Üç Boyutlu Çiçek Yapılışı">
+    <meta name="author" content="Marifetli Eller">
+
+    <meta property="og:title" content="Mekik ve İğne Oyası İle Üç Boyutlu Çiçek Yapılışı - Marifetli Eller">
+    <meta property="og:description" content="Yaptığınız ürünleri veya yapılışını merak ettiğiniz modelleri aşağıdaki linkten bize gönderebilirsin...">
+    <meta property="og:image" content="https://i.ytimg.com/vi/7YuwihHU3gU/hqdefault.jpg">
+    <meta property="og:url" content="https://marifetliel.com/kategori_mekik-oyasi-yapilisi.html">
+
+    <title>Mekik ve İğne Oyası İle Üç Boyutlu Çiçek Yapılışı - Marifetli Eller</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Google Analytics Kodları Başlangıcı -->
+<!-- İleride GA4 kodunuzu buraya yapıştırın -->
+
+<!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- İleride AdSense <script> kodunuzu buraya yapıştırın -->
+
+<!-- Admatic veya diğer reklam ağları meta kodları -->
+<!-- Kodlar buraya gelecek -->
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ana-renk: #d6336c;
+            --arka-plan: #fdfbfb;
+            --kutu-arka-plan: #ffffff;
+            --metin-koyu: #333333;
+            --metin-acik: #555555;
+            --kenarlik: #f0e6e6;
+            --hover-renk: #fff0f3;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--arka-plan);
+            color: var(--metin-koyu);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        header {
+            background-color: var(--kutu-arka-plan);
+            border-bottom: 1px solid var(--kenarlik);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ana-renk);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo a::before {
+            content: "🌸";
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--ana-renk);
+        }
+
+        /* Arama ve Hamburger CSS */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--ana-renk);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+
+        /* Arama Çubuğu CSS'i */
+        .arama-alani {
+            position: relative;
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .arama-kutu {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--kenarlik);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .arama-sonuclari {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .arama-sonuc-oge {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            transition: background 0.2s;
+        }
+
+        .arama-sonuc-oge:hover {
+            background: var(--hover-renk);
+            color: var(--ana-renk);
+        }
+
+        .arama-sonuc-oge img {
+            width: 50px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .arama-sonuc-oge span {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* AÇILIR MENÜ (DROPDOWN) CSS */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown>a {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .dropdown>a::after {
+            content: "▾";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--kutu-arka-plan);
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+            z-index: 1000;
+            border: 1px solid var(--kenarlik);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--metin-koyu);
+            border-bottom: 1px solid var(--kenarlik);
+            white-space: normal;
+            line-height: 1.4;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-renk);
+            color: var(--ana-renk);
+            padding-left: 22px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .video-kutu {
+            background-color: var(--kutu-arka-plan);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--kenarlik);
+        }
+
+        .geri-don {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .geri-don:hover {
+            color: var(--ana-renk);
+        }
+
+        h1 {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .video-iframe {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .video-iframe iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .aciklama-alani {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--kenarlik);
+        }
+
+        .aciklama {
+            font-size: 14px;
+            color: var(--metin-acik);
+            white-space: pre-line;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--ana-renk);
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .sosyal-medya {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .sosyal-medya a {
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .footer-alt {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        @media (max-width: 860px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+                gap: 15px;
+                padding-top: 15px;
+                border-top: 1px solid var(--kenarlik);
+            }
+
+            .nav-links.aktif {
+                display: flex;
+            }
+
+            .arama-alani {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .arama-sonuclari {
+                width: 100%;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                white-space: normal;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--kenarlik);
+                border-radius: 0;
+                max-height: none;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .dropdown.aktif .dropdown-content {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="index.html">Marifetli Eller</a>
+        </div>
+        
+        <!-- Hamburger Menü İkonu -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Ana Sayfa</a>
+            
+            <!-- Sabit Menüler (Belirttiğiniz Kesin Dosya İsimleri) -->
+            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
+            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
+            
+            <!-- Ders Videoları Açılır Menüsü -->
+            <div class="dropdown" onclick="mobilDropdownAc(this)">
+                <a href="javascript:void(0);">Ders Videoları</a>
+                <div class="dropdown-content">
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
+                </div>
+            </div>
+            
+            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
+            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
+            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
+            
+            <!-- Tüm Kategoriler Açılır Menüsü (Alfabetik Sıralı) -->
+            <div class="dropdown" onclick="mobilDropdownAc(this)">
+                <a href="javascript:void(0);">Tüm Kategoriler</a>
+                <div class="dropdown-content">
+                    
+                        <!-- '|sort(attribute="baslik")' komutu listeyi A'dan Z'ye otomatik sıralar -->
+                        
+                            <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
+                        
+                            <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
+                        
+                            <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
+                        
+                            <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
+                        
+                            <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
+                        
+                            <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
+                        
+                            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
+                        
+                            <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
+                        
+                            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
+                        
+                            <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
+                        
+                            <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
+                        
+                            <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
+                        
+                            <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
+                        
+                            <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
+                        
+                            <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
+                        
+                            <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
+                        
+                            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
+                        
+                            <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
+                        
+                            <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
+                        
+                            <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
+                        
+                            <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_pratik-tarifler.html">Pratik Tarifler</a>
+                        
+                            <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
+                        
+                            <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
+                        
+                            <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
+                        
+                            <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
+                        
+                            <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
+                        
+                            <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
+                        
+                            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
+                        
+                            <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
+                        
+                            <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
+                        
+                    
+                </div>
+            </div>
+
+            <!-- Arama Çubuğu -->
+            <div class="arama-alani">
+                <input type="text" id="aramaInput" class="arama-kutu" placeholder="🔍 Model ara..." onkeyup="aramaYap()">
+                <div id="aramaSonuclari" class="arama-sonuclari"></div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<script>
+    // Hamburger ve Açılır Menü İşlevleri
+    function menuGoster() {
+        document.getElementById('navLinks').classList.toggle('aktif');
+    }
+    
+    function mobilDropdownAc(element) {
+        if (window.innerWidth <= 860) {
+            element.classList.toggle('aktif');
+        }
+    }
+
+    // Arama Fonksiyonu
+    let videoVeritabani = [];
+    fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
+
+    function aramaYap() {
+        const input = document.getElementById('aramaInput').value.toLowerCase();
+        const sonucKutusu = document.getElementById('aramaSonuclari');
+
+        if (input.length < 2) {
+            sonucKutusu.style.display = 'none';
+            return;
+        }
+
+        const filtrelenmis = videoVeritabani.filter(video => video.baslik.toLowerCase().includes(input));
+
+        if (filtrelenmis.length > 0) {
+            sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
+                <a href="${video.link}" class="arama-sonuc-oge">
+                    <img src="${video.resim}" alt="thumbnail">
+                    <span>${video.baslik}</span>
+                </a>
+            `).join('');
+            sonucKutusu.style.display = 'block';
+        } else {
+            sonucKutusu.innerHTML = '<div style="padding:15px; font-size:13px; text-align:center;">Sonuç bulunamadı.</div>';
+            sonucKutusu.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.arama-alani')) { 
+            const sonuc = document.getElementById('aramaSonuclari');
+            if(sonuc) sonuc.style.display = 'none'; 
+        }
+    });
+</script>
+
+    <main>
+        <a href="kategori_mekik-oyasi-yapilisi.html" class="geri-don">← Mekik Oyası Yapılışı Kategorisine Dön</a>
+
+        <div class="video-kutu">
+            <h1>Mekik ve İğne Oyası İle Üç Boyutlu Çiçek Yapılışı</h1>
+
+            <div class="video-iframe">
+                <iframe src="https://www.youtube.com/embed/7YuwihHU3gU" allowfullscreen></iframe>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- AdSense veya Admatic Banner Kodları buraya gelecek -->
+            </div>
+
+            <div class="aciklama-alani">
+                <div class="aciklama">Yaptığınız ürünleri veya yapılışını merak ettiğiniz modelleri aşağıdaki linkten bize gönderebilirsiniz.
+
+Link (facebook kullanıyorsanız): m.me/marifetliel
+E Mail: love_yilmaz@hotmail.com
+
+https://mimuu.com/mekik-oyasi-yapilisi-ornekleri/</div>
+            </div>
+
+            
+
+        </div>
+    </main>
+
+    <!-- STANDART ALT YAPI (FOOTER) -->
+    <footer>
+        <div class="footer-container">
+            <div class="sosyal-medya">
+                <!-- Buradaki linkleri kendi sosyal medya hesaplarınızla değiştirebilirsiniz -->
+                <a href="https://www.youtube.com/@Marifetli-Eller" target="_blank">📺 YouTube</a>
+                <a href="https://www.instagram.com/marifetlieller42/" target="_blank">📸 Instagram</a>
+                <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
+            </div>
+            <div class="footer-alt">
+                &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
