@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dinamik SEO Etiketleri -->
+    <meta name="description"
+        content="Fiyonklu İğne Oyası Modelleri modelleri, anlatımlı yapılış videoları ve ipuçları.">
+
+    <title>Fiyonklu İğne Oyası Modelleri - Marifetli Eller</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Google Analytics Kodları Başlangıcı -->
+<!-- İleride GA4 kodunuzu buraya yapıştırın -->
+
+<!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- İleride AdSense <script> kodunuzu buraya yapıştırın -->
+
+<!-- Admatic veya diğer reklam ağları meta kodları -->
+<!-- Kodlar buraya gelecek -->
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ana-renk: #d6336c;
+            --arka-plan: #fdfbfb;
+            --kutu-arka-plan: #ffffff;
+            --metin-koyu: #333333;
+            --metin-acik: #666666;
+            --kenarlik: #f0e6e6;
+            --hover-renk: #fff0f3;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--arka-plan);
+            color: var(--metin-koyu);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        header {
+            background-color: var(--kutu-arka-plan);
+            border-bottom: 1px solid var(--kenarlik);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ana-renk);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo a::before {
+            content: "🌸";
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--ana-renk);
+        }
+
+        /* Arama ve Hamburger CSS */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--ana-renk);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Arama Çubuğu CSS'i */
+        .arama-alani {
+            position: relative;
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .arama-kutu {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--kenarlik);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .arama-sonuclari {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .arama-sonuc-oge {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            transition: background 0.2s;
+        }
+
+        .arama-sonuc-oge:hover {
+            background: var(--hover-renk);
+            color: var(--ana-renk);
+        }
+
+        .arama-sonuc-oge img {
+            width: 50px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .arama-sonuc-oge span {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* AÇILIR MENÜ (DROPDOWN) CSS */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown>a {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .dropdown>a::after {
+            content: "▾";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--kutu-arka-plan);
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+            z-index: 1000;
+            border: 1px solid var(--kenarlik);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--metin-koyu);
+            border-bottom: 1px solid var(--kenarlik);
+            white-space: normal;
+            line-height: 1.4;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-renk);
+            color: var(--ana-renk);
+            padding-left: 22px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .sayfa-baslik {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .sayfa-baslik h1 {
+            font-family: 'Lora', serif;
+            color: var(--ana-renk);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .sayfa-baslik p {
+            color: var(--metin-acik);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .video-kart {
+            background-color: var(--kutu-arka-plan);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--kenarlik);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+        }
+
+        .video-kart:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1);
+            border-color: #ffdce3;
+        }
+
+        .kart-resim {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .kart-resim img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .oynat-ikon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(214, 51, 108, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .oynat-ikon::after {
+            content: "";
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 16px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 4px;
+        }
+
+        .video-kart:hover .oynat-ikon {
+            opacity: 1;
+        }
+
+        .kart-icerik {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kart-baslik {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--metin-koyu);
+            line-height: 1.4;
+            margin: 0 0 10px 0;
+        }
+
+        .video-kart:hover .kart-baslik {
+            color: var(--ana-renk);
+        }
+
+        .kart-tarih {
+            margin-top: auto;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .geri-don {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 16px;
+            background-color: var(--kutu-arka-plan);
+            border-radius: 30px;
+            border: 1px solid var(--kenarlik);
+            transition: all 0.3s ease;
+        }
+
+        .geri-don:hover {
+            color: var(--ana-renk);
+            background-color: var(--hover-renk);
+            border-color: #ffdce3;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .sosyal-medya {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .sosyal-medya a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .sosyal-medya a:hover {
+            background-color: var(--ana-renk);
+        }
+
+        .footer-alt {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Responsive ve Hamburger Menü */
+        @media (max-width: 860px) {
+            .galeri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+                gap: 15px;
+                padding-top: 15px;
+                border-top: 1px solid var(--kenarlik);
+            }
+
+            .nav-links.aktif {
+                display: flex;
+            }
+
+            .arama-alani {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .arama-sonuclari {
+                width: 100%;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                white-space: normal;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--kenarlik);
+                border-radius: 0;
+                max-height: none;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .dropdown.aktif .dropdown-content {
+                display: block;
+            }
+        }
+            
+    </style>
+</head>
+
+<body>
+
+    <header>
+    <div class="header-container">
+        <div class="logo">
+            <a href="index.html">Marifetli Eller</a>
+        </div>
+        
+        <!-- Hamburger Menü İkonu -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        
+        <nav class="nav-links" id="navLinks">
+            <a href="index.html">Ana Sayfa</a>
+            
+            <!-- Sabit Menüler (Belirttiğiniz Kesin Dosya İsimleri) -->
+            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
+            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
+            
+            <!-- Ders Videoları Açılır Menüsü -->
+            <div class="dropdown" onclick="mobilDropdownAc(this)">
+                <a href="javascript:void(0);">Ders Videoları</a>
+                <div class="dropdown-content">
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
+                </div>
+            </div>
+            
+            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
+            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
+            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
+            
+            <!-- Tüm Kategoriler Açılır Menüsü (Alfabetik Sıralı) -->
+            <div class="dropdown" onclick="mobilDropdownAc(this)">
+                <a href="javascript:void(0);">Tüm Kategoriler</a>
+                <div class="dropdown-content">
+                    
+                        <!-- '|sort(attribute="baslik")' komutu listeyi A'dan Z'ye otomatik sıralar -->
+                        
+                            <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
+                        
+                            <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
+                        
+                            <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
+                        
+                            <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
+                        
+                            <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
+                        
+                            <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
+                        
+                            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
+                        
+                            <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
+                        
+                            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
+                        
+                            <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
+                        
+                            <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
+                        
+                            <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
+                        
+                            <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
+                        
+                            <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
+                        
+                            <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
+                        
+                            <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
+                        
+                            <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
+                        
+                            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
+                        
+                            <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
+                        
+                            <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
+                        
+                            <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
+                        
+                            <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
+                        
+                            <a href="kategori_pratik-tarifler.html">Pratik Tarifler</a>
+                        
+                            <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
+                        
+                            <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
+                        
+                            <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
+                        
+                            <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
+                        
+                            <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
+                        
+                            <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
+                        
+                            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
+                        
+                            <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
+                        
+                            <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
+                        
+                            <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
+                        
+                    
+                </div>
+            </div>
+
+            <!-- Arama Çubuğu -->
+            <div class="arama-alani">
+                <input type="text" id="aramaInput" class="arama-kutu" placeholder="🔍 Model ara..." onkeyup="aramaYap()">
+                <div id="aramaSonuclari" class="arama-sonuclari"></div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<script>
+    // Hamburger ve Açılır Menü İşlevleri
+    function menuGoster() {
+        document.getElementById('navLinks').classList.toggle('aktif');
+    }
+    
+    function mobilDropdownAc(element) {
+        if (window.innerWidth <= 860) {
+            element.classList.toggle('aktif');
+        }
+    }
+
+    // Arama Fonksiyonu
+    let videoVeritabani = [];
+    fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
+
+    function aramaYap() {
+        const input = document.getElementById('aramaInput').value.toLowerCase();
+        const sonucKutusu = document.getElementById('aramaSonuclari');
+
+        if (input.length < 2) {
+            sonucKutusu.style.display = 'none';
+            return;
+        }
+
+        const filtrelenmis = videoVeritabani.filter(video => video.baslik.toLowerCase().includes(input));
+
+        if (filtrelenmis.length > 0) {
+            sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
+                <a href="${video.link}" class="arama-sonuc-oge">
+                    <img src="${video.resim}" alt="thumbnail">
+                    <span>${video.baslik}</span>
+                </a>
+            `).join('');
+            sonucKutusu.style.display = 'block';
+        } else {
+            sonucKutusu.innerHTML = '<div style="padding:15px; font-size:13px; text-align:center;">Sonuç bulunamadı.</div>';
+            sonucKutusu.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.arama-alani')) { 
+            const sonuc = document.getElementById('aramaSonuclari');
+            if(sonuc) sonuc.style.display = 'none'; 
+        }
+    });
+</script>
+
+    <main>
+        
+        <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
+
+        <div class="sayfa-baslik">
+            <h1>Fiyonklu İğne Oyası Modelleri</h1>
+        </div>
+
+        <div class="galeri-grid">
+            
+            <a href="video_MNhsgOSS5hU.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/MNhsgOSS5hU/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Facebook "Elif'in iğne oyası grubu.." Haftanın Etkinlik Modeli Anlatımlı Yapılışı | 175. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_dPuqQvGeSsU.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/dPuqQvGeSsU/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Fiyonk Yapamayan Kalmasın. Püf Noktalarıyla Muhteşem Bir Modelin Anlatımlı Yapılışı | 427. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_z-3335RHbHk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/z-3335RHbHk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Firkete İle Çiçek Modeli Anlatımlı Yapılışı | 255. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_HMmHQOFcpMA.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/HMmHQOFcpMA/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Anlatımlı Püskül Yapılışı | 235. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_AZCHkgc9nU4.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/AZCHkgc9nU4/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Çıtı Pıtı Çok Güzel Bir Modelin Anlatımlı Yapılışı | 321. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_mvujAm6f_8c.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/mvujAm6f_8c/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Sonsuzluk Kelebek Modeli Anlatımlı Yapılışı | 55. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_2DpxTV9Pb5E.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/2DpxTV9Pb5E/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Pırpırlı Firkete Modeli Anlatımlı Yapılışı | 132. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_VWRs_EhM3Ts.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/VWRs_EhM3Ts/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Facebook "Elif' in İğne Oyaları.." Grubu Haftanın Etkinlik Modeli Anlatımlı Yapılışı | 260. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_37Wa-tKNHM8.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/37Wa-tKNHM8/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Muhteşem Bir Modelin Anlatımlı Yapılışı | 405. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_uHHC2Q6PUJk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/uHHC2Q6PUJk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Kelebek Modeli Anlatımlı Yapılışı | Firkete veya Plastik Çatalla Yapabilirsiniz | 280. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_ioHvGut6yYE.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/ioHvGut6yYE/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Fiyonklu Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 304. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_bUOBbNan5Mk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/bUOBbNan5Mk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Fiyonklu Çiçek Modeli Anlatımlı Yapılışı | 94. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_0neqioBGemQ.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/0neqioBGemQ/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Çıtı Pıtı Fiyonklu Bir Modelin Anlatımlı Yapılışı | 281. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_QhcqaStLJAc.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/QhcqaStLJAc/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Şeker Gibi Fiyonklu Bir Modelin Anlatımlı Yapılışı | 274. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_S502XDPHRdA.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/S502XDPHRdA/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Mekik Oyası, İğne Oyası ve Filketeyle Yapılan Muhteşem Bir Modelin Anlatımlı Yapılışı</h3>
+                </div>
+            </a>
+            
+            <a href="video_UsYVPuuzZYk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/UsYVPuuzZYk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Fiyonklu Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 325. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_EUQrkdP8cbk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/EUQrkdP8cbk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Kurdeleli Badem Modeli 2 Farklı Teknikle Anlatımlı Yapılışı | 177. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_kP33RaYYjog.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/kP33RaYYjog/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Yeni ve Çok Güzel Bir Modelin Anlatımlı Yapılışı | 308. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_raFtWFONiHA.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/raFtWFONiHA/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Pırpır Dağ Üzeri Fiyonk Modeli Anlatımlı Yapılışı | 298. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_MLqb2guUvR8.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/MLqb2guUvR8/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Firketeyle Farklı İğne Oyası Modeli Anlatımlı Yapılışı | 233. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_Oa44fMuWyiI.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/Oa44fMuWyiI/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Çıtı Pıtı Çok Güzel Bir Modelin Anlatımlı Yapılışı | 444. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_NemPd8zag7M.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/NemPd8zag7M/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Firkete Oyası Fiyonk Anlatımlı Yapılışı | 137. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_NTAS9DEwNt8.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/NTAS9DEwNt8/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Kelebek Görünümünde Harika Fiyonklar Yapmak İstemez Misiniz? | 840. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_SSoOhHRdcSI.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/SSoOhHRdcSI/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Modeli Anlatımlı Yapılışı | 277. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_8LYlv_YarCM.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/8LYlv_YarCM/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Fiyonklu Bir Modelin Anlatımlı Yapılışı | 173. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_-Q8g4fvwaAg.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/-Q8g4fvwaAg/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Bakanların Gözlerini Alamayacağı Muhteşem Bir Modelin Anlatımlı Yapılışı | 426. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_8UvfnH7Kz3w.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/8UvfnH7Kz3w/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Sonsuzluk Kelebek Modelinin Yazmaya Eklenişi | 60. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_lSLIcR-Bzd8.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/lSLIcR-Bzd8/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Havlu Kenarı Sepet Modeli Anlatımlı Yapılışı | 302. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_0eXrE99rvhk.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/0eXrE99rvhk/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">En Beğenileninden Bir İğne Oyası Modelinin Anlatımlı Yapılışı | 94. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_Q_ACWpib0o4.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/Q_ACWpib0o4/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Püf Noktalarıyla İğne Oyası Anlatımlı Yapılışı | 527. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_WwDHa5gC8B4.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/WwDHa5gC8B4/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Sıradışı Muhteşem Bir İğne Oyası Modelinin Anlatımlı Yapılışı | 560. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_6c8LRPm-1EA.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/6c8LRPm-1EA/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İkiz Çiçek Modeli Anlatımlı Yapılışı | 275. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_n3IHNGrp88I.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/n3IHNGrp88I/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Çıtı Pıtı Çok Güzel Bir İğne Oyası Modelin Anlatımlı Yapılışı | 522. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_oLrJmq76uhQ.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/oLrJmq76uhQ/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Yeni Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 360. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_KQ3-SBYRtXw.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/KQ3-SBYRtXw/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğne Oyası Boncuklu Çiçekli Fiyonk Modeli Anlatımlı Yapılışı | 151. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_cGMHCAdW_10.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/cGMHCAdW_10/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">İğnenin Sanatı | 690. İğne Oyası Modelin Yapılışı #iğneoyası #needlelace</h3>
+                </div>
+            </a>
+            
+            <a href="video_yUFyridtY-A.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/yUFyridtY-A/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Şeker Gibi Bir İğne Oyası Modelin Anlatımlı Yapılışı | 700. Model #iğneoyası #needlelace</h3>
+                </div>
+            </a>
+            
+            <a href="video_mWGpsw6BCcE.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/mWGpsw6BCcE/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Çok Gösterişli Bir İğne Oyası Modelinin Yapılışı | 780. Model</h3>
+                </div>
+            </a>
+            
+            <a href="video_3Dodby92hUI.html" class="video-kart">
+                <div class="kart-resim">
+                    <img src="https://i.ytimg.com/vi/3Dodby92hUI/hqdefault.jpg" alt="Video resmi">
+                    <div class="oynat-ikon"></div>
+                </div>
+                <div class="kart-icerik">
+                    <h3 class="kart-baslik">Farklı Duruşuyla Tarzınızı Yansıtacak Harika Bir Model | 847. Model</h3>
+                </div>
+            </a>
+            
+        </div>
+        
+    </main>
+
+    <!-- STANDART ALT YAPI (FOOTER) -->
+    <footer>
+        <div class="footer-container">
+            <div class="sosyal-medya">
+                <!-- Buradaki linkleri kendi sosyal medya hesaplarınızla değiştirebilirsiniz -->
+                <a href="https://www.youtube.com/@Marifetli-Eller" target="_blank">📺 YouTube</a>
+                <a href="https://www.instagram.com/marifetlieller42/" target="_blank">📸 Instagram</a>
+                <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
+            </div>
+            <div class="footer-alt">
+                &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
