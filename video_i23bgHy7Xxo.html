@@ -30,6 +30,10 @@
 <!-- Admatic veya diğer reklam ağları meta kodları -->
 <!-- Kodlar buraya gelecek -->
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
     <style>
         *,
         *::before,
@@ -429,21 +433,21 @@
         <div class="logo">
             <a href="index.html">Marifetli Eller</a>
         </div>
-        
+
         <!-- Hamburger Menü İkonu -->
         <div class="hamburger" onclick="menuGoster()">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        
+
         <nav class="nav-links" id="navLinks">
             <a href="index.html">Ana Sayfa</a>
-            
+
             <!-- Sabit Menüler (Belirttiğiniz Kesin Dosya İsimleri) -->
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
-            
+
             <!-- Ders Videoları Açılır Menüsü -->
             <div class="dropdown" onclick="mobilDropdownAc(this)">
                 <a href="javascript:void(0);">Ders Videoları</a>
@@ -452,123 +456,177 @@
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
                 </div>
             </div>
-            
+
             <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
-            
+
             <!-- Tüm Kategoriler Açılır Menüsü (Alfabetik Sıralı) -->
             <div class="dropdown" onclick="mobilDropdownAc(this)">
                 <a href="javascript:void(0);">Tüm Kategoriler</a>
                 <div class="dropdown-content">
                     
-                        <!-- '|sort(attribute="baslik")' komutu listeyi A'dan Z'ye otomatik sıralar -->
-                        
-                            <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
-                        
-                            <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
-                        
-                            <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
-                        
-                            <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
-                        
-                            <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
-                        
-                            <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
-                        
-                            <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
-                        
-                            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
-                        
-                            <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
-                        
-                            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
-                        
-                            <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
-                        
-                            <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
-                        
-                            <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
-                        
-                            <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
-                        
-                            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
-                        
-                            <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
-                        
-                            <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
-                        
-                            <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
-                        
-                            <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
-                        
-                            <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
-                        
-                            <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
-                        
-                            <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
-                        
-                            <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
-                        
-                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
-                        
-                            <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
-                        
-                            <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
-                        
-                            <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
-                        
-                            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
-                        
-                            <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
-                        
-                            <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
-                        
-                            <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
-                        
-                            <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
-                        
-                            <a href="kategori_pratik-tarifler.html">Pratik Tarifler</a>
-                        
-                            <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
-                        
-                            <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
-                        
-                            <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
-                        
-                            <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
-                        
-                            <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
-                        
-                            <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
-                        
-                            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
-                        
-                            <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
-                        
-                            <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
-                        
-                            <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
-                        
+                    <!-- '|sort(attribute="baslik")' komutu listeyi A'dan Z'ye otomatik sıralar -->
                     
+                    <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
+                    
+                    <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
+                    
+                    <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
+                    
+                    <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
+                    
+                    <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
+                    
+                    <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
+                    
+                    <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
+                    
+                    <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
+                    
+                    <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
+                    
+                    <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
+                    
+                    <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
+                    
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
+                    
+                    <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
+                    
+                    <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
+                    
+                    <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
+                    
+                    <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_pratik-tarifler.html">Pratik Tarifler</a>
+                    
+                    <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
+                    
+                    <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
+                    
+                    <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
+                    
+                    <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
+                    
+                    <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
+                    
+                    <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
+                    
+                    <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
+                    
+                    <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
+                    
+                    <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
+                    
+                    
+                </div>
+            </div>
+
+            <!-- KULLANICI İŞLEMLERİ BUTONLARI -->
+            <div id="kullanici-menusu" style="display:flex; gap:15px; margin-left: 20px; align-items: center;">
+                <!-- Kullanıcı giriş yapmamışsa görünecek -->
+                <a href="giris.html" id="btn-giris"
+                    style="background: var(--ana-renk); color: white; padding: 6px 15px; border-radius: 20px;">Giriş
+                    Yap</a>
+
+                <!-- Kullanıcı giriş yapmışsa görünecek -->
+                <div id="btn-profil-alani" class="gizli" style="display: none; align-items: center; gap: 10px;">
+                    <span id="kullanici-mail" style="font-size: 13px; font-weight: 500; color: var(--ana-renk);"></span>
+                    <a href="#" onclick="cikisYap()"
+                        style="font-size: 13px; color: #666; border: 1px solid #ddd; padding: 5px 10px; border-radius: 15px;">Çıkış
+                        Yap</a>
                 </div>
             </div>
 
             <!-- Arama Çubuğu -->
             <div class="arama-alani">
-                <input type="text" id="aramaInput" class="arama-kutu" placeholder="🔍 Model ara..." onkeyup="aramaYap()">
+                <input type="text" id="aramaInput" class="arama-kutu" placeholder="🔍 Model ara..."
+                    onkeyup="aramaYap()">
                 <div id="aramaSonuclari" class="arama-sonuclari"></div>
             </div>
+            <a href="model-gonder.html" style="color: #d6336c; font-weight: 600;">✨ Model Gönder</a>
         </nav>
     </div>
 </header>
+
+<script>
+    // Header yüklendiğinde oturum durumunu kontrol et
+    document.addEventListener("DOMContentLoaded", function () {
+        // GERÇEK FİREBASE BİLGİLERİNİZ EKLENDİ
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyDxgpXtgQQKtFPKYppu7HByBVxyib6vS1k",
+                authDomain: "marifetlieller-42.firebaseapp.com",
+                projectId: "marifetlieller-42",
+                storageBucket: "marifetlieller-42.firebasestorage.app",
+                messagingSenderId: "632366040975",
+                appId: "1:632366040975:web:15e8a77207e3c3ac326dfa"
+            });
+        }
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // Giriş yapılmış
+                document.getElementById('btn-giris').style.display = 'none';
+                document.getElementById('btn-profil-alani').style.display = 'flex';
+                document.getElementById('kullanici-mail').innerText = user.email.split('@')[0]; // İsmini e-postadan çeker
+            } else {
+                // Çıkış yapılmış
+                document.getElementById('btn-giris').style.display = 'block';
+                document.getElementById('btn-profil-alani').style.display = 'none';
+            }
+        });
+    });
+
+    function cikisYap() {
+        firebase.auth().signOut().then(() => {
+            window.location.reload();
+        });
+    }
+</script>
 
 <script>
     // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
-    
+
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
             element.classList.toggle('aktif');
@@ -605,9 +663,9 @@
     }
 
     document.addEventListener('click', function (e) {
-        if (!e.target.closest('.arama-alani')) { 
+        if (!e.target.closest('.arama-alani')) {
             const sonuc = document.getElementById('aramaSonuclari');
-            if(sonuc) sonuc.style.display = 'none'; 
+            if (sonuc) sonuc.style.display = 'none';
         }
     });
 </script>
@@ -637,6 +695,12 @@ https://youtu.be/EkQo2-nJB4g</div>
         </div>
     </main>
 
+    <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
+    <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
+        <span style="font-size: 16px;">👁️</span> <b id="sayfa-sayac" style="color: var(--ana-renk);">...</b> kez
+        incelendi
+    </div>
+
     <!-- STANDART ALT YAPI (FOOTER) -->
     <footer>
         <div class="footer-container">
@@ -651,6 +715,33 @@ https://youtu.be/EkQo2-nJB4g</div>
             </div>
         </div>
     </footer>
+
+    <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
+            let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
+            if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
+
+            // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
+
+            // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
+            fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
+                .then(response => response.text())
+                .then(data => {
+                    if (data && !isNaN(data) && data !== "0") {
+                        document.getElementById("sayfa-sayac").innerText = data;
+                    } else {
+                        document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
+                    }
+                })
+                .catch(error => {
+                    console.error("Sayaç hatası:", error);
+                    document.getElementById("sayfa-sayac").innerText = "-";
+                });
+        });
+    </script>
 
 </body>
 
