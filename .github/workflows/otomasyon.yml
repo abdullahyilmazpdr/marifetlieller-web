@@ -1,0 +1,38 @@
+name: Otomatik Site Derleme ve Yayinlama
+
+on:
+  repository_dispatch:
+    types: [model_onaylandi] # Google'dan gelen sinyali dinler
+  workflow_dispatch: # İsterseniz GitHub üzerinden manuel tetiklemek için
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Repoyu Klonla (Dosyaları Al)
+        uses: actions/checkout@v3
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Gerekli Python Kütüphanelerini Kur
+        run: |
+          pip install jinja2 requests
+
+      - name: Robot.py'yi Çalıştır (Siteyi Yeniden Üret)
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+        run: |
+          python robot-github-icin.py
+
+      - name: Üretilen HTML Dosyalarını GitHub'a Kaydet (Commit & Push)
+        run: |
+          git config --global user.name "GitHub Actions Otomasyonu"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Yeni onaylanan model eklendi ve site güncellendi 🚀" || echo "Değişiklik bulunamadı."
+          git push
