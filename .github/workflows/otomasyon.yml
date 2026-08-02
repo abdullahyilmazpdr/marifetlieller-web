@@ -20,8 +20,8 @@ jobs:
 
       - name: Gerekli Python Kütüphanelerini Kur
         run: |
-          pip install jinja2 requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
-
+          pip install jinja2 requests google-api-python-client google-genai
+          
       - name: Robot.py'yi Çalıştır (Siteyi Yeniden Üret)
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
