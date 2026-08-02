@@ -20,7 +20,7 @@ jobs:
 
       - name: Gerekli Python Kütüphanelerini Kur
         run: |
-          pip install jinja2 requests
+          pip install jinja2 requests google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
       - name: Robot.py'yi Çalıştır (Siteyi Yeniden Üret)
         env:
