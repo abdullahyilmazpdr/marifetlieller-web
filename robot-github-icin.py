@@ -6,6 +6,9 @@ from datetime import datetime
 from googleapiclient.discovery import build
 from google import genai
 from jinja2 import Environment, FileSystemLoader
+import csv
+import io
+import requests
 
 # API ANAHTARLARI
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -32,6 +35,43 @@ aktif_api_indeksi = 0
 client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
 SECILEN_MODEL = 'gemini-flash-latest'
 AI_KOTALARI_DOLDU = False # Kota dolduğunda hızlı çıkış için bayrak
+
+def onayli_modelleri_cek():
+  # Google E-Tablonuzun "Web'de Yayınla" diyerek aldığınız CSV bağlantısı
+  csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?output=csv"
+
+  try:
+    response = requests.get(csv_url)
+    response.raise_for_status()
+
+    # CSV verisini oku
+    f = io.StringIO(response.content.decode("utf-8"))
+    reader = csv.reader(f)
+
+    onayli_liste = []
+    basliklar = next(reader)  # İlk satır başlıkları atla
+
+    for satir in reader:
+      # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
+      if len(satir) >= 8 and satir[7] == "Onaylandı":
+        model_verisi = {
+            "id": satir[0],
+            "tarih": satir[1],
+            "yazar": satir[2],
+            "kategori": satir[3],
+            "baslik": satir[4],
+            "makale": satir[5],
+            "medya": satir[6],
+            "durum": satir[7],
+            # URL uyumlu dosya adı oluşturuyoruz (örn: "boncuklu-oya-123.html")
+            "dosya_adi": f"model_{satir[0].lower()}.html",
+        }
+        onayli_liste.append(model_verisi)
+
+    return onayli_liste
+  except Exception as e:
+    print(f"E-Tablo okuma hatası: {e}")
+    return []
 
 def api_anahtarini_degistir():
     global aktif_api_indeksi, client, AI_KOTALARI_DOLDU
@@ -226,6 +266,23 @@ def sayfalari_olustur():
             
         kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
         with open(f"cikti_sayfalari/{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
+
+    # 1. E-Tablodan Onaylı Modelleri Çek
+    onayli_modeller = onayli_modelleri_cek()
+
+    template_kullanici_model = env.get_template('kullanici_model_sablon.html')
+
+    for model in onayli_modeller:
+      # Her model için HTML içeriği üret
+      model_html = template_kullanici_model.render(model=model)
+      dosya_yolu = os.path.join('cikti_sayfalari', model['dosya_adi'])
+
+      with open(dosya_yolu, 'w', encoding='utf-8') as f:
+        f.write(model_html)
+
+      # Google'ın dizine eklemesi için sitemap listesine dahil et
+      uretilen_sayfalar.append(model['dosya_adi'])
+      print(f"Yayınlanan Model Sayfası Üretildi: {model['dosya_adi']}")
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
     index_icerik = template_index.render(is_ana_sayfa=True, sayfa_basligi="Ana Sayfa", site_verisi=site_verisi, tum_kategoriler=tum_kategoriler)
