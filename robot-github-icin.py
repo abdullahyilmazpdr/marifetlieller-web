@@ -171,7 +171,7 @@ def sitemap_olustur(sayfa_listesi):
     for sayfa in sayfa_listesi:
         xml += f'  <url>\n    <loc>{SITE_URL}{sayfa.replace(" ", "%20")}</loc>\n    <lastmod>{bugun}</lastmod>\n  </url>\n'
     xml += '</urlset>'
-    with open('cikti_sayfalari/sitemap.xml', 'w', encoding='utf-8') as f: f.write(xml)
+    with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(xml)
 
 def sayfalari_olustur():
     if not os.path.exists('cikti_sayfalari'): os.makedirs('cikti_sayfalari')
@@ -252,7 +252,7 @@ def sayfalari_olustur():
             html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
             
             # Oluşturulan içerik dosyaya yazdırılır
-            with open(f"cikti_sayfalari/{dosya_adi}", 'w', encoding='utf-8') as f: 
+            with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
                 f.write(html_icerik)
 
             uretilen_sayfalar.append(dosya_adi)
@@ -265,7 +265,7 @@ def sayfalari_olustur():
             })
             
         kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
-        with open(f"cikti_sayfalari/{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
+        with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
 
     # 1. E-Tablodan Onaylı Modelleri Çek
     onayli_modeller = onayli_modelleri_cek()
@@ -275,7 +275,7 @@ def sayfalari_olustur():
     for model in onayli_modeller:
       # Her model için HTML içeriği üret
       model_html = template_kullanici_model.render(model=model)
-      dosya_yolu = os.path.join('cikti_sayfalari', model['dosya_adi'])
+      dosya_yolu = os.path.join('', model['dosya_adi'])
 
       with open(dosya_yolu, 'w', encoding='utf-8') as f:
         f.write(model_html)
@@ -286,26 +286,26 @@ def sayfalari_olustur():
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
     index_icerik = template_index.render(is_ana_sayfa=True, sayfa_basligi="Ana Sayfa", site_verisi=site_verisi, tum_kategoriler=tum_kategoriler)
-    with open('cikti_sayfalari/index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
+    with open('index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
     sitemap_olustur(uretilen_sayfalar)
 
     # Giriş Sayfasını Oluştur ve Çıktı Klasörüne Aktar
     template_giris = env.get_template('giris_sablon.html')
     giris_icerik = template_giris.render()
-    with open('cikti_sayfalari/giris.html', 'w', encoding='utf-8') as f: f.write(giris_icerik)
+    with open('giris.html', 'w', encoding='utf-8') as f: f.write(giris_icerik)
     uretilen_sayfalar.append('giris.html') # Sitemap'e (Site Haritasına) dahil et
 
     # Model Gönderme Sayfasını Oluştur
     template_model = env.get_template('model_sablon.html')
     model_icerik = template_model.render(tum_kategoriler=tum_kategoriler)
-    with open('cikti_sayfalari/model-gonder.html', 'w', encoding='utf-8') as f: 
+    with open('model-gonder.html', 'w', encoding='utf-8') as f: 
         f.write(model_icerik)
     uretilen_sayfalar.append('model-gonder.html')
 
-    with open('cikti_sayfalari/arama_verisi.json', 'w', encoding='utf-8') as f:
+    with open('arama_verisi.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_arama_icin, f, ensure_ascii=False)
         
-    with open('cikti_sayfalari/tum_videolar_ham.json', 'w', encoding='utf-8') as f:
+    with open('tum_videolar_ham.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_ham, f, ensure_ascii=False)
         
     print("İşlem tamamlandı! Web sitesi oluşturuldu.")
