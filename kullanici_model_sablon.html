@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ model.baslik }} - Marifetli Eller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Diğer ortak CSS ve Firebase scriptleri buraya eklenebilir -->
+</head>
+<body>
+    {% include 'header_sablon.html' %}
+
+    <main style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+        <a href="index.html" style="color: var(--metin-koyu); text-decoration: none; font-size: 14px;">← Ana Sayfaya Dön</a>
+        
+        <article style="background: #fff; padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); margin-top: 20px;">
+            <span style="background: var(--hover-renk); color: var(--ana-renk); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">{{ model.kategori }}</span>
+            
+            <h1 style="font-family: 'Lora', serif; color: var(--metin-koyu); margin-top: 15px;">{{ model.baslik }}</h1>
+            <div style="font-size: 13px; color: #888; margin-bottom: 25px;">Yazar: <b>{{ model.yazar }}</b> | Tarih: {{ model.tarih[:10] }}</div>
+
+            <!-- MEDYA GÖSTERİMİ (Resim, Video veya YouTube) -->
+            {% if model.medya %}
+                <div style="margin-bottom: 25px; text-align: center;">
+                    {% if "youtube.com" in model.medya or "youtu.be" in model.medya %}
+                        <!-- YouTube Video Gösterimi -->
+                        <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ model.medya.split('=')[-1] }}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                    {% elif model.medya.endswith('.mp4') %}
+                        <!-- Doğrudan Video Gösterimi -->
+                        <video controls style="width: 100%; border-radius: 8px; max-height: 450px;"><source src="{{ model.medya }}" type="video/mp4"></video>
+                    {% else %}
+                        <!-- Resim Gösterimi -->
+                        <img src="{{ model.medya }}" alt="{{ model.baslik }}" style="max-width: 100%; border-radius: 8px; max-height: 500px; object-fit: cover;">
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- MAKAL / AÇIKLAMA METNİ -->
+            <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line;">
+                {{ model.makale }}
+            </div>
+        </article>
+    </main>
+
+    {% include 'footer_sablon.html' %}
+</body>
+</html>

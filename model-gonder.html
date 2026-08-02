@@ -1,0 +1,30 @@
+<div class="model-gonder-sayfasi">
+    <h2 style="text-align: center; color: var(--ana-renk);">El Emeğinizi Paylaşın, Yazarımız Olun!</h2>
+    <p style="text-align: center; color: var(--metin-acik);">Yaptığınız harika iğne oyası, mekik ve örgü modellerini, yapılış hikayeleriyle birlikte topluluğumuzla paylaşın. Sitemizde sizin adınızla yayınlayalım.</p>
+    
+    <!-- Kopyaladığınız Apps Script URL'sini src kısmına yapıştırın -->
+    <iframe src="https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec" 
+            width="100%" 
+            height="700px" 
+            frameborder="0" 
+            scrolling="no" 
+            style="max-width: 650px; margin: 0 auto; display: block; border-radius: 12px;">
+    </iframe>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // Ziyaretçi giriş yapmamışsa içeriği gizle ve uyar
+                document.querySelector('.model-gonder-sayfasi').innerHTML = `
+                    <div style="text-align:center; padding: 50px;">
+                        <h2 style="color:red;">Lütfen Giriş Yapın!</h2>
+                        <p>Kendi modellerinizi ve tariflerinizi gönderebilmek için topluluğumuza üye olmalısınız.</p>
+                        <a href="giris.html" style="background: #d6336c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">Kayıt Ol / Giriş Yap</a>
+                    </div>
+                `;
+            }
+        });
+    });
+</script>

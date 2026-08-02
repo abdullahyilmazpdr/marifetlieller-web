@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Gönder - Marifetli Eller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (Güvenlik kontrolü için şart) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+        
+        :root {
+            --ana-renk: #d6336c;
+            --arka-plan: #fdfbfb;
+            --kutu-arka-plan: #ffffff;
+            --metin-koyu: #333333;
+            --metin-acik: #666666;
+            --kenarlik: #f0e6e6;
+            --hover-renk: #fff0f3;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--arka-plan);
+            color: var(--metin-koyu);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* HEADER CSS */
+        header { background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 20px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100; }
+        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; }
+        .logo a { font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo a::before { content: "🌸"; font-size: 28px; }
+        
+        .nav-links { display: flex; gap: 20px; align-items: center; flex: 1; justify-content: flex-end; }
+        .nav-links a { text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px; transition: color 0.3s ease; white-space: nowrap; }
+        .nav-links a:hover { color: var(--ana-renk); }
+        
+        .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px; transition: all 0.3s ease; }
+
+        /* ARAMA VE DROPDOWN CSS */
+        .arama-alani { position: relative; margin-left: auto; width: 250px; }
+        .arama-kutu { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit; }
+        .arama-sonuclari { position: absolute; top: 100%; left: 0; width: 300px; background: #fff; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border-radius: 8px; max-height: 300px; overflow-y: auto; display: none; z-index: 1000; margin-top: 5px; }
+        .arama-sonuc-oge { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-decoration: none; color: var(--metin-koyu); transition: background 0.2s; }
+        .arama-sonuc-oge:hover { background: var(--hover-renk); color: var(--ana-renk); }
+        .arama-sonuc-oge img { width: 50px; height: 35px; object-fit: cover; border-radius: 4px; margin-right: 10px; }
+        .arama-sonuc-oge span { font-size: 13px; font-weight: 500; line-height: 1.2; }
+
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown>a { padding-right: 15px; cursor: pointer; }
+        .dropdown>a::after { content: "▾"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 12px; }
+        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: var(--kutu-arka-plan); min-width: 250px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow-y: auto; max-height: 500px; z-index: 1000; border: 1px solid var(--kenarlik); }
+        .dropdown-content a { display: block; padding: 12px 16px; color: var(--metin-koyu); border-bottom: 1px solid var(--kenarlik); white-space: normal; line-height: 1.4; margin: 0; font-size: 13px; }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: var(--hover-renk); color: var(--ana-renk); padding-left: 22px; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        /* FOOTER CSS */
+        footer { background-color: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px; margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; text-align: center; }
+        .sosyal-medya { margin-bottom: 20px; display: flex; justify-content: center; gap: 15px; }
+        .sosyal-medya a { padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: #fff; text-decoration: none; border-radius: 5px; font-size: 14px; }
+        .footer-alt { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #bdc3c7; }
+
+        main { flex: 1; padding: 40px 20px; }
+
+        @media (max-width: 860px) {
+            .hamburger { display: flex; }
+            .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
+            .nav-links.aktif { display: flex; }
+            .arama-alani { width: 100%; margin-left: 0; }
+            .arama-sonuclari { width: 100%; }
+            .nav-links a { margin-left: 0; white-space: normal; }
+            .dropdown-content { position: static; display: none; box-shadow: none; border: none; border-left: 2px solid var(--kenarlik); border-radius: 0; max-height: none; width: 100%; margin-top: 10px; }
+            .dropdown.aktif .dropdown-content { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'header_sablon.html' %}
+
+    <main>
+        <div class="model-gonder-sayfasi">
+            <h2 style="text-align: center; color: var(--ana-renk);">El Emeğinizi Paylaşın, Yazarımız Olun!</h2>
+            <p style="text-align: center; color: var(--metin-acik);">Yaptığınız harika iğne oyası, mekik ve örgü modellerini, yapılış hikayeleriyle birlikte topluluğumuzla paylaşın. Sitemizde sizin adınızla yayınlayalım.</p>
+            
+            <iframe src="https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec" 
+                    width="100%" 
+                    height="700px" 
+                    frameborder="0" 
+                    scrolling="no" 
+                    style="max-width: 650px; margin: 0 auto; display: block; border-radius: 12px;">
+            </iframe>
+        </div>
+    </main>
+
+    {% include 'footer_sablon.html' %}
+
+    <!-- GİRİŞ KONTROLÜ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (!user) {
+                    document.querySelector('.model-gonder-sayfasi').innerHTML = `
+                        <div style="text-align:center; padding: 50px;">
+                            <h2 style="color:red;">Lütfen Giriş Yapın!</h2>
+                            <p>Kendi modellerinizi ve makalelerinizi gönderebilmek için topluluğumuza üye olmalısınız.</p>
+                            <a href="giris.html" style="background: #d6336c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px;">Kayıt Ol / Giriş Yap</a>
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
