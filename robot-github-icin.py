@@ -137,6 +137,20 @@ def oynatma_listelerini_getir():
 def listedeki_videolari_getir(playlist_id):
     request = youtube.playlistItems().list(part="snippet", playlistId=playlist_id, maxResults=50)
     videolar = []
+    response = None
+    for deneme in range(3):  # Hata verirse 3 kez tekrar deneme hakkı
+        try:
+            response = request.execute()
+            break  # Başarılı olursa döngüden çık ve devam et
+        except Exception as e:
+            print(f"YouTube bağlantısı yoruldu (Deneme {deneme+1}/3). 2 saniye bekleniyor... Hata: {e}")
+            time.sleep(2)  # 2 saniye nefes al ve tekrar dene
+            
+    # Eğer 3 denemede de yanıt gelmediyse boş liste dön (programın çökmesini engeller)
+    if not response:
+        return []
+
+    # Yanıt başarıyla alındıysa döngüye sok
     for item in request.execute().get('items', []):
         snippet = item['snippet']
         if 'videoId' in snippet['resourceId']:
@@ -204,6 +218,7 @@ def sayfalari_olustur():
         tum_kategoriler.append({'baslik': kat_adi, 'dosya_adi': f"kategori_{guvenli_dosya_adi(kat_adi)}.html"})
 
     for index, liste in enumerate(listeler):
+        time.sleep(0.5)  # YouTube'u yormamak için her kategoride yarım saniye bekle
         kategori_adi = liste['snippet']['title']
         playlist_id = liste['id']
         kategori_dosya_adi = f"kategori_{guvenli_dosya_adi(kategori_adi)}.html"
