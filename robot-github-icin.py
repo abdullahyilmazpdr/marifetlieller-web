@@ -9,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 import csv
 import io
 import requests
+import unicodedata
 
 # API ANAHTARLARI
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -53,20 +54,30 @@ def onayli_modelleri_cek():
 
     for satir in reader:
       # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
+      for satir in reader:
+      # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
       if len(satir) >= 8 and satir[7] == "Onaylandı":
-        model_verisi = {
-            "id": satir[0],
-            "tarih": satir[1],
-            "yazar": satir[2],
-            "kategori": satir[3],
-            "baslik": satir[4],
-            "makale": satir[5],
-            "medya": satir[6],
-            "durum": satir[7],
-            # URL uyumlu dosya adı oluşturuyoruz (örn: "boncuklu-oya-123.html")
-            "dosya_adi": f"model_{satir[0].lower()}.html",
-        }
-        onayli_liste.append(model_verisi)
+                    # ESKİ: "dosya_adi": f"model_{satir[0].lower()}.html",
+            
+            # YENİ (SEO UYUMLU):
+            baslik_seo = url_uyumlu_yap(satir[4]) # Başlık 4. indekste
+            if len(baslik_seo) > 50: 
+                baslik_seo = baslik_seo[:50].strip('-')
+            kisa_id = str(satir[0])[-5:] # Karmaşık ID'nin sadece son 5 hanesini alalım
+            uretilen_dosya_adi = f"{baslik_seo}-{kisa_id}.html"
+
+            model_verisi = {
+                "id": satir[0],
+                "tarih": satir[1],
+                "yazar": satir[2],
+                "kategori": satir[3],
+                "baslik": satir[4],
+                "makale": satir[5],
+                "medya": satir[6],
+                "durum": satir[7],
+                "dosya_adi": uretilen_dosya_adi,
+            }
+            onayli_liste.append(model_verisi)
 
     return onayli_liste
   except Exception as e:
@@ -164,6 +175,15 @@ def listedeki_videolari_getir(playlist_id):
             })
     return videolar
 
+def url_uyumlu_yap(metin):
+    # Türkçe karakterleri İngilizce'ye çevir ve küçük harf yap
+    metin = str(metin).lower()
+    metin = metin.replace('ı', 'i').replace('ğ', 'g').replace('ü', 'u').replace('ş', 's').replace('ö', 'o').replace('ç', 'c')
+    # Özel karakterleri temizle ve boşlukları tireye dönüştür
+    metin = re.sub(r'[^a-z0-9\s-]', '', metin)
+    metin = re.sub(r'[-\s]+', '-', metin).strip('-')
+    return metin
+
 def guvenli_dosya_adi(isim):
     # Türkçe karakterleri İngilizceye çevir
     isim = isim.replace('ı', 'i').replace('İ', 'i').replace('ğ', 'g').replace('Ğ', 'g')
@@ -233,7 +253,13 @@ def sayfalari_olustur():
         video_verileri_kategori_icin = []
 
         for video in videolar:
-            dosya_adi = f"video_{video['id']}.html" 
+            # ESKİ: dosya_adi = f"video_{video['id']}.html" 
+            
+            # YENİ (SEO UYUMLU):
+            baslik_seo = url_uyumlu_yap(video['title'])
+            # Başlık çok uzunsa ilk 50 karakterini alalım ki URL destan gibi olmasın
+            if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
+            dosya_adi = f"{baslik_seo}-{video['id']}.html" 
             
             # Güncelleyici Robot İçin Veriyi Kaydet
             tum_videolar_ham.append({
@@ -242,7 +268,8 @@ def sayfalari_olustur():
                 'description': video['description'],
                 'thumbnail': video['thumbnail'],
                 'kategori_adi': kategori_adi,
-                'kategori_dosya_adi': kategori_dosya_adi
+                'kategori_dosya_adi': kategori_dosya_adi,
+                'dosya_adi': dosya_adi
             })
 
             # YAPAY ZEKA KONTROLÜ
