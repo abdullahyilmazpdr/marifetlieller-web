@@ -52,12 +52,10 @@ def onayli_modelleri_cek():
     onayli_liste = []
     basliklar = next(reader)  # İlk satır başlıkları atla
 
+    # DÖNGÜYÜ TEKE DÜŞÜRDÜK VE HİZALAMAYI DÜZELTTİK
     for satir in reader:
       # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
-      for satir in reader:
-      # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
       if len(satir) >= 8 and satir[7] == "Onaylandı":
-                    # ESKİ: "dosya_adi": f"model_{satir[0].lower()}.html",
             
             # YENİ (SEO UYUMLU):
             baslik_seo = url_uyumlu_yap(satir[4]) # Başlık 4. indekste
