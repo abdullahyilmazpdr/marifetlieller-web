@@ -37,8 +37,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions Otomasyonu"
           git config --global user.email "actions@github.com"
-          # YENİ EKLENEN SATIR: Önce GitHub'daki en son manuel değişiklikleri (virgül düzeltmesi vb.) robota çek
-          git pull origin main --rebase
           git add .
           git commit -m "Yeni onaylanan model eklendi ve site güncellendi 🚀" || echo "Değişiklik bulunamadı."
           
