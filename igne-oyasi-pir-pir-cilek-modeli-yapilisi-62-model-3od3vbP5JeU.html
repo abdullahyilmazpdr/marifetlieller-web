@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,26 +719,32 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili marifetli hanımlar ve iğne oyası sevdalıları, bugün çeyizlerin göz bebeği olacak, yazmalarınıza adeta bir bahar havası katacak çok özel bir modelle karşınızdayız: <strong>Pır Pır Çilek Modeli</strong>! Türk el sanatlarımızın o incecik ruhunu yansıtan bu tasarım, klasik çilek motifinin minik ilmeklerle, yani "pır pır" detaylarıyla zenginleştirilmiş en zarif halidir.</p>
-<p>Koleksiyonumuzun 62. modeli olan bu çalışma, geleneksel dokusunun yanında üç boyutlu duruşuyla da dikkat çekiyor. Pır pırların kattığı o çıtır çıtır ve dolgun görünüm, yazma kenarlarında kendisini hemen belli ediyor. Yapılışı son derece keyifli olan bu modeli işlerken zamanın nasıl geçtiğini anlamayacaksınız. İster kendi kullanımınız için tülbentlerinizi süsleyin, ister sevdiklerinizin çeyizine <strong>göz nuru</strong> değerli bir hatıra bırakın; pır pır çilek modeli her göreni kendine hayran bırakacak güzellikte.</p>
+<p>Sevgili marifetli hanımlar, geleneksel el sanatlarımızın en gözde parçası olan iğne oyasında bugün yine kalbinizi çalacak çok özel bir tasarımla karşınızdayım! <strong>İğne Oyası Pır Pır Çilek Modeli</strong>, hem klasik dokunuşları sevenlerin hem de çeyizine modern ve çıtı pıtı bir hava katmak isteyenlerin favorisi olmaya aday. Kanalımızdaki 62. model olan bu zarif motif, minik pır pır detaylarıyla adeta gerçek bir yaz meyvesinin neşesini tülbentlerinize taşıyor.</p>
+<p>Bu modelin en büyük ayrıcalığı, <strong>pır pır tekniği</strong> sayesinde üç boyutlu ve dolgun bir duruşa sahip olmasıdır. Yazma kenarlarında salkım salkım duran bu çilekler, oyaya bakan herkesin tekrar tekrar bakmasını sağlayacak kadar alımlı. Üstelik kalıp gibi duran yapısı sayesinde uzun yıllar ilk günkü formunu korur.</p>
+<ul>
+    <li><strong>Çok Yönlü Kullanım:</strong> Sadece günlük yazmalarda değil, gösterişli çeyizlik havlu kenarlarında ve mevlüt örtülerinde de rahatlıkla tercih edebilirsiniz.</li>
+    <li><strong>Zarif Duruş:</strong> Ne çok büyük ne de çok küçük olan ideal boyutuyla tülbent üzerinde ağırlık yapmaz, sarkma eğilimi göstermez.</li>
+    <li><strong>Göz Alıcı Detaylar:</strong> Çileğin alt kısmındaki yeşil yaprak ve üstteki pır pır ilmekler, modele tam bir doğallık katar.</li>
+</ul>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir iğne oyasının tüm zarafetini ortaya çıkaran en önemli unsur şüphesiz doğru ip ve renk tercihidir. Pır pır çilek modelinizin adeta kalıp gibi durması ve renklerin göz alıcı görünmesi için şu tatlı ipuçlarına göz atabilirsiniz:</p>
+<p>İğne oyasının güzelliğini ortaya çıkaran en önemli sır, doğru ip seçimi ve renklerin birbiriyle olan muhteşem uyumudur. <strong>Pır Pır Çilek Modeli</strong> yaparken hayal gücünüzü serbest bırakabilirsiniz ancak kusursuz bir sonuç için şu detaylara dikkat etmenizi öneririm:</p>
+<p>Modelimizin ana kahramanı çilek olduğu için yeşil yaprak detayı sabittir. Ancak çilek gövdesinde klasikten şaşmayanlar için <strong>canlı kırmızı</strong>, pastel tonları sevenler için ise <strong>toz pembe, fuşya veya mürdüm</strong> tonları harika alternatifler sunar. Tülbentinizin içindeki çiçek renklerini baz alarak çileklerinizi farklı renklerde de çalışabilirsiniz.</p>
 <ul>
-    <li><strong>Geleneksel Canlılık:</strong> Çileğin simgesi olan canlı bir <strong>kırmızı</strong> ile gövdeyi yapıp, tepe yapraklarında doğanın en güzel tonu olan <strong>fıstık yeşili</strong> tercih ederek zamansız bir şıklık yakalayabilirsiniz.</li>
-    <li><strong>Pastel Rüyalar:</strong> Son yılların trendi olan pastel tonları deneyebilirsiniz. Pudra pembesi, lavanta moru ya da tatlı bir krem tonuyla yapacağınız çilekler, özellikle düz renk desenli yazmalarda harika duracaktır.</li>
-    <li><strong>İp Kalitesi ve Püf Noktası:</strong> Pır pırların zamanla yatmaması ve dik durması için mutlaka <strong>4 katlı suni ipek</strong> veya kaliteli polyester oyalı ipler kullanmanızı öneririm. İpinizi oyaya başlamadan önce hafifçe esnetmeniz, ilmeklerinizin çok daha muntazam oturmasını sağlayacaktır.</li>
+    <li><strong>İp Türü:</strong> Pır pırların dik ve diri durması için mutlaka <strong>4 katlı suni ipek</strong> veya kaliteli bükümlü polyester iğne oyası ipleri kullanmalısınız. Esneyen ipler pır pırların şeklinin bozulmasına neden olabilir.</li>
+    <li><strong>Renk Kontrastı:</strong> Çileğin yeşil sap kısmı için doğalı yansıtan tatlı bir çimen yeşili, çilek gövdesi için ise tülbentin zeminine zıt düşecek parlak tonlar seçilmelidir.</li>
+    <li><strong>Düğüm Sıkılığı:</strong> Pır pırları oluştururken iğnenizi çekerken ipinizi iyice sıkılaştırmalısınız; böylece çilekleriniz ütülenmese bile dik duracaktır.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Pır pır çilek modeli yeni başlayanlar için uygun mudur?</strong></p>
-<p>Temel zürafa ve pır pır yapımını biliyorsanız bu modeli rahatlıkla yapabilirsiniz. Videomuzda tüm aşamalar adım adım ve detaylıca anlatıldığı için eli az çok iğne tutan her hamarat hanım kolayca uygulayabilir.</p>
+<p><strong>1. İğne Oyası Pır Pır Çilek Modeli yeni başlayanlar için uygun mudur?</strong><br>
+Bu model, temel iğne oyası tekniklerini (zürafa ve pır pır yapımını) bilen orta seviyedeki hanımlar için oldukça kolaydır. Yeni başlayan marifetli okurlarımız ise YouTube videomuzda verdiğimiz adım adım püf noktalarını takip ederek biraz pratikle bu modeli rahatlıkla tamamlayabilirler.</p>
 
-<p><strong>Pır pırların hepsinin eşit boyda olması için ne yapmalıyım?</strong></p>
-<p>Pır pır ilmeğini oluştururken düğümü tam sıkmadan önce iğnenizin ucuyla ilmeğin yüksekliğini ayarlamalısınız. Başparmağınızla ilmeği sabitleyip ardından düğümü iyice sıktığınızda tüm pır pırlarınızın eşit boyda olduğunu göreceksiniz.</p>
+<p><strong>2. Çilek modelindeki pır pırların eşit boyda olması için ne yapmalıyım?</strong><br>
+Pır pır boylarını eşitlemenin en kolay yolu, ilmeği sıkıştırmadan önce iğnenizin ucuyla pır pırın boyunu ayarlamak ve başparmağınızla ipi sabitleyerek düğümü öyle sıkmaktır. Zamanla eliniz alışacak ve hepsi aynı hizada olacaktır.</p>
 
-<p><strong>Bu modelin ütüsü nasıl yapılmalı, bozulma yapar mı?</strong></p>
-<p>Doğru teknikle yapılan iğne oyası kolay kolay bozulmaz. Oyayı ütülerken mutlaka tersinden ve üzerine nemli, ince bir tülbent kapatarak orta ısıda buharla ütülemelisiniz. Bu sayede çilek motifleriniz formunu kaybetmez ve ilk günkü gibi diri kalır.</p>
+<p><strong>3. Bu model ütülenirken pır pırlar bozulur mu, nasıl ütülenmeli?</strong><br>
+Doğru teknikle yapılan iğne oyası kolay kolay bozulmaz. Modelinizi ütülerken üzerine ince ve nemli bir tülbent örtüp, ütüyü bastırmadan hafif buhar vererek ütülemeniz yeterlidir. Pır pırları elinizle yukarı doğru düzelterek ütülerseniz modeliniz ilk günkü tazeliğini korur.</p>
                 </div>
             </div>
             
@@ -770,6 +772,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

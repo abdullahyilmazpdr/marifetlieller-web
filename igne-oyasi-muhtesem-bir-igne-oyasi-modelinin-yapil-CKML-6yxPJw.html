@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -769,6 +765,12 @@ Modelinizin formunu koruması için ütüleme aşamasında üzerine mutlaka ince
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

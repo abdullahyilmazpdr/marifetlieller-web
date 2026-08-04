@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,25 +719,22 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Merhaba sevgili oya tutkunları, maharetli hanımlar! Çeyiz sandıklarının baş tacı, göz nuru iğne oyalarımıza bugün hem çok klasik hem de zamansız bir motifle devam ediyoruz. İğne oyası denince akla gelen en gösterişli, en havalı modellerden biri şüphesiz <strong>Keloğlan modeli</strong>dir. İsmini o tatlı, kat kat kıvrılan dairesel yapısından alan bu model, iki farklı renkle birleştiğinde adeta bir görsel şölene dönüşüyor.</p>
-<p>İki renkli Keloğlan modeli, tek renkli tasarımlara kıyasla motife muazzam bir derinlik ve üç boyutlu bir boyut kazandırıyor. Yazmanın üzerindeki renkleri birbirine bağlayan bu teknik, hem <strong>ağır çeyizlik yazmalarda</strong> hem de özel günlerde kullanacağınız <strong>namaz örtülerinde</strong> inanılmaz zengin bir duruş sergiliyor. Yapımı biraz sabır ve el ayarı istese de videodaki detaylı anlatımla iğnenizi her attığınızda bu modelin zarafetine bir kez daha hayran kalacaksınız.</p>
+<p>Sevgili oya sevdalıları, bugün çeyizlerin vazgeçilmezi, zarafetiyle göz kamaştıran çok özel bir modelle karşınızdayım: <strong>İki Renk Keloğlan Modeli</strong>! Geleneksel iğne oyası sanatımızın en sevilen motiflerinden biri olan Keloğlan modeli, iki farklı rengin muhteşem uyumuyla yeniden hayat buluyor. Kat kat duruşu, kabarık ve hacimli yapısıyla yazmalarınızın kenarında adeta bir mücevher gibi parlayacak.</p>
+<p>Bu modelin en güzel yanı, hem klasik hem de modern bir havaya sahip olmasıdır. İlmek ilmek sabırla işlenen bu motif, iğne oyasına yeni başlayanlar için biraz cesaret istese de, anlatımlı videomuz sayesinde adım adım kolayca yapabileceğiniz bir seviyeye geliyor. Özellikle gösterişli ve dolgun modelleri seven hanımlar için bu teknik, tülbentlerden havlu kenarlarına kadar her alanda kullanabileceğiniz harika bir seçenektir.</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Keloğlan motifinin o muhteşem kat kat kıvrımlarını tam anlamıyla öne çıkarabilmek için doğru renk kombinasyonunu yapmak ve doğru ipi seçmek işin en kritik noktasıdır. Yanlış ip seçimi modelin düşmesine, yanlış renk ise motifin kaybolmasına neden olabilir. İşte marifetli eller için altın değerinde tavsiyelerim:</p>
+<p>Keloğlan modelinin kendini tam anlamıyla gösterebilmesi için doğru renk kombinasyonunu yapmak ve kaliteli ip seçmek son derece önemlidir. İşte modelinizi bir üst seviyeye taşıyacak küçük ama etkili tüyolarım:</p>
 <ul>
-<li><strong>Zıt Renklerin Şıklığı:</strong> Keloğlan modelinde katların belirgin olması için zıt renkleri bir arada kullanabilirsiniz. Örneğin; krem veya ekru taban üzerine <strong>mürdüm ve hardal sarısı</strong> ya da <strong>gece mavisi ile pudra pembe</strong> kombinasyonları motifin güzelliğini ikiye katlayacaktır.</li>
-<li><strong>Ton Sür Ton Zarafeti:</strong> Daha sade ve asil bir görünüm arıyorsanız aynı rengin açık ve koyu tonlarını tercih edebilirsiniz. Gül kurusu ile açık pembe veya zümrüt yeşili ile su yeşili uyumu yazmanızda harikalar yaratır.</li>
-<li><strong>İp Seçimi Püf Noktası:</strong> Keloğlan modelinin kalıp gibi durması ve halkaların bozulmaması için kesinlikle <strong>4 katlı sun'i ipek oya iplerini</strong> tercih etmenizi öneririm. Sun'i ipek ipler hem motifin diri durmasını sağlar hem de yıkandıkça veya ütülendikçe formunu asla kaybetmez.</li>
+<li><strong>Kontrast Renklerin Gücü:</strong> Modelin katlarını belirginleştirmek için zıt renkleri bir arada kullanabilirsiniz. Örneğin; mürdüm ile krem, gece mavisi ile toz pembe veya hardal sarısı ile taba rengi muhteşem bir zıtlık oluşturur.</li>
+<li><strong>Ton Sür Ton Zarafeti:</strong> Daha yumuşak ve asil bir görüntü isterseniz, aynı rengin açık ve koyu tonlarını tercih edebilirsiniz. Açık yeşil ve koyu yeşil uyumu yazmalarınızda çok doğal duracaktır.</li>
+<li><strong>İp Kalitesi:</strong> Keloğlan modelinde ilmeklerin dik ve muntazam durması şarttır. Bu yüzden esnemeyen, kaliteli <strong>suni ipek</strong> veya 50 numara polyester oya iplerini tercih etmelisiniz. Kaliteli ip, oyalarınızın yıkandıkça bozulmasını önler.</li>
+<li><strong>İğne Seçimi:</strong> İpinizle uyumlu, ne çok kalın ne de çok ince olan standart iğne oyası iğnelerini kullanarak ilmekleri daha rahat oturtabilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p>Bu zarif modeli örerken takıldığınız detaylar veya aklınıza takılan sorular olabilir. Sizler için en çok merak edilenleri derledim:</p>
-<ul>
-<li><strong>Keloğlan modeli yeni başlayanlar için uygun mudur?</strong><br>Keloğlan modeli orta ve ileri seviye bir iğne oyası modelidir. Ancak videodaki adım adım anlatımı ve püf noktalarını dikkatle takip ederek, birkaç deneme turundan sonra elinizi rahatlıkla alıştırabilirsiniz.</li>
-<li><strong>Halkalarımın bükülmemesi veya düzleşmemesi için ne yapmalıyım?</strong><br>İğneyi batırıp ipi çekerken zürafa paylarını çok iyi ayarlamalı ve ip gerginliğini ne çok sıkı ne de çok gevşek bırakmalısınız. Düğümleri tam halkanın tepe noktasına oturtmak kıvrımın dik durmasını sağlar.</li>
-<li><strong>İki renk geçişinde ipi nasıl gizleyebilirim?</strong><br>Renk değiştirirken bir önceki rengin ipini halkanın altındaki zürafanın içinde yürüterek sıfır noktasından kesmelisin. Böylece yazmanızın arkası da önü kadar temiz ve pürüzsüz görünecektir.</li>
-<li><strong>Bu model ütü ister mi?</strong><br>Doğru teknik ve kaliteli sun'i ipek ip ile yapıldığında Keloğlan modeli ütüsüz bile kalıp gibi durur. Yine de yazmanızı tamamlayınca tersten, hafif nemli bir tülbent ile ütüleyerek ömürlük bir kullanım elde edebilirsiniz.</li>
-</ul>
+<p><strong>Keloğlan modeli yaparken motifler neden büzüşür veya marullanır?</strong><br>İlmek sayılarını eşit tutmamak veya katları dönerken ipin mesafesini ayarlayamamak marullanmaya sebep olur. Katları oluştururken ipi ne çok sıkı ne de çok gevşek bırakmalısınız; el ayarınızı sabit tutmak modelin düzgün durmasını sağlar.</p>
+<p><strong>İğne oyasına yeni başlayanlar bu modeli yapabilir mi?</strong><br>Temel zürafa tekniğini biliyorsanız, videolu anlatımımızı adım adım takip ederek rahatlıkla yapabilirsiniz. İlk birkaç motifte eliniz alışana kadar sabırlı olmanızı tavsiye ederim.</p>
+<p><strong>İki renkli Keloğlan modeli nasıl ütülenir?</strong><br>Oyanızın üzerine nemli bir tülbent örterek tersten ütülemenizi tavsiye ederim. Ütüyü doğrudan oyaya temas ettirmemek, motiflerin kabarık dokusunu korur ve parlamasını engeller.</p>
                 </div>
             </div>
             
@@ -769,6 +762,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

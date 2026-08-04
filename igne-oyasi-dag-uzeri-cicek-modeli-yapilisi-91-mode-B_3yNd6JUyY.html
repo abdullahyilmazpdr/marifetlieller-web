@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -717,6 +713,35 @@ E Mail: love_yilmaz@hotmail.com</div>
             </div>
 
             
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
+                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
+                    ✨ Model Hakkında İpuçları ve Detaylar
+                </div>
+                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
+                    <h3>Modelin Özellikleri ve Zarafeti</h3>
+<p>Sevgili marifetli hanımlar, geleneksel el sanatlarımızın en göz alıcı, en zengin parçalarından biri olan iğne oyasında yine içimizi ısıtacak harika bir modelle karşınızdayım! <strong>İğne oyası dağ üzeri çiçek modeli</strong>, yazmalarınıza adeta bir bahar bahçesi havası katacak, bakmaya doyamayacağınız zarafette bir tasarım. Kanalımızdaki 91. model olan bu özel çalışma, hem çeyiz bohçalarının yıldızı olmaya aday hem de günlük kullanımda şıklığınızı tamamlayacak nitelikte.</p>
+<p>Bu modelin en büyüleyici yanı, alt kısımda yükselen güçlü ve simetrik <strong>iğne oyası dağı</strong> ile üzerindeki narin çiçeğin oluşturduğu o mükemmel dengedir. Dağ motifi oyaya heybetli ve oturaklı bir zemin kazandırırken, tepesindeki minik çiçek dokunuşu tasarıma zarafet ve hafiflik katıyor. Zürafalarınızı sıkı tuttuğunuzda kalıp gibi duran bu model, tülbent kenarlarında hiç sarkma yapmaz ve yıllarca ilk günkü güzelliğini korur.</p>
+
+<h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
+<p>Bir iğne oyasının güzelliğini tam anlamıyla ortaya çıkaran şey, hiç şüphesiz doğru renk kombinasyonları ve ip kalitesidir. <strong>Dağ üzeri çiçek modeli</strong> işlerken göz önünde bulundurmanız gereken birkaç tatlı ipucunu sizler için derledim:</p>
+<ul>
+    <li><strong>İp Kalitesi:</strong> Modelin dik ve formunu koruyan bir yapıda olması için <strong>kaliteli polyester oya ipleri</strong> veya daha parlak, otantik bir doku isteyenler için <strong>suni ipek ipler</strong> tercih edilmelidir. Suni ipek, özellikle tepe çiçeğinin kıvrımlarında harika bir ışıltı sağlar.</li>
+    <li><strong>Zemin ve Dağ Rengi:</strong> Dağ motifini işlerken tülbentin kendi ana rengini ya da doğallığı yakalamak adına yaprak yeşili tonlarını tercih edebilirsiniz. Yeşil bir dağ tabanı, üzerindeki çiçeği adeta canlı bir kır çiçeği gibi öne çıkaracaktır.</li>
+    <li><strong>Çiçek Tonları:</strong> Dağın tepesindeki çiçeklerde zıt renklerin uyumundan faydalanabilirsiniz. Örneğin; koyu yeşil bir dağ üzerine tozpembe, fuşya veya civciv sarısı çiçekler kondurarak harika bir kontrast yakalayabilirsiniz. Eğer tülbentiniz desenliyse, desenin içindeki en canlı iki rengi çiçeklerde kullanmak bütünlük sağlayacaktır.</li>
+</ul>
+
+<h3>Sıkça Sorulan Sorular</h3>
+<p><strong>1. İğne oyası dağ üzeri çiçek modeli yeni başlayanlar için uygun mudur?</strong><br>
+Bu model orta seviye el becerisi gerektiren bir modeldir. Eğer temel zürafa ve düğüm tekniklerine hakimseniz, videoyu adım adım takip ederek kolaylıkla tamamlayabilirsiniz. İlk kez deneyecekseniz, dağ motifini oluştururken ilmek eksiltmelerine ekstra dikkat etmenizi öneririm.</p>
+
+<p><strong>2. Dağ motifinin yamulmaması ve dik durması için ne yapmalıyım?</strong><br>
+Dağ yaparken ilmekleri her sırada eşit oranlarda eksiltmek ve düğümleri atarken ipi yukarıya doğru iyice sıkılamak gerekir. İpinizi ne kadar sıkı çekerseniz, <strong>iğne oyası dağınız</strong> o kadar sert ve muntazam duracaktır.</p>
+
+<p><strong>3. Bu oya modeli tülbente işlendikten sonra nasıl ütülenmelidir?</strong><br>
+Modelinizi uzun süre ilk günkü gibi kullanmak için yazmanızı tersinden ütülemelisiniz. Çiçeklerin ve dağ motifinin üzerine nemli bir tülbent bezi örterek, buharlı ütüyü çok fazla bastırmadan hafifçe gezdirmek oyunun şeklini bozmadan pürüzsüzleşmesini sağlar.</p>
+                </div>
+            </div>
+            
 
         </div>
     </main>
@@ -741,6 +766,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

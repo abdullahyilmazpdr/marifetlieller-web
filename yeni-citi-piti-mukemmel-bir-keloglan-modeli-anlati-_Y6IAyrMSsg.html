@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -720,26 +716,25 @@
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili marifetli hanımlar, çeyizlerin vazgeçilmezi ve iğne oyası sevdalılarının göz bebeği olan harika bir tasarımla karşınızdayım! <strong>352. modelimiz olan bu yeni çıtı pıtı Keloğlan modeli</strong>, zarafeti ve kibarlığıyla gören herkesi kendine hayran bırakıyor. Geleneksel Keloğlan tekniğinin minik dokunuşlarla yeniden yorumlandığı bu oya, özellikle ağır modellerden sıkılıp daha zarif, şık ve günlük kullanıma uygun tasarım arayanlar için biçilmiş kaftan.</p>
-<p>Bu özel modelin öne çıkan ve hanımların kalbini çalan başlıca özellikleri şunlardır:</p>
-<ul>
-<li><strong>Çıtı Pıtı Görünüm:</strong> Yazma kenarlarında asla kaba durmaz, tam aksine tülbentinize zarif ve estetik bir çerçeve kazandırır.</li>
-<li><strong>Üç Boyutlu Keloğlan Tekniği:</strong> Üst üste dönerek atılan ilmeklerin oluşturduğu oval form, oyaya dolgun ve hacimli bir şıklık katar.</li>
-<li><strong>Kalıp Gibi Duruş:</strong> Doğru teknik ve sıkı düğümlerle yapıldığında bozulmayan, ütü istemeyen ve yıllarca ilk günkü formunu koruyan bir yapıya sahiptir.</li>
-</ul>
+<p>Sevgili iğne oyası tutkunları, marifetli ellerinizin emeğiyle hayat bulan yazmalarınıza yepyeni ve göz alıcı bir dokunuş yapmaya hazır mısınız? <strong>352. modelimiz</strong> olan bu harika <strong>çıtı pıtı Keloğlan modeli</strong>, zarafeti ve naifliğiyle çeyizlerinize değer katacak nitelikte. İğne oyasında klasikleşmiş Keloğlan motifinin en modern ve kibar yorumlarından biri olan bu model, sıkılmadan işleyebileceğiniz son derece akıcı bir yapıya sahip. Hem hafif hem de gösterişli durması sayesinde ister günlük yazmalarda ister çeyizlik tülbentlerde rahatlıkla tercih edebilirsiniz. Adım adım anlatımı sayesinde döngüleri oturtmakta hiç zorlanmayacak, her bir ilmekte ortaya çıkan o muazzam zarafete adeta hayran kalacaksınız!</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>İğne oyasının tüm emeğini ve güzelliğini ortaya çıkaran en önemli detay, doğru ip ve renk tercihidir canlar. Bu çıtı pıtı Keloğlan modelini uygularken yazmanızın zemin rengini ve içindeki çiçek tonlarını çok iyi analiz etmelisiniz. İşte modelinizi göz alıcı kılacak birkaç altın tavsiye:</p>
+<p>Bir iğne oyasını kusursuz gösteren en önemli detay, doğru renk kombinasyonu ve kaliteli malzeme tercihidir. Bu çıtı pıtı Keloğlan modelinin güzelliğini tam anlamıyla ortaya çıkarmak için sizlere birkaç küçük tüyo hazırladım:</p>
 <ul>
-<li><strong>İp Türü Seçimi:</strong> Oyalarınızın mat durmaması ve ilmeklerin kaymaması için kaliteli <strong>4 katlı suni ipek</strong> veya esnemeyen polyester oyalı ipleri tercih etmelisiniz. Suni ipek ipler, Keloğlan motiflerinin çok daha pürüzsüz ve yuvarlak oturmasını sağlar.</li>
-<li><strong>Desenli Yazmalarda Renk Dengesi:</strong> Eğer çiçekli bir yazma kenarına yapıyorsanız, Keloğlan motifi için yazmanın içindeki en canlı 2 ana rengi seçin. Alt çim veya zürafa kısmında ise mutlaka yazmanın zemin rengini kullanarak ton sür ton bir uyum yakalayın.</li>
-<li><strong>Tek Renk (Düz) Tülbentler:</strong> Düz renk yazmalarda pastel ve zıt tonları bir arada kullanmak modele modern bir hava katar. Örneğin; krem rengi bir yazmaya hardal sarısı ve kiremit tonlarında Keloğlan motifleri işleyebilirsiniz.</li>
+    <li><strong>İp Seçimi:</strong> Oyanızın yıkanınca bozulmaması ve adeta bir kalıp gibi durması için 4 katlı suni ipek ipleri veya kaliteli polyester oya iplerini tercih etmenizi öneririm.</li>
+    <li><strong>Kontrastın Gücü:</strong> Yazmanızın zemin rengini zürafa kısmında kullanıp, Keloğlan motiflerinde desenin içindeki en canlı iki zıt rengi seçerek modelin çıtı pıtı detaylarını öne çıkarabilirsiniz.</li>
+    <li><strong>Soft ve Doğal Tonlar:</strong> Eğer daha dingin bir şıklık arıyorsanız, çağla yeşili zemin üzerine pudra pembesi, krem veya bebek mavisi tonlarını deneyerek son derece zarif bir uyum yakalayabilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Keloğlan iğne oyası modeli yeni başlayanlar için uygun mudur?</strong><br>Evet, bu modelin çıtı pıtı ve küçük boyutlu versiyonu, temel iğne oyası tekniklerini (zürafa ve kuyruk yapımını) bilen herkes için oldukça uygundur. İlk etapta ilmek boylarını eşit tutmaya özen gösterdiğinizde çok hızlı ilerlediğinizi göreceksiniz.</p>
-<p><strong>Keloğlan motiflerinin marullanmaması ve eğrilmemesi için ne yapılmalı?</strong><br>İlmekleri dönerek atarken ipinizi ne çok sıkı çekmeli ne de pot bırakmalısınız. Her katta düğümü tam ortalayarak ve iğnenin yardımıyla ilmeği forma sokarak sıkılamak, modelin kalıp gibi durmasını sağlar.</p>
-<p><strong>352. Keloğlan modeli hangi kumaş türlerine daha çok yakışır?</strong><br>Zarif ve hafif yapısı sayesinde pamuklu yazmalara, ipek tülbentlere, mevlüt örtülerine ve hatta havlu kenarı ara yollarına çok yakışmaktadır.</p>
+<p><strong>Bu Keloğlan modelini iğne oyasına yeni başlayanlar yapabilir mi?</strong><br>
+Evet, kesinlikle! Keloğlan modeli dışarıdan bakıldığında karmaşık görünse de videodaki detaylı anlatım sayesinde ilmek mantığını kolayca çözeceksiniz. Temel zürafa tekniğini biliyorsanız bu modeli rahatlıkla tamamlayabilirsiniz.</p>
+
+<p><strong>Keloğlan motiflerinin eşit ve düzgün durması için ne yapmalıyım?</strong><br>
+Motifleri oluştururken ipinizi ne çok sıkı ne de fazla gevşek bırakmalısınız. İğneyi çekerken elinizle katları hafifçe düzeltip sabitlemek, tüm motiflerin aynı boyutta ve düzgün kalmasını sağlayacaktır.</p>
+
+<p><strong>Oyamın ütülendiğinde bozulmaması için nasıl bir yol izlemeliyim?</strong><br>
+Düğümleri atarken iyice sıkılaştırdığınızdan emin olun. Oyayı ütülerken üzerine nemli ve ince bir tülbent sererek tersten hafif buharla ütülerseniz, modeliniz formunu uzun yıllar boyunca koruyacaktır.</p>
                 </div>
             </div>
             
@@ -767,6 +762,12 @@
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

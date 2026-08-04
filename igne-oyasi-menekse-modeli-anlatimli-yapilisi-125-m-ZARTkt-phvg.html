@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,23 +719,21 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Merhabalar hanımlar, çeyiz sandıklarının baş tacı, zarafetin simgesi olan iğne oyasında bugün bambaşka bir güzellikle karşınızdayım! 125. modelimiz olan <strong>İğne Oyası Menekşe Modeli</strong>, doğanın o iç ısıtan renklerini ve süzülen yapraklarını doğrudan yazmalarımıza taşıyor. Menekşe çiçeğinin o narin dokusunu ilmek ilmek işlerken hem günün stresini atacak hem de ortaya baktıkça gurur duyacağınız bir eser çıkaracaksınız.</p>
-<p>Bu model, özellikle <strong>üç boyutlu (3D) duruşu</strong> ve kat kat ilerleyen yaprak detaylarıyla benzerlerinden ayrılıyor. Ağır ve gösterişli yapısıyla <strong>çeyizlik tülbentler</strong> ve gelin bohçaları için biçilmiş kaftan. Yapımı biraz emek istese de videodaki detaylı ve püf noktalı anlatım sayesinde parmaklarınızın arasından yağ gibi kayıp gidecek. Hazırsanız, iğnemizi ipliğimizi hazırlayıp bu zarif menekşeyi açtıralım!</p>
+<p>Merhaba sevgili marifetli hanımlar! Bugün çeyizlerinizin baş tacı olacak, zarafetiyle görenleri kendine hayran bırakan harika bir modelle karşınızdayım: <strong>İğne Oyası Menekşe Modeli</strong>. Geleneksel el sanatlarımızın en nazik dokunuşlarından biri olan bu model, adeta doğadaki o narin menekşe çiçeklerini yazmalarımızın kenarına taşıyor.</p>
+<p>Kanalımdaki 125. model olan bu çalışma, hem duruşundaki <strong>asalet</strong> hem de yapımındaki keyifle favorileriniz arasına girmeye aday. Menekşe motifinin kat kat yaprak dokusu, iğne oyasına yeni başlayanların bile rahatlıkla uygulayabileceği detaylı ve adım adım bir anlatımla hazırlandı. Özellikle ağır ve gösterişli model sevip çeyiz hazırlığında olan hanımlar için bu tasarım, yazma kenarlarında tam bir görsel şölen sunuyor.</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir iğne oyasını "sıradan" olmaktan çıkarıp "sanat eserine" dönüştüren en önemli sır, doğru renk kombinasyonu ve kaliteli ip seçimidir. Menekşe modelinin tüm albenisini ortaya çıkarmak için şu tavsiyelerime mutlaka göz atın:</p>
+<p>Bir oyayı kusursuz gösteren şüphesiz ki doğru renk kombinasyonu ve kaliteli malzeme seçimidir. <strong>Menekşe iğne oyası modeli</strong> işlerken çiçeğin o doğal ve canlı ruhunu yakalamak için şu küçük ipuçlarına dikkat etmenizi öneririm:</p>
 <ul>
-<li><strong>Klasik Menekşe Rüyası:</strong> Menekşenin doğadaki o asil duruşunu yakalamak için koyu mor, lila ve çiçeğin tam ortasına konduracağınız canlı bir sarı tonunu tercih edebilirsiniz. Alt zürafa için ise doğayı simgeleyen tatlı bir çimen yeşili harika duracaktır.</li>
-<li><strong>Soft ve Pastel Tonlar:</strong> Eğer daha modern ve dingin bir hava isterseniz, pudra pembesi, krem ve toz sarı kombinasyonlarıyla mevsime uygun taze bir görünüm elde edebilirsiniz.</li>
-<li><strong>İp Türü Seçimi:</strong> Oyalarınızın ütülendikten sonra bozulmaması ve yıllarca kalıp gibi durması için <strong>4 katlı suni ipek ip</strong> kullanmanızı şiddetle tavsiye ederim. Suni ipek, menekşe yapraklarının hatlarını çok daha net ve diri gösterir.</li>
+<li><strong>Orijinal Menekşe Tonları:</strong> Morun en tatlı tonları, mürdüm, lila ve tomurcuk kısmı için canlı bir sarı renk tercih ederek doğala en yakın görüntüyü elde edebilirsiniz. Alternatif olarak pembe ve krem uyumu da çok zarif duracaktır.</li>
+<li><strong>İplik Türü Seçimi:</strong> Oyanın daha diri ve ütüye dayanıklı durması için 4 katlı <strong>suni ipek ip</strong> kullanmanızı tavsiye ederim. Suni ipek, menekşe yapraklarının formunu mükemmel tutar.</li>
+<li><strong>Zemin ve Yazma Uyumları:</strong> Düz renk yazmalarda menekşe motifleri kendini çok daha net gösterir. Eğer desenli yazma tercih edecekseniz, yazmanın içerisindeki yaprak yeşilini zemin zürafasında kullanıp çiçekleri baskın renklere uyarlayabilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>İğne oyası menekşe modeli yeni başlayanlar için uygun mudur?</strong><br>Menekşe modeli orta ve ileri seviye bir modeldir. Ancak videoda ilmek ilmek, tane tane anlatıldığı için temel zürafa yapmayı ve pırpır tekniğini bilen her hanım biraz sabırla bu modeli rahatlıkla tamamlayabilir.</p>
-
-<p><strong>Menekşe motiflerinin kalıp gibi dik durması için ne yapmalıyım?</strong><br>İğne oyasında en önemli kural düğümleri iyice sıkmaktır. Düğümleriniz ne kadar sıkı olursa çiçeğiniz o kadar dik durur. Ayrıca suni ipek ip kullanmak ve motifi bitirdikten sonra hafif nemli bir bezle tersten ütülemek modelin formunu sabitleyecektir.</p>
-
-<p><strong>Bu menekşe modelini nerelerde kullanabilirim?</strong><br>Bu zarif modeli sadece yazma ve tülbent kenarlarında değil; <strong>çeyizlik mutfak havlularının</strong> kenarlarında, namaz örtülerinde, oda takımlarında ve hatta fular uçlarında motif olarak güvenle kullanabilirsiniz.</p>
+<p><strong>İğne oyası menekşe modeli yeni başlayanlar için uygun mudur?</strong><br>Videomuzda anlatım son derece detaylı ve adım adım yapıldığı için temel iğne oyası tekniklerini (zürafa, zürafa üzerine artırma vb.) bilen her hanım bu modeli kolaylıkla tamamlayabilir.</p>
+<p><strong>Menekşe yapraklarının düzgün durması için ne yapmalıyım?</strong><br>Düğümleri sıkı atmak en önemli püf noktasıdır. Ayrıca <strong>suni ipek iplik</strong> kullanımı ve düğümleri iğneyle iyice oturtmak yaprakların dik ve formda durmasını sağlar.</p>
+<p><strong>Bu modelin ütü bakımı nasıl yapılmalıdır?</strong><br>Oyanızı tamamladıktan sonra ters yüzünden, üzerine ince ve nemli bir tülbent örterek orta sıcaklıktaki ütüyle buhar vermeden ütüleyebilirsiniz. Bu sayede motifleriniz bozulmadan uzun yıllar ilk günkü gibi kalır.</p>
                 </div>
             </div>
             
@@ -767,6 +761,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

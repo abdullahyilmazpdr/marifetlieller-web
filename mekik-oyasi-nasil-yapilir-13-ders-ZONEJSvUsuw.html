@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,27 +719,27 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili marifetli hanımlar, geleneksel el sanatlarımızın en gözde, en dökümlü parçalarından biri olan <strong>mekik oyası</strong> serimizin 13. dersine hepiniz hoş geldiniz! Mekik oyası, sabırla dokunan ve her ilmeğinde ayrı bir emek barındıran gerçek bir zarafet abidesidir. Bu dersimizde detaylarıyla işlediğimiz model, hem <strong>çeyizlik tülbentler</strong> için biçilmiş kaftan hem de günlük kullanımda şıklığından ödün vermek istemeyenlerin ilk tercihi olmaya aday.</p>
-<p>Modelimizin en belirgin özelliği, mekik düğümlerinin son derece sıkı, duruşunun ise adeta bir kulp gibi diri ve kalıp gibi durmasıdır. İğne oyasına kıyasla formunu yıllarca koruyan bu yapı, motiflerin simetrik güzelliğini ön plana çıkarır. Yazma kenarlarında bir mücevher gibi parıldayan bu zarif model, 13. dersimize özel olarak hem klasik hem de modern dokunuşları bir arada sunuyor. Çeyiz sandıklarına unutulmaz bir hatıra bırakmak veya sevdiklerinize el emeği göz nuru bir hediye vermek istiyorsanız, bu modelin duruşuna bayılacaksınız!</p>
+<p>Sevgili el emeği tutkunları, geleneksel el sanatlarımızın en zarif halkalarından biri olan <strong>mekik oyası</strong> serimizin 13. dersine hoş geldiniz! Bu dersimizde birlikte işleyeceğimiz model, hem göz alıcı duruşu hem de kalıp gibi duran yapısıyla çeyizlerin vazgeçilmezi olmaya aday. Mekik oyasını diğer oyalardan ayıran en büyük özellik, düşen her ilmekte düğümlerin sımsıkı oturması ve yıllar geçse de ilk günkü formunu korumasıdır.</p>
+<p>13. dersimizdeki bu özel motif, ince detayları ve tığ ya da iğne oyasına kıyasla çok daha diri duran pırpırlarıyla öne çıkıyor. Tülbent kenarlarında, namaz örtülerinde veya havlu kenarlarında rahatlıkla kullanabileceğiniz bu model, sabırla atılan ilmeklerin adeta bir sanat eserine dönüşme halidir. Eğer siz de "Benim yaptığım oya kalıp gibi dursun, ütü istemesin" diyenlerdenseniz, bu modelin sunduğu zarafete ve kullanım kolaylığına bayılacaksınız!</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Mekik oyasında model ne kadar güzel olursa olsun, kendini göstermesini sağlayan asıl sır doğru ip ve renk kombinasyonudur. El emeğinizin tam anlamıyla parlaması için dikkat etmeniz gereken altın kurallar şunlardır:</p>
+<p>Mekik oyasında modelin güzelliği kadar, seçtiğiniz ipin kalitesi ve renklerin birbiriyle olan dansı da son derece önemlidir. Motifi tam anlamıyla göstermek ve verdiğiniz emeği taçlandırmak için ip seçimi yaparken şu püf noktalarına dikkat etmenizi öneririm:</p>
 <ul>
-    <li><strong>İp Tipi ve Kalitesi:</strong> Mekik çalışırken mutlaka <strong>50 kat polyester oya iplikleri</strong> tercih etmelisiniz. Naylon oranı dengeli olan kaliteli ipler, mekikten rahat kayar ve düğümlerin açılmasını önler.</li>
-    <li><strong>Kontrastın Gücü:</strong> Yazmanızın zemin rengiyle tamamen zıt, canlı tonlar kullanmak mekik motifini patlatır. Örneğin; koyu yeşil bir yazma kenarına krem veya toz pembe iplerle çalışmak modelin zarafetini ikiye katlayacaktır.</li>
-    <li><strong>Soft ve Pastel Modası:</strong> Son yılların çeyiz trendlerinde pastel tonlar ön planda. Mint yeşili, somon ve bej uyumu ile hazırlayacağınız motifler, tülbentlerinize çok modern bir hava katacaktır.</li>
-    <li><strong>Tek Renk Şıklığı:</strong> Eğer modelin kendisini daha çok öne çıkarmak istiyorsanız, tülbentin kendi renginde tek renk ip kullanarak <strong>ağır ve asil</strong> bir görünüm elde edebilirsiniz.</li>
+    <li><strong>İp Numarası ve Kalitesi:</strong> Mekik oyası yaparken 50 veya 60 numara katlı polyester oyalı ipleri tercih etmelisiniz. İpin tüylenmeyen ve esnemeyen yapıda olması, ilmeklerin mekik üzerinde rahatça kaymasını sağlar.</li>
+    <li><strong>Kontrast Renklerin Gücü:</strong> Eğer çoklu renk içeren bir motif çalışıyorsanız, taban rengi ile çiçek detaylarında birbirini zıt ama tamamlayan tonlar tercih edin. Örneğin; krem rengi bir tülbent kenarına mürdüm ve pudra pembe uyumu zarafeti kat kat artıracaktır.</li>
+    <li><strong>Tek Renk Asaleti:</strong> "Ben sadelikten yanayım" derseniz, tülbentin kendi renginde tek ton iple çalışarak oldukça modern, akıcı ve asil bir görünüm elde edebilirsiniz.</li>
+    <li><strong>Mekik Seçimi:</strong> İp kadar kullandığınız mekiğin yapısı da önemlidir. Çapak yapmamış, pürüzsüz plastikten veya kemikten yapılmış mekikler ipin takılmasını ve yıpranmasını önler.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Mekik oyası yaparken düğümlerim neden gevşek kalıyor ve eğri duruyor?</strong></p>
-<p>Mekik oyasındaki en yaygın durum el ayarı tutarsızlığıdır. Düğümü atarken ana ipi iyice germeli ve mekikteki ipi sonuna kadar çekip kitlemelisiniz. Parmağınızdaki ipi gevşetmeden sıkılaştırma yaparsanız düğümleriniz <strong>kalıp gibi</strong> oturacaktır.</p>
+<p><strong>Mekik oyası yaparken ipim sürekli dolaşıyor, ne yapmalıyım?</strong></p>
+<p>Mekik oyasında ipin dolaşmasının en yaygın sebebi, ilmeği aktarırken mekiğin açısını doğru ayarlayamamaktır. İlmeği mekikteki ipin üzerine değil, sol elinizdeki halkanın üzerine aktarmanız gerekir. Ayrıca kaliteli ve fazla bükümlü olmayan ipler kullanmak da düğüm oluşumunu engeller.</p>
 
-<p><strong>Sıfırdan başlayan biri olarak 13. ders modelini yapabilir miyim?</strong></p>
-<p>Bu dersimiz orta seviye teknikler içerir. Eğer ilk derslerimizdeki temel mekik tutuşunu, ilmek atmayı ve alt ip yürütmeyi öğrendiyseniz videoyu ağır çekimde takip ederek bu modeli rahatlıkla yapabilirsiniz. Biraz sabırla harikalar çıkaracaksınız!</p>
+<p><strong>Mekik oyasına yeni başlayanlar 13. ders modelini yapabilir mi?</strong></p>
+<p>Eğer temel ilmek atma, halka kapatma ve pırpır yapma tekniklerine hâkimseniz, videoyu adım adım takip ederek bu modeli rahatlıkla yapabilirsiniz. Ancak mekik tutmayı henüz yeni öğreniyorsanız, öncelikle serimizin ilk 5 dersini pratik etmenizi tavsiye ederim.</p>
 
-<p><strong>Mekik oyası yıkanınca bozulur mu, ütü ister mi?</strong></p>
-<p>Kaliteli polyester ip ile yapılan mekik oyaları bozulmaya karşı çok dirençlidir. Yıkama filesi içinde veya elde ılık suyla yıkandığında şeklini asla kaybetmez. Ütülerken tülbentin tersinden, hafif nemli bir tülbent bezi üzerinden ütü basarsanız motifleriniz ilk günkü tazeliğini korur.</p>
+<p><strong>Mekik oyası nasıl yıkanmalı ve ütülenmelidir?</strong></p>
+<p>Mekik oyası sıkı düğüm esasına dayandığı için son derece dayanıklıdır. Oyalarınızı ılık suda elde yıkadıktan sonra, hafif nemliyken tersinden ve üzerine ince bir ütü bezi örterek ütüleyebilirsiniz. Sert yapısı sayesinde kolay kolay bozulmaz ve sık ütü gerektirmez.</p>
                 </div>
             </div>
             
@@ -771,6 +767,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

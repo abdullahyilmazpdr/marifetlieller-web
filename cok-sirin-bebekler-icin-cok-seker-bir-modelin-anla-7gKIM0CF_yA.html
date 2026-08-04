@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -722,22 +718,23 @@ Bebek yüz örtüsü arayan arkadaşlar için muhteşem bir modelin videosunu ha
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Merhaba sevgili oya sevdalıları, marifetli hanımlar! Bugün yine içimizi ısıtacak, görünce hemen elinize iğneyi ipliği alıp başlamak isteyeceğiniz şahane bir modelle karşınızdayım. Videomuzdaki <strong>511. modelimiz</strong>, tam anlamıyla minik bebeklerimizin masumiyetine yakışır, <strong>çıtı pıtı ve çok şeker bir iğne oyası örneği</strong>. Özellikle bebek mevlüt örtülerinde, bebek yüz mendillerinde ve çeyizlik bebek battaniyesi kenarlarında süzülen bu zarafete hayran kalmamak elde değil.</p>
-<p>Bu modelin en güzel yanı, ilk bakışta çok uğraştırıcı gibi görünse de anlatımlı yapılışı sayesinde son derece akıcı ve keyifli ilerlemesi. Düğümleri sıkı attığınızda kendini hemen gösteren, yapıldığı zeminde adeta bir mücevher gibi ışıldayan bu tasarım, bebek bohçalarına hediye hazırlayan hamarat teyzelerin ve anne adaylarının favorisi olmaya aday!</p>
+<p>Sevgili marifetli hanımlar, göz nuru el sanatlarımıza bugün bebeklerimizin masumluğuna yakışır, içimizi ısıtan muhteşem bir modelle devam ediyoruz. <strong>511. Model</strong> olarak paylaşılan bu cıvıl cıvıl tasarım, adından da anlaşılacağı üzere tam anlamıyla "şeker" gibi! Bebek mevlüt örtülerinde, bebek mendillerinde ve pazen battaniye kenarlarında zarifçe ışıldayacak bu iğne oyası, hem duruşundaki kibarlıkla hem de yapımının keyfiyle kalbinizi çalacak.</p>
+<p>Modelin en belirgin özelliği, minik bebeklerin narin dünyasına uygun olarak tasarlanmış <strong>hafif, minyon ve zarif detaylara</strong> sahip olması. Sıkı zürafalar üzerine kurulan bu tatlı motifler, yıkandığında bile şeklini kaybetmiyor ve adeta kalıp gibi duruyor. İğne oyasına yeni başlayan hamarat okurlarımızın bile videodaki adım adım anlatımla zorlanmadan yapabileceği bu modelle, bebek çeyizlerine unutulmayacak değerde el emeği bir hatıra bırakabilirsiniz.</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Söz konusu bebekler olunca seçtiğimiz renklerin ve iplerin dokusu çok daha fazla önem kazanıyor. Bu tatlı modeli işlerken göz önünde bulundurmanızı tavsiye ettiğim püf noktaları şunlar:</p>
+<p>Bebek el işlerinde kullanılan renkler ve malzeme kalitesi, modelin güzelliğini doğrudan ortaya çıkarır. Bu şirin modelin zarafetini en üst seviyeye taşımak için dikkat etmeniz gereken püf noktaları şöyle sıralayabiliriz:</p>
 <ul>
-<li><strong>Soft ve Pastel Tonlar:</strong> Bebek konseptine en çok yakışan toz pembe, bebek mavisi, minnet yeşili, somon ve açık sarı gibi göz yormayan soft tonları tercih edebilirsiniz.</li>
-<li><strong>Zemin Renk Uyumu:</strong> Beyaz veya krem rengi bir tülbent ya da mendil kenarına yapıyorsanız, motiflerde 2 veya 3 farklı tatlı rengi ardışık kullanarak cıvıl cıvıl bir görünüm yakalayabilirsiniz.</li>
-<li><strong>İp Kalitesi ve Tekniği:</strong> Oyamızın kalıp gibi durması ve zamanla bozulmaması için <strong>kaliteli suni ipek</strong> veya <strong>4 katlı polyester iğne oyası ipleri</strong> kullanmanızı öneririm. İpinizi işlemeye başlamadan önce hafifçe esnetmeyi unutmayın; bu işlem düğümlerinizin daha sıkı olmasını sağlar.</li>
-<li><strong>İğne Seçimi:</strong> Bebek mendillerinin narin kumaşına zarar vermemek için ince, kumaşı çekmeyen özel iğne oyası iğnelerini tercih etmelisiniz.</li>
+<li><strong>Pastel Tonların Büyüsü:</strong> Bebek konseptine en çok yakışan pudra pembe, bebek mavisi, mint yeşili, açık sarı ve somon tonlarını tercih edebilirsiniz. Zemin tülbentini beyaz veya krem tutup motiflerde bu soft renkleri kullanmak modelin şirinliğini artıracaktır.</li>
+<li><strong>İp Kalitesi ve Dokusu:</strong> İşlemenizin ütü istemeden kalıp gibi durması için <strong>4 katlı suni ipek</strong> veya tüylenme yapmayan kaliteli polyester iğne oyası iplerini tercih etmelisiniz. İpinizin katlarına ayrılmaması motiflerin daha net görünmesini sağlar.</li>
+<li><strong>Doğal Renk Geçişleri:</strong> Eğer bebek yüz örtüsü yapıyorsanız, alt çimeni tatlı bir fıstık yeşili yapıp üzerindeki küçük çiçekleri rengârenk işleyerek adeta bir bahar bahçesi havası yakalayabilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Bu model iğne oyasına yeni başlayanlar için uygun mu?</strong><br>Evet, kesinlikle! Videolu anlatımda tüm aşamalar adım adım ve detaylıca gösterildiği için temel zürafa yapmayı bilen her hanım bu modeli zorlanmadan tamamlayabilir.</p>
-<p><strong>Bebek eşyaları dışında bu modeli nerelerde kullanabilirim?</strong><br>Bu şirin modeli sadece bebek ürünlerinde değil; günlük yazma ve tülbent kenarlarında, mutfak havlularında veya söz/nişan bohçalarına koyacağınız çıtı pıtı oyalar için de rahatlıkla değerlendirebilirsiniz.</p>
-<p><strong>Oyanın yıkanınca bozulmaması ve dik durması için ne yapmalıyım?</strong><br>Düğümlerinizi atarken ipinizi sonuna kadar çekip iyice sıkılaştırmanız çok önemlidir. Oyanız bittiğinde, tersinden tülbent sererek hafif buharlı ütü bastığınızda modeliniz uzun süre kalıp gibi kalacaktır.</p>
+<p><strong>Bu iğne oyası modeli yeni başlayanlar için uygun mudur?</strong><br>Evet, kesinlikle uygundur. 511. model, temel zürafa ve zürafa üzeri pırpır tekniklerine dayandığı için iğne oyasına yeni adım atan hanımların bile anlatımlı video sayesinde kolayca kavrayabileceği bir seviyededir.</p>
+
+<p><strong>Modeli bebek ürünleri dışında hangi alanlarda kullanabilirim?</strong><br>Her ne kadar bebek mendili ve mevlüt tülbenti için biçilmiş kaftan olsa da, bu minik ve sevimli modeli günlük yazmalarınızda, mutfak havlularının kenarlarında veya fular uçlarında da severek uygulayabilirsiniz.</p>
+
+<p><strong>İğne oyasının bozulmaması için yıkama ve ütüleme nasıl yapılmalıdır?</strong><br>Bebek ürünleri sık yıkandığı için oyayı ılık suda bebek şampuanı ile elde nazikçe yıkamalısınız. Ütülerken ise oyayı tersinden, üzerine ince bir tülbent sererek orta ısıda buharla ütülerseniz model tazeliğini ve ilk günkü duruşunu uzun yıllar korur.</p>
                 </div>
             </div>
             
@@ -765,6 +762,12 @@ Bebek yüz örtüsü arayan arkadaşlar için muhteşem bir modelin videosunu ha
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

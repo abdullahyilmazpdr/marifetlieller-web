@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,21 +719,28 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili oya sevdalıları, bugün yine parmaklarınızdan süzülecek harika bir göz nuruyla karşınızdayım! 70. modelimizde, sizlerin çok sevdiği o <strong>sıralı ve çıtı pıtı</strong> iğne oyası zarafetini ele alıyoruz. Ağır ve göz yoran modellerden ziyade, yazmanın kenarında adeta bir su gibi akan, hem gösterişli hem de yapımı bir o kadar keyifli bir tarif bu.</p>
-<p>Bu modelin en güzel yanı, kendini tekrar eden ritmik yapısı sayesinde elinizin çabucak alışması. Özellikle <strong>yeni başlayanlar</strong> ya da "Şöyle çabuk bitsin ama bakan bir daha baksın" diyenler için biçilmiş kaftan. Namaz örtülerinde, günlük tülbentlerde ve çeyizlik yazmalarda o kadar nazik duruyor ki, tamamladığınızda karşısına geçip izlemekten kendinizi alamayacaksınız.</p>
+<p>Sevgili hanımlar, marifetli ellerinizin emeğiyle hayat bulan o güzelim iğne oyalarımıza bugün yepyeni, göz alıcı bir model ekliyoruz! Videomuzdaki 70. modelimiz olan <strong>sıralı çıtı pıtı iğne oyası</strong>, hem sadeliği sevenlerin hem de zarafetten ödün vermeyenlerin ilk bakışta favorisi olmaya aday. Sıralı yapısı sayesinde ip koparma derdi olmadan akıp giden bu özel model, özellikle günlük yazmalarınıza, çeyizlik tülbentlerinize ve hediye edeceğiniz göz nuru tülbentlere çok yakışacak.</p>
+<p>Bu zarif modelin öne çıkan harika özellikleri ise şunlar:</p>
+<ul>
+<li><strong>Zarif ve Kibar Duruş:</strong> Büyük ve kaba modellerden hoşlanmayanlar için tam anlamıyla "çıtı pıtı" bir güzellik sunar, yazmanın kenarında adeta bir mücevher gibi parıldar.</li>
+<li><strong>Hızlı İlerleyen Sıralı Yapı:</strong> Sürekli ip kesip bağlamakla zaman kaybetmezsiniz. Eliniz ritme alıştıkça model su gibi akar gider.</li>
+<li><strong>Çok Yönlü Kullanım:</strong> Sadece yazma kenarlarında değil, küçük mutfak havlularında, fular uçlarında ve hatta namaz örtüsü detaylarında rahatlıkla tercih edebilirsiniz.</li>
+<li><strong>Yeni Başlayanlar İçin İdeal:</strong> Temel zürafa ve pırpır tekniklerini bilen her hanımın zorlanmadan yapabileceği son derece pratik bir tekniktir.</li>
+</ul>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir iğne oyasını gösterişli kılan en önemli detay şüphesiz <strong>renk ve ip seçimidir</strong>. Çıtı pıtı sıralı modellerde zarafeti öne çıkarmak için doğru dokunuşları yapmak gerekir. İşte bu modelde harikalar yaratmanız için küçük sırları şöyle sıralayabilirim:</p>
+<p>Bir iğne oyasını asıl gösteren detay, doğru ip seçimi ve renklerin muazzam uyumudur canım hanımlar. Bu çıtı pıtı modelimizin zarafetini katlamak için ip ve renk tercihi yaparken şu küçük tüyolarıma mutlaka kulak verin:</p>
 <ul>
-    <li><strong>İp Türü:</strong> Oyalarınızın kalıp gibi durması ve düğümlerinizin esnememesi için <strong>4 katlı suni ipek</strong> ipleri tercih etmenizi öneririm. Naylon ip kullanacaksanız, işlemeden önce ipi hafifçe esnetmeyi unutmayın.</li>
-    <li><strong>Zemin Uyumu:</strong> Yazmanız çiçekliyse, modeldeki çıtı pıtı detaylar için yazmanın içindeki en belirgin iki ana rengi seçebilirsiniz. Zemin zürafasını ise mutlaka yazmanın kendi ana rengiyle geçmelisiniz.</li>
-    <li><strong>Sade ve Şık Kombinler:</strong> Düz renk tülbentlerde pastel tonlar (pudra pembe, mint yeşili veya krem) bu sıralı modele inanılmaz zarif bir hava katacaktır.</li>
+<li><strong>İp Türü Seçimi:</strong> Oyalarınızın yıkanınca bozulmaması ve ütülendiğinde kalıp gibi durması için 50 kat <strong>kaliteli polyester iğne oyası ipleri</strong> tercih etmelisiniz. Oyayı işlemeye başlamadan önce ipinizi hafifçe çekerek esnetmeyi unutmayın!</li>
+<li><strong>Zemin ve Motif Uyumu:</strong> Yazmanızın kendi ana renginden bir zemin zürafası zemin gidip, üzerindeki çıtı pıtı motiflerde yazmanın deseninde bulunan en canlı iki rengi kullanabilirsiniz.</li>
+<li><strong>Ton Sür Ton Şıklığı:</strong> Düz renk tek renk yazmalarda, yazmanızın renginin bir ton açığı ve bir ton koyusu ile yapacağınız sıralı geçişler son derece modern ve elit bir hava katacaktır.</li>
+<li><strong>Pastel Tonların Gücü:</strong> Çıtı pıtı modellerde pudra pembesi, bebek mavisi, mint yeşili ve krem gibi pastel tonlar modelin narinliğini çok daha güzel ortaya çıkarır.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Bu modeli iğne oyasına yeni başlayanlar yapabilir mi?</strong><br>Evet, kesinlikle! Model sıralı ve mantığı oldukça kolay olduğu için temel zürafa ve pırpır tekniğini bilen her maharetli hanım rahatlıkla yapabilir.</p>
-<p><strong>Sıralı çıtı pıtı modeller nasıl ütülenmelidir?</strong><br>Oyayı tamamladıktan sonra tersinden, üzerine hafif nemli bir tülbent kapatarak ütülemenizi tavsiye ederim. Bu sayede modeliniz bozulmaz ve uzun yıllar <strong>kalıp gibi</strong> kalır.</p>
-<p><strong>Bir yazma kenarı ortalama ne kadar sürede biter?</strong><br>Sıralı bir model olduğu için elinizin hızına bağlı olarak 3 ila 5 gün arasında rahatlıkla tamamlayabilirsiniz.</p>
+<p><strong>Bu iğne oyası modeli yeni başlayanlar için uygun mu?</strong><br>Evet, kesinlikle çok uygun! Düğümleri mantık olarak oldukça basittir ve sıralı bir yapısı olduğu için el alışkanlığı kazanmak isteyen hanımlar rahatlıkla deneyebilirler.</p>
+<p><strong>Oyamın daha kalıp gibi ve sert durması için ne yapmalıyım?</strong><br>Düğümleri sıkarken ipi sonuna kadar ve kuvvetlice çekmelisiniz. Ayrıca işleme yaparken 28 numara iğne oyası iğnesi kullanmak ve oyayı bitirdikten sonra tülbent üzerinden hafif buharlı ütü basmak motiflerin jilet gibi durmasını sağlar.</p>
+<p><strong>Sıralı çıtı pıtı iğne oyası modelleri hangi yazmalara daha çok yakışır?</strong><br>Özellikle ufak çiçek desenli çıtı pıtı yazmalara, ebruli tülbentlere ve sadelikten hoşlananlar için tek renk düz yazma kenarlarına mükemmel uyum sağlar.</p>
                 </div>
             </div>
             
@@ -765,6 +768,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

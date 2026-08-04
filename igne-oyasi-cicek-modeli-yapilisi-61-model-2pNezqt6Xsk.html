@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -723,27 +719,27 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili hanımlar, el emeği göz nuru sanatımızın en tatlı heyecanlarından biriyle daha karşınızdayım! Bugün sizlerle paylaştığımız <strong>61. İğne Oyası Çiçek Modeli</strong>, adeta baharı yazmalarınıza ve çeyizlerinize taşıyacak kadar zarif ve gösterişli bir motif. İğne oyasının o büyüleyici, dokunduğu her yeri güzelleştiren ruhunu bu modelde ilmek ilmek hissedeceksiniz.</p>
-<p>Bu özel model, kat kat duran üç boyutlu yapısı ve çıtı pıtı görünümüyle öne çıkıyor. Hem modern tülbentlerde hem de geleneksel <strong>çeyizlik havlu kenarlarında</strong> mükemmel duran bir duruşa sahip. Yapılışı ilk bakışta karmaşık görünse de, videodaki adım adım anlatımla marifetli ellerinizde hemencecik şekil alacak. Zarafetiyle komşularınızın ve misafirlerinizin gözlerini alamayacağı bu motif, sandığınızın en nadide parçası olmaya aday!</p>
+<p>Sevgili iğne oyası sevdalıları, marifetli hanımlar, ekran başına hoş geldiniz! Bugün sizlerle kanalımızın en çok sevilen ve asil duruşuyla göz kamaştıran <strong>61. Model: İğne Oyası Çiçek Modeli</strong> ile birlikteyiz. İğne oyası denince akan sular durur, bilirsiniz; fakat bu modelin yeri gerçekten bambaşka. Doğanın o nazlı çiçeklerini adeta ilmek ilmek yazma kenarlarına işlediğimiz bu tasarım, hem klasik motifleri sevenlerin hem de modernize edilmiş el sanatlarına gönül verenlerin vazgeçilmezi olmaya aday.</p>
+<p>Bu özel model, kat kat duran taç yaprakları ve kalıp gibi duran yapısıyla dikkat çekiyor. <strong>Çeyiz bohçalarının yıldızı</strong> olacak kadar gösterişli, ama bir o kadar da göz yormayan bir zarafete sahip. Zürafalarının sıkılığı ve çiçek zürafalarının simetrisi sayesinde, ütü istemeyen ve yıllarca ilk günkü formunu koruyan bir yapıya kavuşuyor. İster çeyizlik yazmalarınızda, ister büyük boy mutfak havlularınızda kenar süslemesi olarak güvenle tercih edebilirsiniz. Üstelik videolu anlatımımız sayesinde, "Ben bu çiçeği oturtamam" diye düşünen acemi marifetli hanımlar bile kolaylıkla kavrayabilecek!</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir iğne oyasını gösterişli kılan en önemli detay kuşkusuz doğru renk ve ip seçimidir canlar. 61. Çiçek modelimizin o muazzam yapısını tam anlamıyla ortaya çıkarabilmek için şu ipuçlarına mutlaka göz atmanızı öneririm:</p>
+<p>Bir iğne oyasını "sıradan" olmaktan çıkarıp "sanat eseri" haline getiren en önemli detay, şüphesiz doğru ip ve renk tercihidir. 61. Modelimizin o muazzam güzelliğini tam anlamıyla ortaya çıkarabilmeniz için sizlere birkaç küçük uzman tavsiyesi hazırladım:</p>
 <ul>
-    <li><strong>İp Türü:</strong> Çiçek yapraklarının dik ve formunu koruyan bir yapıda olması için <strong>4 katlı suni ipek</strong> veya kaliteli polyester iğne oyası iplerini tercih etmelisiniz. Kalın ipler modelin zarafetini kapatabilir.</li>
-    <li><strong>Ana Renk ve Yaprak Uyumu:</strong> Çiçeğin tabanındaki yapraklar için doğanın kendi rengi olan <strong>tatlı bir zümrüt yeşili</strong> veya yağı yeşili tonları harika bir zemin oluşturur.</li>
-    <li><strong>Çiçek Tonları:</strong> Bahar havası estirmek istiyorsanız toz pembe, pudra ve krem kombinasyonlarını; daha iddialı ve çeyizlik bir model istiyorsanız mürdüm, lila veya gece mavisi tonlarını bir arada kullanabilirsiniz.</li>
-    <li><strong>İğne Seçimi:</strong> İpiniz kadar iğneniz de önemli! İnce ve gözenekleri kumaşı zedelemeyen <strong>sivri uçlu iğne oyası iğnesi</strong> kullanarak zürafalarınızı daha sıkı ve pürüzsüz yapabilirsiniz.</li>
+    <li><strong>İp Türü Seçimi:</strong> Çiçek motiflerinin dik ve diri durması için mutlaka <strong>4 katlı suni ipek ipler</strong> tercih etmenizi öneririm. Polyester ipler de kullanılabilir ancak suni ipek, çiçeğin taç yapraklarına o mat ve doğal güzelliği verir.</li>
+    <li><strong>Zemin ve Yaprak Renkleri:</strong> Çiçeğin altındaki çimen ve yaprak kısmı için yazmanızın zemin rengine uygun, ne çok cırt ne de çok koyu olan doğal bir <strong>yaprak yeşili (filiz yeşili veya asker yeşili)</strong> tonu seçmelisiniz.</li>
+    <li><strong>Çiçek Kombinasyonları:</strong> Eğer düz renk (desensiz) bir tülbent üzerine çalışıyorsanız, canlı ve birbirini tamamlayan zıt renkleri kullanabilirsiniz. Örneğin; <strong>pudra pembesi ve mürdüm</strong> uyumu ya da <strong>hardal sarısı ile krem</strong> birlikteliği bu modele inanılmaz bir modernlik katacaktır. Deseni bol bir yazma kullanıyorsanız, yazmanın içindeki en hakim 2 ana rengi seçip çiçekleri bu tonlarla renklendirebilirsiniz.</li>
+    <li><strong>Tohum Detayı:</strong> Çiçeğin tam ortasına yapacağınız küçük tohumlar için klasik <strong>koyu sarı veya krem</strong> rengi ip kullanmak, modelin derinliğini ve gerçekçiliğini artıracaktır.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Bu iğne oyası çiçek modeli yeni başlayanlar için uygun mudur?</strong></p>
-<p>Modelimiz orta seviye bir marifet gerektirse de, temel zürafa ve kuyumcu kafesi tekniklerini biliyorsanız videoyu izleyerek rahatlıkla yapabilirsiniz. İlk kez deneyecekseniz önce küçük bir tülbent parçasında alıştırma yapmanızı tavsiye ederim.</p>
+<p><strong>Soru: İğne oyasına yeni başladım, bu çiçek modelini yapabilir miyim?</strong><br>
+<strong>Cevap:</strong> Kesinlikle evet! Modellere numara verirken adım adım ilerliyoruz. 61. Modelimizde temel zürafa ve kuyumcu kafesi teknikleri kullanıldığı için, videomuzdaki adımları yavaşça takip ederek ve ip gerginliğinize dikkat ederek ilk denemede bile harika bir sonuç elde edebilirsiniz.</p>
 
-<p><strong>İğne oyası çiçeğin dik ve sert durması için ne yapmalıyım?</strong></p>
-<p>Çiçeklerin kalıp gibi durmasının sırrı ilmekleri (zürafaları) mümkün olduğunca <strong>sıkı çekmekte</strong> gizlidir. Ayrıca yaprakları tamamladıktan sonra parmaklarınızla formu verip dilerseniz çok hafif kolalama veya ip yakma teknikleriyle sabitleyebilirsiniz.</p>
+<p><strong>Soru: Çiçek yapraklarının büzülmemesi ve 'kalıp gibi' durması için ne yapmalıyım?</strong><br>
+<strong>Cevap:</strong> En önemli püf noktası, düğümleri sıkarken ipi sonuna kadar ve iyice asılarak sıkılaştırmaktır. Ayrıca pırpırları yaparken boylarının eşit olmasına özen gösterin. İp seçiminde suni ipek kullanmak da motifin büzülmesini engeller ve ütülenmiş gibi sert durmasını sağlar.</p>
 
-<p><strong>61. Çiçek modeli en çok hangi örtülere yakışır?</strong></p>
-<p>Bu zarif motifi sadece yazma veya tülbent kenarlarında değil; <strong>çeyizlik mutfak havlularında</strong>, namaz örtülerinde (mevlit örtüsü), hatta fular uçlarında bile keyifle kullanabilirsiniz.</p>
+<p><strong>Soru: Bu model sadece yazma kenarına mı uygulanır, havluya yapılır mı?</strong><br>
+<strong>Cevap:</strong> Bu model son derece esnektir! Tülbent ve yazma kenarlarında sıklıkla tercih edilmekle birlikte, ara dağ motiflerini biraz daha geniş tutarak <strong>küçük yüz havlularında veya mutfak havlularında</strong> muhteşem bir kenar oyası olarak da kullanabilirsiniz.</p>
                 </div>
             </div>
             
@@ -771,6 +767,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

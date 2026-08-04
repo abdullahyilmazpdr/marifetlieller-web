@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -740,6 +736,41 @@ E Mail: love_yilmaz@hotmail.com</div>
             </div>
 
             
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
+                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
+                    ✨ Model Hakkında İpuçları ve Detaylar
+                </div>
+                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
+                    <h3>Modelin Özellikleri ve Zarafeti</h3>
+<p>Sevgili marifetli hanımlar, iğne oyası arşivinize görenlerin hayran kalacağı yepyeni bir göz nuru eklemeye hazır mısınız? <strong>"İlk Kez Göreceğiniz Harika Lale Modeli"</strong>, hem geleneksel motiflerimizin sıcaklığını taşıyor hem de modern duruşuyla yazmalarınıza adeta baharı getiriyor. Lalelerin o asil duruşunu iğne oyasının ince işçiliğiyle buluşturan bu özel tasarım, özellikle çeyiz bohçalarının baş tacı olmaya aday.</p>
+<p>Bu modelin zarafetini öne çıkaran başlıca özellikler şunlardır:</p>
+<ul>
+    <li><strong>Özgün ve Yenilikçi Tasarım:</strong> Klasik oyaların dışına çıkmak isteyenler için tamamen farklı ve son derece dikkat çekici bir lale formu sunar.</li>
+    <li><strong>Kalıp Gibi Duruş:</strong> Doğru teknikle yapıldığında sökülme veya form bozulması yapmaz; ütülendiğinde tıpkı bir kalıp gibi net görünür.</li>
+    <li><strong>Çok Yönlü Kullanım Alanı:</strong> Sadece tülbent ve yazma kenarlarında değil, gösterişli havlu kenarlarında ve hediyelik namaz örtülerinde de rahatlıkla tercih edebilirsiniz.</li>
+</ul>
+
+<h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
+<p>İğne oyasında modelin güzelliğini ortaya çıkaran en önemli detay doğru renk ve ip seçimidir. Bu harika lale modelini işlerken motiflerin daha tok ve parlak durması için <strong>4 katlı suni ipek ipleri</strong> tercih etmenizi kesinlikle öneririm. Eğer naylon ip kullanacaksanız, esneterek işlemek düğümlerinizin daha sıkı olmasını sağlayacaktır.</p>
+<p>Modeli uygularken değerlendirebileceğiniz renk kombinasyonu tavsiyeleri:</p>
+<ul>
+    <li><strong>Klasik Zarafet:</strong> Yeşil yaprakların üzerine uygulayacağınız canlı bir nar çiçeği veya asil bir kırmızı, lale motifinin zamansız şıklığını öne çıkarır.</li>
+    <li><strong>Pastel Rüyası:</strong> Krem veya ekru zeminli tülbentlerde leylak, pudra pembe ve toz sarı tonlarını kullanarak çok soft ve modern bir hava yakalayabilirsiniz.</li>
+    <li><strong>Kontrast Şıklık:</strong> Koyu renkli yazmalarda lalelerinizi fuşya, civciv sarısı veya açık mercan gibi canlı renklerden seçerek oyayı daha belirgin hale getirebilirsiniz.</li>
+</ul>
+
+<h3>Sıkça Sorulan Sorular</h3>
+<p><strong>Yeni başlayanlar bu lale modelini yapabilir mi?</strong></p>
+<p>Model ilk bakışta detaylı görünse de videodaki adım adım anlatım sayesinde temel iğne oyası düğümünü bilen herkes kolaylıkla uygulayabilir. Biraz sabır ve pratikle harika bir sonuç elde edebilirsiniz.</p>
+
+<p><strong>Lale motiflerinin daha dik ve sert durması için ne yapmalıyım?</strong></p>
+<p>Düğümlerinizi atarken ipi sonuna kadar sıkıca çekmeniz çok önemlidir. Ayrıca motifi tamamladıktan sonra tülbentinizi tersten hafif nemli bir bezle ütülemek, oyaya kalıp gibi bir sertlik katacaktır.</p>
+
+<p><strong>Bu model için kaç numara iğne kullanılmalı?</strong></p>
+<p>İğne oyasına uygun, ne çok uzun ne de çok kısa olan standart <strong>24 veya 26 numara iğne oyası iğnelerini</strong> tercih edebilirsiniz. İğnenin ipinizi yıpratmayacak pürüzsüzlükte olması işinizi kolaylaştırır.</p>
+                </div>
+            </div>
+            
 
         </div>
     </main>
@@ -764,6 +795,12 @@ E Mail: love_yilmaz@hotmail.com</div>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

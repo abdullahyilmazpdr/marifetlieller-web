@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -720,27 +716,32 @@
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili el emeği tutkunları, çeyizlerin vazgeçilmezi ve geleneksel el sanatlarımızın en zarif örneklerinden biri olan mekik oyası ile karşınızdayım! Bugünü özel kılan ise duruşuyla göz dolduran, kat kat yapısıyla adeta bir sanat eserini andıran <strong>İkili Keloğlan Modeli</strong>. Klasik Keloğlan motifinin iki katlı ve daha hacimli işlenmesiyle elde edilen bu model, yazma kenarlarında inanılmaz gösterişli ve zengin bir duruş sergiliyor.</p>
-<p>Mekik oyasının o kendine has sıkı, bozulmayan ve ütü istemeyen düğüm yapısı, Keloğlan motifinin kavisli hatlarıyla birleştiğinde ortaya yıllarca eskimyecek bir zarafet çıkıyor. <strong>İkili Keloğlan modeli</strong>, özellikle ağır ve gösterişli oya seven hanımlar için harika bir alternatif. Bir kez eliniz alıştıktan sonra ritmik düğümlerle su gibi akan bu örneği işlerken zamanın nasıl geçtiğini anlamayacaksınız.</p>
+<p>Sevgili oya meraklıları, geleneksel el sanatlarımızın en gözde ve en zarif parçalarından biri olan mekik oyasıyla yine karşınızdayım! Bugün tülbent kenarlarından namaz örtülerine, çeyizlerin baş tacı olacak harika bir tasarımla tanışıyoruz: <strong>Mekik Oyası İkili Keloğlan Modeli</strong>. Klasik Keloğlan motifinin o büyüleyici dolgunluğunu iki katına çıkaran bu model, el emeğinize adeta üç boyutlu bir zarafet kazandırıyor.</p>
+<p>Peki, bu özel modeli bu kadar cazip kılan ve hanımların gözdeleri arasına sokan özellikler nelerdir? Gelip birlikte göz atalım:</p>
+<ul>
+    <li><strong>Sıkı ve Tok Duruş:</strong> Mekik oyasının kendine has sert ve muntazam duruşu, İkili Keloğlan motifinde kendini çok daha net belli eder. Ütülendiğinde bozulan, sarkan oyalardan kesinlikle değildir.</li>
+    <li><strong>Hacimli ve Gösterişli Yapı:</strong> Tekli Keloğlan modeline kıyasla, üst üste binerek katlanan ilmek yapısı sayesinde adeta minik bir çiçek tomurcuğu gibi kabarık ve zengin durur.</li>
+    <li><strong>Çeyizlerin Vazgeçilmezi:</strong> Ağır ve gösterişli oya modeli arayanlar için hem gelin çeyizlerinde hem de özel gün hediyeliklerinde tam bir klasik şıklık sunar.</li>
+</ul>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Modelin kendini tam anlamıyla gösterebilmesi ve motiflerin o belirgin kıvrımlarının ortaya çıkması için doğru ip ve renk tercihi son derece önemlidir. İşte çeyizliklerinize değer katacak ip seçim tüyolarım:</p>
+<p>Bir el emeğinin tüm zarafetini ortaya çıkaran en önemli detay şüphesiz doğru ip ve renk tercihidir. <strong>İkili Keloğlan Modeli</strong> gibi detaylı ve katmanlı bir motif yapıyorsanız, renklerin dansına ekstra özen göstermelisiniz.</p>
+<p>İşte projenizi bir sanat eserine dönüştürecek altın değerindeki ipuçlarım:</p>
 <ul>
-    <li><strong>İp Türü:</strong> Mekik oyasında mutlaka kaliteli, esnemeyen ve tüylenme yapmayan 50 numara polyester mekik ipleri tercih edilmelidir. İpin sentetik yapısı, düğümlerin tam oturmasını ve motifin dik durmasını sağlar.</li>
-    <li><strong>Kontrast Renklerin Gücü:</strong> İkili Keloğlan modelinde motifin iç ve dış katmanlarında zıt fakat birbirini tamamlayan renkler kullanabilirsiniz. Örneğin; krem zemin üzerine mürdüm ve toz pembe uyumu motifleri adeta patlatacaktır.</li>
-    <li><strong>Doğal ve Pastel Tonlar:</strong> Günümüz modasına uygun modern bir yazma hazırlamak istiyorsanız, adaçayı yeşili, somon veya çağla yeşili gibi tonları bir arada kullanarak soft bir şıklık yakalayabilirsiniz.</li>
-    <li><strong>Yazma İle Uyum:</strong> Yazmanızın içindeki en baskın iki rengi seçip birini taban zürafasında, diğerini ise Keloğlan motifinde kullanarak mükemmel bir bütünlük sağlayabilirsiniz.</li>
+    <li><strong>İp Türü ve Kalitesi:</strong> Mekik oyasında ilmeklerin yağ gibi kayması ve katların belirgin durması için kesinlikle <strong>50 veya 60 numara kaliteli polyester oya iplikleri</strong> tercih etmelisiniz. Pamuklu veya kalın ipler modelin kibarlığını gölgeleyebilir.</li>
+    <li><strong>Zıt Renklerin Büyüsü:</strong> Keloğlan motifinin kat kat detaylarını öne çıkarmak istiyorsanız, taban zemininde koyu, Keloğlan bölümünde ise açık ve zıt bir renk kullanabilirsiniz. Örneğin; mürdüm zemin üzerine krem veya toz pembe detaylar muhteşem duracaktır.</li>
+    <li><strong>Ton-Sür-Ton Şıklığı:</strong> Daha modern ve göz yormayan bir tasarım arıyorsanız, aynı rengin açık ve koyu tonlarını bir arada kullanarak büyüleyici bir renk geçişi elde edebilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>1. İkili Keloğlan modeli yeni başlayanlar için uygun mudur?</strong><br>
-Mekik oyasına henüz yeni başladıysanız, bu model sizi biraz zorlayabilir. Öncelikle temel mekik düğümünü ve tekli Keloğlan modelini kavradıktan sonra İkili Keloğlan modeline geçmeniz elinizin adapte olması açısından daha kolay olacaktır.</p>
+<p><strong>İkili Keloğlan modeli yeni başlayanlar için uygun mudur?</strong><br>
+Mekik oyasında temel ilmek atma ve halka yapma tekniklerine hakimseniz, videodaki adımları yavaşça takip ederek bu modeli rahatlıkla çıkarabilirsiniz. Ancak mekikle ilk defa tanışıyorsanız, elinizi alıştırmak için önce tekli Keloğlan veya daha basit motiflerle başlamanızı öneririm.</p>
 
-<p><strong>2. Mekik oyası yaparken motiflerin eğri olmaması için ne yapmalıyım?</strong><br>
-Düğümleri atarken ipi eşit meyil ve sıkılıkta çekmeye özen göstermelisiniz. Mekik oyasında halkaları kapatırken ipi aniden değil, orantılı bir şekilde çekmek motifin düzgün durmasını sağlar.</p>
+<p><strong>Mekik oyası İkili Keloğlan modeli yıkanınca bozulur mu, nasıl ütülenmelidir?</strong><br>
+İlmekleri yeterince sıkı attığınız sürece mekik oyası formunu asla kaybetmez. Yıkadıktan sonra motifleri elinizle hafifçe düzeltip, tersinden nemli bir tülbent koyarak ılık ütü ile preslerseniz oyanız ilk günkü gibi diri ve muntazam kalır.</p>
 
-<p><strong>3. Bu model havlu kenarı için kullanılabilir mi?</strong><br>
-Evet, kesinlikle! İkili Keloğlan modeli hacimli ve dolgun bir yapıda olduğu için ip numarasını bir tık kalın tutarak veya motif sayılarını artırarak küçük mutfak havlularında harika bir kenar süslemesi olarak uygulayabilirsiniz.</p>
+<p><strong>Motifin daha simetrik ve dik durması için ne yapmalıyım?</strong><br>
+Keloğlan ilmeklerini sararken ipin boşluğunu çok iyi ayarlamalı ve her katı mekikle iyice sıkıştırmalısınız. Katlar arasındaki mesafeyi eşit tutmak, motifinizin sağa veya sola yatmasını engeller, tam ortalı durmasını sağlar.</p>
                 </div>
             </div>
             
@@ -768,6 +769,12 @@ Evet, kesinlikle! İkili Keloğlan modeli hacimli ve dolgun bir yapıda olduğu 
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>

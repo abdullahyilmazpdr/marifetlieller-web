@@ -465,7 +465,6 @@
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
-                <!-- oninput="aramaYap()" EKLENDİ -->
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
@@ -479,15 +478,16 @@
     <!-- ALT MENÜ SIRASI -->
     <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
         
-        <!-- id="navLinks" EKLENDİ -->
-        <nav id="navLinks" class="nav-links" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
             <a href="index.html">Ana Sayfa</a>
 
             <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
             <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Ders Videoları</a>
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
                 <div class="dropdown-content">
                     <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
                     <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
@@ -498,8 +498,8 @@
             <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
             <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
 
-            <div class="dropdown" onclick="mobilDropdownAc(this)">
-                <a href="javascript:void(0);">Tüm Kategoriler</a>
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
                     
                     
@@ -594,17 +594,16 @@
             </div>
         </nav>
         
-        <!-- onclick="menuGoster()" EKLENDİ VE ÇİZGİLER GÖRÜNÜR YAPILDI -->
-        <div class="hamburger" onclick="menuGoster()" style="display: none; cursor: pointer; flex-direction: column; gap: 5px;">
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
-            <span style="width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px;"></span>
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </div>
 </header>
 
 <script>
-    // FİREBASE BAĞLANTISI VE KULLANICI ROZETİ GÜNCELLEMESİ
     document.addEventListener("DOMContentLoaded", function () {
         if (!firebase.apps.length) {
             firebase.initializeApp({
@@ -621,7 +620,6 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
-                // Giriş yapılmışsa (Yeni Şık Rozet Tasarımı)
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -630,7 +628,6 @@
                     </div>
                 `;
             } else {
-                // Çıkış yapılmışsa
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
@@ -646,18 +643,17 @@
 </script>
 
 <script>
-    // Hamburger ve Açılır Menü İşlevleri
     function menuGoster() {
         document.getElementById('navLinks').classList.toggle('aktif');
     }
 
     function mobilDropdownAc(element) {
         if (window.innerWidth <= 860) {
-            element.classList.toggle('aktif');
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
         }
     }
 
-    // Arama Fonksiyonu
     let videoVeritabani = [];
     fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
 
@@ -726,26 +722,26 @@ E Mail: love_yilmaz@hotmail.com</div>
                 </div>
                 <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
                     <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Merhaba sevgili marifetli kadınlar, hamarat hanımlar! Bugün çeyiz sandıklarımızın baştacı, zarafetiyle göz kamaştıran harika bir teknikle karşınızdayım. <strong>Mekik oyası motifinin tığ oyasıyla yazmaya eklenişi</strong>, geleneksel el sanatlarımızda adeta bir devrim niteliğinde! Mekiğin o kemik gibi duran, bozulmayan naif yapısı ile tığ oyasının esnek ve pratik birleştirme gücü bu modelde buluşuyor.</p>
-<p>Bu özel modelin en büyük zarafeti, mekik motiflerinin yazma kenarında tıpkı birer mücevher gibi tek tek ışıldamasıdır. Doğrudan kumaşa mekik atmak zaman zaman zorlayıcı olabilirken, motifleri önceden hazırlayıp tığ yardımıyla yazmaya oturtmak hem işinizi kolaylaştırır hem de oya kenarının çok daha muntazam durmasını sağlar. Çeyizlik yazmalarında fark yaratmak isteyenlerin mutlaka denemesi gereken, göz alıcı ve ömürlük bir modeldir.</p>
+<p>Merhaba canım hamarat hanımlar, çeyiz sandıklarının baş tacı olan el emeği göz nuru oyalarımıza bugün yine harika bir dokunuş yapıyoruz! <strong>Mekik oyası</strong>nın o kendine has, zıpır ve dökümlü duruşunu hepimiz çok seviyoruz, değil mi? Ancak mekik motiflerini tek başına yazmaya muntazam bir şekilde sabitlemek bazen biraz zahmetli olabiliyor. İşte tam bu noktada imdadımıza <strong>tığ oyası</strong> yetişiyor!</p>
+<p>Mekik motiflerinin tığ oyası birleştirme tekniğiyle yazmaya eklenmesi, hem modelin netliğini koruyor hem de yazma kenarına inanılmaz dökümlü ve zengin bir zarafet katıyor. Bu teknik sayesinde motifler yazmanızın kenarında adeta bir mücevher gibi kalıp gibi duruyor. Özellikle çeyizlik ağır yazma arayanlar ve yıkandığında bile şekli bozulmayan oya modelleri seven hanımlar için bu harika birleşim adeta biçilmiş kaftan!</p>
 
 <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir oyayı olduğundan çok daha zengin ve kaliteli gösteren en önemli sır, doğru renk ve doğru ip tercihidir güzel hanımlar. Bu modeli çalışırken göz önünde bulundurmanız gereken altın tavsiyelerim şunlar:</p>
+<p>Bir el emeğinin tüm güzelliğini ortaya çıkaran en önemli detay şüphesiz doğru <strong>renk uyumu ve ip seçimi</strong>dir. Mekik ve tığ birleşimi modellerde ipinizin dokusu, oyanın duruşunu doğrudan etkiler. Bu şahane modeli örerken işinizi kolaylaştıracak ve sonuçtan gurur duymanızı sağlayacak birkaç küçük sırrım var:</p>
 <ul>
-    <li><strong>İp Kalitesi:</strong> Mekik motiflerinin dik ve formunu koruyan bir yapıda olması için mutlaka katı ayrılmayan, kaliteli <strong>polyester oya ipleri</strong> veya 50 numara dantel iplikleri tercih etmelisiniz. Birleştirme yaptığınız tığ ipinin de aynı markanın aynı serisinden olmasına özen gösterin.</li>
-    <li><strong>Kontrastın Gücü:</strong> Desenli ve çiçekli bir yazma kullanıyorsanız, mekik motiflerini yazmanın içindeki en canlı çiçek renginden yapabilirsiniz. Motifleri yazmaya bağlayan tığ oyası kısmında ise yazmanın kendi zemin rengini kullanırsanız, motifleriniz adeta havada süzülüyormuş gibi öne çıkar.</li>
-    <li><strong>Sade ve Asil (Ton Sür Ton):</strong> Tek renk düz yazmalarda ise yazma renginin bir ton açığı veya bir ton koyusu iplerle çalışarak son derece modern ve minimalist bir şıklık yakalayabilirsiniz.</li>
+    <li><strong>İp Numarası ve Türü:</strong> Mekik motiflerinin sıkı ve diri durması için <strong>50 numara kaliteli polyester oya ipliği</strong> kullanmanızı tavsiye ederim. Polyester ipler tüylenme yapmaz ve motiflerinizin formunu yıllarca korur.</li>
+    <li><strong>Zemin ve Motif Dengesi:</strong> Desenli bir yazma çalışıyorsanız, mekik motiflerini yazmanın içindeki en canlı renkten hazırlayıp; tığ ile ekleme kısmını yazmanın kendi zemin rengiyle yapabilirsiniz. Böylece motifler kendini çok daha şık gösterecektir.</li>
+    <li><strong>Ton Sür Ton Zarafeti:</strong> Tek renk düz yazmalarda ise yazmanızın ipiyle aynı tonda mekik motifleri hazırlayıp, aralara minik altın sarısı veya gümüş rengi simli ipler dokundurarak hanımeli zarafetinde bir şıklık yakalayabilirsiniz.</li>
 </ul>
 
 <h3>Sıkça Sorulan Sorular</h3>
-<p><strong>Mekik motifi tığla eklenirken kıvrılma veya toplanma yapar mı?</strong><br>
-Eğer tığ zincir sayılarını yazma tığ battısına ve motifinizin boyutuna göre dengeli ayarlarsanız kesinlikle toplanma yapmaz. Videomuzda gösterdiğim batış mesafelerine dikkat etmeniz, oyanızın ütülenmiş gibi düzgün durmasını sağlayacaktır.</p>
-
-<p><strong>Bu model için kaç numara tığ kullanmalıyım?</strong><br>
-Oya yapımında elinizin sıklığına göre değişmekle birlikte genellikle <strong>21 veya 22 numara tığ</strong> kullanmanızı öneririm. İnce tığ, ilmeklerin daha sıkı ve kalıp gibi durmasını sağlar.</p>
-
-<p><strong>Tığ oyasında yeni olanlar bu birleştirme tekniğini yapabilir mi?</strong><br>
-Kesinlikle evet! Mekik yapmayı biliyorsanız, birleştirme kısmı sadece temel tığ tekniklerinden (zincir, trabzan ve sık iğne) oluştuğu için yeni başlayanlar bile rehber videomuzu izleyerek rahatlıkla uygulayabilir.</p>
+<ul>
+    <li><strong>Mekik motifi tığla eklenirken sökülme veya kayma yapar mı?</strong><br>
+    Kesinlikle yapmaz hanımlar. Videomuzda adım adım gösterdiğim sık iğne ve sabitleme tekniği sayesinde motifleriniz yazmaya adeta kilitlenir, kullanım esnasında asla kayma yapmaz.</li>
+    <li><strong>Bu modeli yaparken kaç numara tığ kullanmalıyım?</strong><br>
+    İpliğinize uygun olarak genelde <strong>21 veya 22 numara oya tığı</strong> kullanmanızı öneririm. İnce uçlu tığlar ilmeklerin daha sıkı ve birleştirme yerlerinin daha net durmasını sağlar.</li>
+    <li><strong>Tığ oyasını az bilen biri bu birleştirmeyi yapabilir mi?</strong><br>
+    Evet, hiç korkmayın! Elinizde hazır mekik motifleriniz varsa, tığ ile ekleme kısmı sadece zincir ve sık iğne tekniklerinden oluşuyor. Videoyu sakince izleyerek ilk denemede bile harika bir sonuç alabilirsiniz.</li>
+</ul>
                 </div>
             </div>
             
@@ -773,6 +769,12 @@ Kesinlikle evet! Mekik yapmayı biliyorsanız, birleştirme kısmı sadece temel
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>
