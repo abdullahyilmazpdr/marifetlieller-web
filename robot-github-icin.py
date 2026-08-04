@@ -341,6 +341,10 @@ def sayfalari_olustur():
     with open('model-gonder.html', 'w', encoding='utf-8') as f: 
         f.write(model_icerik)
     uretilen_sayfalar.append('model-gonder.html')
+    
+    # AdSense Zorunlu Sayfalarını Site Haritasına Ekle
+    uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
+    sitemap_olustur(uretilen_sayfalar)
 
     with open('arama_verisi.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_arama_icin, f, ensure_ascii=False)
