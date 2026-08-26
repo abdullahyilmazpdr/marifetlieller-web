@@ -500,6 +500,14 @@
                     `;
                     document.getElementById('kullaniciAdi').innerText = displayName;
                     document.getElementById('kullaniciEmail').innerText = user.email;
+
+                    // ==========================================
+                    // 👑 YÖNETİCİ KONTROLÜ BURADA YAPILIYOR
+                    // ==========================================
+                    if (user.email === "ayilmazpdr@gmail.com") {
+                        document.getElementById('adminPanelKutusu').style.display = 'block';
+                        document.getElementById('adminIframe').src = SCRIPT_URL + "?sayfa=admin";
+                    }
                     
                     modelleriGetir(user.email);
                 } else {
