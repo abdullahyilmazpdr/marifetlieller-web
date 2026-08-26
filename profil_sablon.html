@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Paneli - Marifetli Eller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    {% include 'izleme_kodlari.html' ignore missing %}
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
+    <style>
+        /* Standart Değişkenleriniz */
+        :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin:0; padding:0; display:flex; flex-direction:column; min-height:100vh; }
+        main { flex:1; max-width:900px; margin:40px auto; width:100%; padding:0 20px; }
+        .panel-kutu { background: var(--kutu-arka-plan); padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--kenarlik); font-size: 14px; }
+        th { background-color: var(--hover-renk); color: var(--ana-renk); font-weight: 600; }
+        
+        .durum-onayli { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .durum-bekliyor { background-color: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .durum-red { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .btn-duzelt { background: var(--ana-renk); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+    {% include 'header_sablon.html' %}
+
+    <main>
+        <div class="sayfa-baslik" style="text-align:center; margin-bottom: 30px;">
+            <h1 style="font-family: 'Lora', serif; color: var(--ana-renk);">Profilim</h1>
+            <p>Gönderdiğiniz tüm makaleleri ve durumlarını buradan takip edebilirsiniz.</p>
+        </div>
+
+        <div class="panel-kutu">
+            <h3 style="margin-top:0;">👤 Hesap Bilgileri</h3>
+            <p><strong>Hoş Geldin, </strong> <span id="kullaniciAdi">Yükleniyor...</span></p>
+            <p><strong>E-Posta: </strong> <span id="kullaniciEmail">Yükleniyor...</span></p>
+        </div>
+
+        <div class="panel-kutu">
+            <h3 style="margin-top:0;">📝 Gönderdiğim Modeller</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Başlık</th>
+                            <th>Kategori</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modellerTablosu">
+                        <tr><td colspan="5" style="text-align:center;">Verileriniz yükleniyor...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    {% include 'footer_sablon.html' ignore missing %}
+
+    <script>
+        // Kendi Apps Script URL'nizi buraya yazın
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+
+        document.addEventListener("DOMContentLoaded", function () {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    // Kullanıcı giriş yapmışsa bilgilerini ekrana bas
+                    document.getElementById('kullaniciAdi').innerText = user.displayName || "Kullanıcı";
+                    document.getElementById('kullaniciEmail').innerText = user.email;
+                    
+                    // Apps Script'ten kullanıcının modellerini getir
+                    modelleriGetir(user.email);
+                } else {
+                    // Giriş yapmamışsa login sayfasına yönlendir
+                    window.location.href = "giris.html";
+                }
+            });
+        });
+
+        function modelleriGetir(email) {
+            fetch(SCRIPT_URL + "?islem=kullanici_modelleri&email=" + encodeURIComponent(email))
+            .then(response => response.json())
+            .then(data => {
+                const tablo = document.getElementById('modellerTablosu');
+                if(data.length === 0) {
+                    tablo.innerHTML = `<tr><td colspan="5" style="text-align:center;">Henüz bir model göndermediniz.</td></tr>`;
+                    return;
+                }
+
+                let html = "";
+                data.forEach(model => {
+                    let durumClass = "durum-bekliyor";
+                    let durumMetin = model.durum || "Onay Bekliyor";
+                    if (durumMetin.includes("Onaylandı")) durumClass = "durum-onayli";
+                    if (durumMetin.includes("Red") || durumMetin.includes("red")) durumClass = "durum-red";
+
+                    html += `
+                        <tr>
+                            <td>${new Date(model.tarih).toLocaleDateString('tr-TR')}</td>
+                            <td><strong>${model.baslik}</strong></td>
+                            <td>${model.kategori}</td>
+                            <td><span class="${durumClass}">${durumMetin}</span></td>
+                            <td>
+                                ${durumClass === 'durum-onayli' ? `<button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzeltme İste</button>` : '-'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                tablo.innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('modellerTablosu').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Veriler çekilirken bir hata oluştu.</td></tr>`;
+            });
+        }
+
+        function duzeltmeTalebi(id) {
+            // İleride buraya düzeltme talep formu (modal) açma kodunu ekleyeceğiz.
+            alert("Düzeltme talebi altyapısı bir sonraki aşamada aktif edilecektir. ID: " + id);
+        }
+    </script>
+</body>
+</html>
