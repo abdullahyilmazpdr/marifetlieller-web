@@ -698,6 +698,33 @@
                 <iframe src="https://www.youtube.com/embed/XuFu8tXsCIM" allowfullscreen></iframe>
             </div>
 
+            <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                
+                <!-- WhatsApp Paylaş -->
+                <button onclick="whatsappPaylas('Sizce O İki İp Boncukların Arasından Nasıl Geçti? Cevabı İçin Buyrun İzleyin.')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    💬 WhatsApp
+                </button>
+                
+                <!-- Facebook Paylaş -->
+                <button onclick="facebookPaylas()" style="background-color: #1877F2; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📘 Facebook
+                </button>
+
+                <!-- Pinterest Paylaş -->
+                <button onclick="pinterestPaylas('Sizce O İki İp Boncukların Arasından Nasıl Geçti? Cevabı İçin Buyrun İzleyin.')" style="background-color: #E60023; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📌 Pinterest
+                </button>
+
+                <!-- Instagram (Bağlantı Kopyalama) -->
+                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📸 Instagram'da Paylaş
+                </button>
+            </div>
+        </div>
+
             <div style="margin-top: 20px; text-align: center;">
                 <!-- Google AdSense Doğrulama Kodları Başlangıcı -->
 <!-- AdSense veya Admatic Banner Kodları buraya gelecek -->
@@ -805,6 +832,33 @@ Nasıl yapıldığı merak uyandıran iki ipin aynı anda boncuğun nasıl geçt
                 });
         });
     </script>
+     <!-- AKILLI PAYLAŞIM SCRİPTLERİ -->
+        <script>
+            function whatsappPaylas(baslik) {
+                var url = window.location.href;
+                var mesaj = baslik + " - Marifetli Eller'de harika bir model gördüm! Mutlaka incele: " + url;
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(mesaj), "_blank");
+            }
+
+            function facebookPaylas() {
+                var url = window.location.href;
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+            }
+
+            function pinterestPaylas(baslik) {
+                var url = window.location.href;
+                window.open("https://pinterest.com/pin/create/button/?url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(baslik), "_blank");
+            }
+
+            function instagramIcinKopyala() {
+                var sayfaLinki = window.location.href;
+                navigator.clipboard.writeText(sayfaLinki).then(function() {
+                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+                }).catch(function(err) {
+                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+                });
+            }
+        </script>
 
 </body>
 
