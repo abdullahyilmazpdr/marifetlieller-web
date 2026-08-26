@@ -411,24 +411,7 @@
         function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
         function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
         function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
-
-        let videoVeritabani = [];
-        fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
-        function aramaYap() {
-            const input = document.getElementById('aramaInput').value.toLowerCase();
-            const sonucKutusu = document.getElementById('aramaSonuclari');
-            if (input.length < 2) { sonucKutusu.style.display = 'none'; return; }
-            const filtrelenmis = videoVeritabani.filter(v => v.baslik.toLowerCase().includes(input));
-            if (filtrelenmis.length > 0) {
-                sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(v => `<a href="${v.link}" class="arama-sonuc-oge"><img src="${v.resim}" style="width:50px; border-radius:5px; margin-right:10px;"><span>${v.baslik}</span></a>`).join('');
-                sonucKutusu.style.display = 'block';
-            } else {
-                sonucKutusu.innerHTML = '<div style="padding:15px; text-align:center; font-size:13px;">Sonuç bulunamadı.</div>';
-                sonucKutusu.style.display = 'block';
-            }
-        }
-        document.addEventListener('click', (e) => { if (!e.target.closest('.arama-alani')) { const s = document.getElementById('aramaSonuclari'); if(s) s.style.display = 'none'; } });
-
+        
         // 2. Kimlik Doğrulama ve Veri Çekme
         document.addEventListener("DOMContentLoaded", function () {
             if (!firebase.apps.length) {
