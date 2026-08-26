@@ -122,6 +122,16 @@
         </div>
     </main>
 
+    <!-- YÖNETİCİ PANELİ (Sadece yetkili e-posta giriş yaptığında görünür) -->
+        <div class="panel-kutu" id="adminPanelKutusu" style="display: none; padding: 0; overflow: hidden; height: 800px; border: 2px solid var(--ana-renk);">
+            <div style="background: var(--ana-renk); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 16px;">👑 Gelişmiş Moderasyon Paneli</h3>
+                <span style="font-size: 12px; opacity: 0.8;">Sadece Yöneticiler Görebilir</span>
+            </div>
+            <!-- Iframe linki JavaScript ile otomatik doldurulacak -->
+            <iframe id="adminIframe" src="" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+
     <!-- DÜZELTME TALEBİ MODALI -->
     <div id="duzenlemeModal" class="modal-arkaplan">
         <div class="modal-kutu">
