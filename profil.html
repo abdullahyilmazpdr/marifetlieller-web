@@ -98,6 +98,15 @@
         .sosyal-medya a:hover { background-color: var(--ana-renk); }
         .footer-alt { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #bdc3c7; }
 
+        /* MODAL (AÇILIR PENCERE) CSS */
+        .modal-arkaplan { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-kutu { background: var(--kutu-arka-plan); width: 90%; max-width: 600px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-kapat { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .form-grup { margin-bottom: 15px; }
+        .form-grup label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .form-grup input, .form-grup select, .form-grup textarea { width: 100%; padding: 10px; border: 1px solid var(--kenarlik); border-radius: 8px; font-family: inherit; }
+        .btn-kaydet { background: var(--ana-renk); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px;}
+        
         @media (max-width: 860px) {
             .hamburger { display: flex; }
             .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
@@ -378,6 +387,42 @@
         </div>
     </main>
 
+    <!-- DÜZELTME TALEBİ MODALI -->
+    <div id="duzenlemeModal" class="modal-arkaplan">
+        <div class="modal-kutu">
+            <button class="modal-kapat" onclick="modalKapat()">×</button>
+            <h3 style="margin-top:0; color: var(--ana-renk);">Modeli Düzenle</h3>
+            <p style="font-size:13px; color:#666; margin-bottom:20px;">Reddedilen veya yayında olan modeliniz için düzeltmeleri yapıp tekrar gönderebilirsiniz.</p>
+
+            <form id="duzenlemeFormu" onsubmit="guncellemeGonder(event)">
+                <input type="hidden" id="editModalId">
+                
+                <div class="form-grup">
+                    <label>Kategori</label>
+                    <!-- Dinamik kategoriler Python'dan veya elle girilebilir, şimdilik input bıraktım -->
+                    <input type="text" id="editModalKategori" required>
+                </div>
+
+                <div class="form-grup">
+                    <label>Başlık</label>
+                    <input type="text" id="editModalBaslik" required>
+                </div>
+
+                <div class="form-grup">
+                    <label>Makale / Yapılış Anlatımı</label>
+                    <textarea id="editModalMakale" rows="5" required></textarea>
+                </div>
+
+                <div class="form-grup">
+                    <label>Medya (Google Drive / YouTube Linki)</label>
+                    <input type="text" id="editModalMedya" required>
+                </div>
+
+                <button type="submit" class="btn-kaydet" id="btnGuncelle">Değişiklikleri Kaydet ve Gönder</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Admatic AUTO ads START -->
 <ins data-publisher="adm-pub-171446397753" data-ad-network="6594390d4d11b285b617196c"   class="adm-ads-area"></ins>
 <script type="text/javascript" src="https://static.cdn.admatic.com.tr/showad/showad.min.js"></script>
@@ -408,6 +453,8 @@
         // 1. Sabitler ve Arama Fonksiyonları
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
+        let globalModeller = []; // Modalları doldurmak için verileri hafızada tutuyoruz
+        
         function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
         function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
         function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
@@ -456,25 +503,30 @@
             return seo.substring(0, 50).replace(/-+$/, '');
         }
 
+        // VERİ ÇEKME VE LİSTELEME
         function modelleriGetir(email) {
             fetch(SCRIPT_URL + "?islem=kullanici_modelleri&email=" + encodeURIComponent(email))
             .then(response => response.json())
             .then(data => {
+                globalModeller = data; // Global hafızaya aldık
                 const tablo = document.getElementById('modellerTablosu');
-                if(data.length === 0) {
-                    tablo.innerHTML = `<tr><td colspan="5" style="text-align:center;">Henüz bir model göndermediniz.</td></tr>`;
-                    return;
-                }
+                if(data.length === 0) { tablo.innerHTML = `<tr><td colspan="5" style="text-align:center;">Henüz bir model göndermediniz.</td></tr>`; return; }
 
                 let html = "";
                 data.forEach(model => {
                     let durumClass = "durum-bekliyor";
                     let durumMetin = model.durum || "Onay Bekliyor";
-                    
                     if (durumMetin.includes("Onaylandı")) durumClass = "durum-onayli";
                     if (durumMetin.includes("Red") || durumMetin.includes("red")) durumClass = "durum-red";
 
-                    let islemKodu = "-";
+                    // Red Nedeni Varsa Göster
+                    let redNedeniHtml = "";
+                    if (durumClass === "durum-red" && model.red_nedeni) {
+                        redNedeniHtml = `<span class="red-nedeni-metin">Sebep: ${model.red_nedeni}</span>`;
+                    }
+
+                    // İşlem Butonları
+                    let islemKodu = `<button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzenle ✏️</button>`;
                     if (durumClass === "durum-onayli") {
                         let kisaId = String(model.id).slice(-5);
                         let olusturulanUrl = `${seoUrlYap(model.baslik)}-${kisaId}.html`;
@@ -484,6 +536,8 @@
                                 <button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzenle ✏️</button>
                             </div>
                         `;
+                    } else if (durumClass === "durum-red") {
+                        islemKodu = `<button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzelt ve Tekrar Gönder 🔄</button>`;
                     }
 
                     html += `
@@ -491,20 +545,68 @@
                             <td>${new Date(model.tarih).toLocaleDateString('tr-TR')}</td>
                             <td><strong>${model.baslik}</strong></td>
                             <td>${model.kategori}</td>
-                            <td><span class="${durumClass}">${durumMetin}</span></td>
+                            <td><span class="${durumClass}">${durumMetin}</span>${redNedeniHtml}</td>
                             <td>${islemKodu}</td>
                         </tr>
                     `;
                 });
                 tablo.innerHTML = html;
             })
-            .catch(error => {
-                document.getElementById('modellerTablosu').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Veriler çekilirken bir hata oluştu.</td></tr>`;
-            });
+            .catch(error => { document.getElementById('modellerTablosu').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Veriler çekilirken bir hata oluştu.</td></tr>`; });
         }
 
+        // MODAL YÖNETİMİ
         function duzeltmeTalebi(id) {
-            alert("Düzeltme talebi altyapısı bir sonraki aşamada aktif edilecektir. ID: " + id);
+            // İlgili modeli global diziden bul
+            let secilenModel = globalModeller.find(m => String(m.id) === String(id));
+            if(secilenModel) {
+                document.getElementById('editModalId').value = secilenModel.id;
+                document.getElementById('editModalKategori').value = secilenModel.kategori;
+                document.getElementById('editModalBaslik').value = secilenModel.baslik;
+                document.getElementById('editModalMakale').value = secilenModel.makale;
+                document.getElementById('editModalMedya').value = secilenModel.medya;
+                document.getElementById('duzenlemeModal').style.display = 'flex';
+            }
+        }
+
+        function modalKapat() {
+            document.getElementById('duzenlemeModal').style.display = 'none';
+        }
+
+        // VERİYİ GÜNCELLEME (POST)
+        function guncellemeGonder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnGuncelle');
+            btn.innerText = "Gönderiliyor...";
+            btn.disabled = true;
+
+            // Form verilerini hazırlıyoruz
+            let formData = new URLSearchParams();
+            formData.append('islem', 'model_guncelle');
+            formData.append('id', document.getElementById('editModalId').value);
+            formData.append('kategori', document.getElementById('editModalKategori').value);
+            formData.append('baslik', document.getElementById('editModalBaslik').value);
+            formData.append('makale', document.getElementById('editModalMakale').value);
+            formData.append('medya', document.getElementById('editModalMedya').value);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Düzeltme talebiniz başarıyla alındı ve yönetici onayına gönderildi!");
+                modalKapat();
+                // Tabloyu yenile
+                modelleriGetir(firebase.auth().currentUser.email);
+            })
+            .catch(error => {
+                alert("Gönderim sırasında bir hata oluştu.");
+            })
+            .finally(() => {
+                btn.innerText = "Değişiklikleri Kaydet ve Gönder";
+                btn.disabled = false;
+            });
         }
     </script>
 </body>
