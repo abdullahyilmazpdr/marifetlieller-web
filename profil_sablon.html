@@ -115,16 +115,15 @@
 
     {% include 'footer_sablon.html' ignore missing %}
 
+    <!-- TÜM JAVASCRIPT KODLARI (BİRLEŞTİRİLMİŞ VE TEMİZLENMİŞ) -->
     <script>
-        // Kendi Apps Script URL'nizi buraya yazın
+        // 1. Sabitler ve Arama Fonksiyonları
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
-        // Header Fonksiyonları
         function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
         function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
         function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
 
-        // Arama (Arama datanız yüklenecek)
         let videoVeritabani = [];
         fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
         function aramaYap() {
@@ -141,35 +140,41 @@
             }
         }
         document.addEventListener('click', (e) => { if (!e.target.closest('.arama-alani')) { const s = document.getElementById('aramaSonuclari'); if(s) s.style.display = 'none'; } });
-        
-        // FİREBASE VE KİMLİK KONTROLÜ
+
+        // 2. Kimlik Doğrulama ve Veri Çekme
         document.addEventListener("DOMContentLoaded", function () {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyDxgpXtgQQKtFPKYppu7HByBVxyib6vS1k",
+                    authDomain: "marifetlieller-42.firebaseapp.com",
+                    projectId: "marifetlieller-42",
+                    storageBucket: "marifetlieller-42.firebasestorage.app",
+                    messagingSenderId: "632366040975",
+                    appId: "1:632366040975:web:15e8a77207e3c3ac326dfa"
+                });
+            }
+
             firebase.auth().onAuthStateChanged((user) => {
                 const kullaniciAlan = document.getElementById('kullaniciAlan');
                 if (user) {
-                    // EKSİK OLAN SATIR EKLENDİ: İsmi tanımlıyoruz
                     let displayName = user.displayName || user.email.split('@')[0];
-
                     kullaniciAlan.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
                             <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
                             <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
                         </div>
                     `;
-                    // Kullanıcı bilgilerini profil ekranına bas
                     document.getElementById('kullaniciAdi').innerText = displayName;
                     document.getElementById('kullaniciEmail').innerText = user.email;
                     
-                    // Apps Script'ten kullanıcının modellerini getir
                     modelleriGetir(user.email);
                 } else {
-                    // Giriş yapmamışsa login sayfasına yönlendir
                     window.location.href = "giris.html";
                 }
             });
         });
 
-        // URL OLUŞTURUCU (Python Robotu ile Birebir Aynı Çalışır)
+        // 3. Yardımcı Profil Fonksiyonları
         function seoUrlYap(metin) {
             let seo = metin.toLowerCase()
                 .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
@@ -180,7 +185,6 @@
             return seo.substring(0, 50).replace(/-+$/, '');
         }
 
-        // VERİLERİ E-TABLODAN ÇEKME
         function modelleriGetir(email) {
             fetch(SCRIPT_URL + "?islem=kullanici_modelleri&email=" + encodeURIComponent(email))
             .then(response => response.json())
@@ -195,10 +199,10 @@
                 data.forEach(model => {
                     let durumClass = "durum-bekliyor";
                     let durumMetin = model.durum || "Onay Bekliyor";
+                    
                     if (durumMetin.includes("Onaylandı")) durumClass = "durum-onayli";
                     if (durumMetin.includes("Red") || durumMetin.includes("red")) durumClass = "durum-red";
 
-                    // Görüntüle Butonu Mantığı
                     let islemKodu = "-";
                     if (durumClass === "durum-onayli") {
                         let kisaId = String(model.id).slice(-5);
