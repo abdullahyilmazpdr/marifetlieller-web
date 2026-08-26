@@ -65,6 +65,15 @@
         .sosyal-medya a:hover { background-color: var(--ana-renk); }
         .footer-alt { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #bdc3c7; }
 
+        /* MODAL (AÇILIR PENCERE) CSS */
+        .modal-arkaplan { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-kutu { background: var(--kutu-arka-plan); width: 90%; max-width: 600px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-kapat { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .form-grup { margin-bottom: 15px; }
+        .form-grup label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .form-grup input, .form-grup select, .form-grup textarea { width: 100%; padding: 10px; border: 1px solid var(--kenarlik); border-radius: 8px; font-family: inherit; }
+        .btn-kaydet { background: var(--ana-renk); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px;}
+
         @media (max-width: 860px) {
             .hamburger { display: flex; }
             .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
