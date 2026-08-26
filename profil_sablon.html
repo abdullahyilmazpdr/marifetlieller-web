@@ -279,10 +279,11 @@
             let secilenModel = globalModeller.find(m => String(m.id) === String(id));
             if(secilenModel) {
                 document.getElementById('editModalId').value = secilenModel.id;
-                document.getElementById('editModalKategori').value = secilenModel.kategori;
-                document.getElementById('editModalBaslik').value = secilenModel.baslik;
-                document.getElementById('editModalMakale').value = secilenModel.makale;
-                document.getElementById('editModalMedya').value = secilenModel.medya;
+                document.getElementById('editModalKategori').value = secilenModel.kategori || "";
+                document.getElementById('editModalBaslik').value = secilenModel.baslik || "";
+                // undefined hatasını önlemek için "|| '' " eklendi
+                document.getElementById('editModalMakale').value = secilenModel.makale || "";
+                document.getElementById('editModalMedya').value = secilenModel.medya || "";
                 document.getElementById('duzenlemeModal').style.display = 'flex';
             }
         }
