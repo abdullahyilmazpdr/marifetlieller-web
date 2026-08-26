@@ -335,6 +335,12 @@ def sayfalari_olustur():
     with open('giris.html', 'w', encoding='utf-8') as f: f.write(giris_icerik)
     uretilen_sayfalar.append('giris.html') # Sitemap'e (Site Haritasına) dahil et
 
+    # Profil Sayfasını Oluştur ve Çıktı Klasörüne Aktar
+    template_profil = env.get_template('profil_sablon.html')
+    profil_icerik = template_profil.render(tum_kategoriler=tum_kategoriler)
+    with open('profil.html', 'w', encoding='utf-8') as f: f.write(profil_icerik)
+    uretilen_sayfalar.append('profil.html') # Sitemap'e eklemek için
+
     # Model Gönderme Sayfasını Oluştur
     template_model = env.get_template('model_sablon.html')
     model_icerik = template_model.render(tum_kategoriler=tum_kategoriler)
