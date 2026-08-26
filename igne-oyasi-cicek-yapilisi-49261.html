@@ -717,6 +717,38 @@
         </div>
     </main>
 
+    <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                
+                <!-- WhatsApp Paylaş -->
+                <a href="https://api.whatsapp.com/send?text=İğne Oyası Çiçek Yapılışı - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: igne-oyasi-cicek-yapilisi-49261.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    💬 WhatsApp
+                </a>
+                
+                <!-- Facebook Paylaş -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=igne-oyasi-cicek-yapilisi-49261.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📘 Facebook
+                </a>
+
+                <!-- Pinterest Paylaş -->
+                <a href="https://pinterest.com/pin/create/button/?url=igne-oyasi-cicek-yapilisi-49261.html&description=İğne Oyası Çiçek Yapılışı" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📌 Pinterest
+                </a>
+
+                <!-- Instagram (Bağlantı Kopyalama) -->
+                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📸 Instagram'da Paylaş
+                </button>
+            </div>
+        </div>
+
+    <!-- YENİ: YAZAR SORUMLULUK REDDİ BEYANI -->
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6;">
+            <strong>⚠️ Sorumluluk Reddi:</strong> Bu sayfada yer alan model, metin, görsel veya videolar tamamen yazarımız <strong>Ayşegül YILMAZ</strong> tarafından oluşturulmuş ve platformumuza eklenmiştir. İçeriğin özgünlüğü, telif hakları ve sorumluluğu tamamen yazarın kendisine aittir. Marifetli Eller platformu, kullanıcılar tarafından yüklenen içeriklerden doğabilecek hukuki veya telif ihlali durumlarından sorumlu tutulamaz. Herhangi bir hak ihlali olduğunu düşünüyorsanız lütfen İletişim sayfamızdan bize bildirin.
+        </div>
+
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
         <span style="font-size: 16px;">👁️</span> <b id="sayfa-sayac" style="color: var(--ana-renk);">...</b> kez
@@ -773,6 +805,18 @@
                     document.getElementById("sayfa-sayac").innerText = "-";
                 });
         });
+
+        function instagramIcinKopyala() {
+                // Sayfanın tam URL'sini alır
+                var sayfaLinki = window.location.href;
+                
+                // Panoya kopyalar
+                navigator.clipboard.writeText(sayfaLinki).then(function() {
+                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+                }).catch(function(err) {
+                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+                });
+            }
     </script>
 </body>
 

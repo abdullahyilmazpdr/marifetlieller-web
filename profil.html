@@ -106,7 +106,7 @@
         .form-grup label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
         .form-grup input, .form-grup select, .form-grup textarea { width: 100%; padding: 10px; border: 1px solid var(--kenarlik); border-radius: 8px; font-family: inherit; }
         .btn-kaydet { background: var(--ana-renk); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px;}
-        
+
         @media (max-width: 860px) {
             .hamburger { display: flex; }
             .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
@@ -357,7 +357,7 @@
     <main>
         <div class="sayfa-baslik" style="text-align:center; margin-bottom: 30px;">
             <h1 style="font-family: 'Lora', serif; color: var(--ana-renk);">Profilim</h1>
-            <p>Gönderdiğiniz tüm makaleleri ve durumlarını buradan takip edebilirsiniz.</p>
+            Gönderdiğiniz modellerin onay durumunu ve düzeltme taleplerini buradan yönetin.</p>
         </div>
 
         <div class="panel-kutu">
@@ -464,7 +464,7 @@
         function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
         function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
         function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
-        
+
         // 2. Kimlik Doğrulama ve Veri Çekme
         document.addEventListener("DOMContentLoaded", function () {
             if (!firebase.apps.length) {
