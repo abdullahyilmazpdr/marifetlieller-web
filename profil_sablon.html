@@ -142,18 +142,22 @@
         }
         document.addEventListener('click', (e) => { if (!e.target.closest('.arama-alani')) { const s = document.getElementById('aramaSonuclari'); if(s) s.style.display = 'none'; } });
         
+        // FİREBASE VE KİMLİK KONTROLÜ
         document.addEventListener("DOMContentLoaded", function () {
             firebase.auth().onAuthStateChanged((user) => {
                 const kullaniciAlan = document.getElementById('kullaniciAlan');
                 if (user) {
+                    // EKSİK OLAN SATIR EKLENDİ: İsmi tanımlıyoruz
+                    let displayName = user.displayName || user.email.split('@')[0];
+
                     kullaniciAlan.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
                             <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
                             <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
                         </div>
                     `;
-                    // Kullanıcı giriş yapmışsa bilgilerini ekrana bas
-                    document.getElementById('kullaniciAdi').innerText = user.displayName || "Kullanıcı";
+                    // Kullanıcı bilgilerini profil ekranına bas
+                    document.getElementById('kullaniciAdi').innerText = displayName;
                     document.getElementById('kullaniciEmail').innerText = user.email;
                     
                     // Apps Script'ten kullanıcının modellerini getir
@@ -176,6 +180,7 @@
             return seo.substring(0, 50).replace(/-+$/, '');
         }
 
+        // VERİLERİ E-TABLODAN ÇEKME
         function modelleriGetir(email) {
             fetch(SCRIPT_URL + "?islem=kullanici_modelleri&email=" + encodeURIComponent(email))
             .then(response => response.json())
@@ -193,15 +198,26 @@
                     if (durumMetin.includes("Onaylandı")) durumClass = "durum-onayli";
                     if (durumMetin.includes("Red") || durumMetin.includes("red")) durumClass = "durum-red";
 
+                    // Görüntüle Butonu Mantığı
+                    let islemKodu = "-";
+                    if (durumClass === "durum-onayli") {
+                        let kisaId = String(model.id).slice(-5);
+                        let olusturulanUrl = `${seoUrlYap(model.baslik)}-${kisaId}.html`;
+                        islemKodu = `
+                            <div class="btn-grup">
+                                <a href="${olusturulanUrl}" target="_blank" class="btn-goruntule">Görüntüle 👁️</a>
+                                <button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzenle ✏️</button>
+                            </div>
+                        `;
+                    }
+
                     html += `
                         <tr>
                             <td>${new Date(model.tarih).toLocaleDateString('tr-TR')}</td>
                             <td><strong>${model.baslik}</strong></td>
                             <td>${model.kategori}</td>
                             <td><span class="${durumClass}">${durumMetin}</span></td>
-                            <td>
-                                ${durumClass === 'durum-onayli' ? `<button class="btn-duzelt" onclick="duzeltmeTalebi('${model.id}')">Düzeltme İste</button>` : '-'}
-                            </td>
+                            <td>${islemKodu}</td>
                         </tr>
                     `;
                 });
@@ -213,7 +229,6 @@
         }
 
         function duzeltmeTalebi(id) {
-            // İleride buraya düzeltme talep formu (modal) açma kodunu ekleyeceğiz.
             alert("Düzeltme talebi altyapısı bir sonraki aşamada aktif edilecektir. ID: " + id);
         }
     </script>
