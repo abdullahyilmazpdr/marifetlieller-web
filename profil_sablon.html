@@ -10,20 +10,71 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     
     <style>
-        /* Standart Değişkenleriniz */
+        /* 1. GENEL DEĞİŞKENLER VE GÖVDE */
+        *, *::before, *::after { box-sizing: border-box; }
         :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin:0; padding:0; display:flex; flex-direction:column; min-height:100vh; }
-        main { flex:1; max-width:900px; margin:40px auto; width:100%; padding:0 20px; }
-        .panel-kutu { background: var(--kutu-arka-plan); padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        html, body { max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); display: flex; flex-direction: column; min-height: 100vh; }
         
+        /* 2. HEADER VE MENÜ CSS (Eksik olan kısım) */
+        header { background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100; }
+        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px; }
+        .logo a { font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo a::before { content: "🌸"; font-size: 28px; }
+        .nav-links { display: flex; gap: 20px; align-items: center; flex: 1; justify-content: flex-end; }
+        .nav-links a { text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px; transition: color 0.3s ease; white-space: nowrap; }
+        .nav-links a:hover { color: var(--ana-renk); }
+        .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px; transition: all 0.3s ease; }
+        
+        /* Arama ve Dropdown CSS */
+        .arama-alani { position: relative; margin-left: auto; width: 220px; }
+        .arama-kutu { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit; }
+        .arama-sonuclari { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto; margin-top: 5px;}
+        .arama-sonuc-oge { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-decoration: none; color: var(--metin-koyu); transition: background 0.2s; }
+        .arama-sonuc-oge:hover { background: var(--hover-renk); color: var(--ana-renk); }
+        .dropdown { position: relative; display: flex; align-items: center; }
+        .dropdown > a { padding-right: 15px; cursor: pointer; }
+        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: var(--kutu-arka-plan); min-width: 250px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-radius: 8px; overflow-y: auto; max-height: 500px; z-index: 1000; border: 1px solid var(--kenarlik); }
+        .dropdown-content a { display: block; padding: 12px 16px; color: var(--metin-koyu); border-bottom: 1px solid var(--kenarlik); white-space: normal; line-height: 1.4; margin: 0; font-size: 13px; }
+        .dropdown-content a:hover { background-color: var(--hover-renk); color: var(--ana-renk); padding-left: 22px; transition: all 0.2s; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        /* 3. PROFİL PANELİ CSS */
+        main { flex: 1; max-width: 1000px; margin: 40px auto; width: 100%; padding: 0 20px; }
+        .panel-kutu { background: var(--kutu-arka-plan); padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--kenarlik); font-size: 14px; }
         th { background-color: var(--hover-renk); color: var(--ana-renk); font-weight: 600; }
-        
         .durum-onayli { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .durum-bekliyor { background-color: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .durum-red { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .btn-duzelt { background: var(--ana-renk); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; cursor: pointer; border: none; }
+        
+        /* Buton Stilleri */
+        .btn-grup { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-duzelt { background: var(--arka-plan); color: var(--metin-koyu); padding: 6px 12px; border-radius: 5px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
+        .btn-duzelt:hover { background: #eee; }
+        .btn-goruntule { background: var(--ana-renk); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; transition: 0.2s; border: none;}
+        .btn-goruntule:hover { filter: brightness(1.1); }
+
+        /* 4. FOOTER VE MOBİL CSS */
+        footer { background-color: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px; margin-top: auto; }
+        .footer-container { max-width: 1200px; margin: 0 auto; text-align: center; }
+        .sosyal-medya { margin-bottom: 20px; display: flex; justify-content: center; gap: 15px; }
+        .sosyal-medya a { display: inline-block; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: #fff; text-decoration: none; border-radius: 5px; font-size: 14px; transition: background 0.3s; }
+        .sosyal-medya a:hover { background-color: var(--ana-renk); }
+        .footer-alt { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #bdc3c7; }
+
+        @media (max-width: 860px) {
+            .hamburger { display: flex; }
+            .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
+            .nav-links.aktif { display: flex; }
+            .arama-alani { width: 100%; margin-left: 0; }
+            .dropdown { width: 100%; flex-direction: column; align-items: flex-start; }
+            .dropdown > a { width: 100%; padding-right: 0; }
+            .dropdown-content { position: static; display: none; box-shadow: none; border: none; border-left: 2px solid var(--kenarlik); border-radius: 0; max-height: none; width: 100%; margin-top: 10px; }
+            .dropdown.aktif .dropdown-content { display: block; }
+        }
     </style>
 </head>
 <body>
@@ -68,9 +119,39 @@
         // Kendi Apps Script URL'nizi buraya yazın
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
+        // Header Fonksiyonları
+        function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
+        function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
+        function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
+
+        // Arama (Arama datanız yüklenecek)
+        let videoVeritabani = [];
+        fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
+        function aramaYap() {
+            const input = document.getElementById('aramaInput').value.toLowerCase();
+            const sonucKutusu = document.getElementById('aramaSonuclari');
+            if (input.length < 2) { sonucKutusu.style.display = 'none'; return; }
+            const filtrelenmis = videoVeritabani.filter(v => v.baslik.toLowerCase().includes(input));
+            if (filtrelenmis.length > 0) {
+                sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(v => `<a href="${v.link}" class="arama-sonuc-oge"><img src="${v.resim}" style="width:50px; border-radius:5px; margin-right:10px;"><span>${v.baslik}</span></a>`).join('');
+                sonucKutusu.style.display = 'block';
+            } else {
+                sonucKutusu.innerHTML = '<div style="padding:15px; text-align:center; font-size:13px;">Sonuç bulunamadı.</div>';
+                sonucKutusu.style.display = 'block';
+            }
+        }
+        document.addEventListener('click', (e) => { if (!e.target.closest('.arama-alani')) { const s = document.getElementById('aramaSonuclari'); if(s) s.style.display = 'none'; } });
+        
         document.addEventListener("DOMContentLoaded", function () {
             firebase.auth().onAuthStateChanged((user) => {
+                const kullaniciAlan = document.getElementById('kullaniciAlan');
                 if (user) {
+                    kullaniciAlan.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
+                            <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
+                            <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
+                        </div>
+                    `;
                     // Kullanıcı giriş yapmışsa bilgilerini ekrana bas
                     document.getElementById('kullaniciAdi').innerText = user.displayName || "Kullanıcı";
                     document.getElementById('kullaniciEmail').innerText = user.email;
@@ -83,6 +164,17 @@
                 }
             });
         });
+
+        // URL OLUŞTURUCU (Python Robotu ile Birebir Aynı Çalışır)
+        function seoUrlYap(metin) {
+            let seo = metin.toLowerCase()
+                .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
+                .replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/[-\s]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            return seo.substring(0, 50).replace(/-+$/, '');
+        }
 
         function modelleriGetir(email) {
             fetch(SCRIPT_URL + "?islem=kullanici_modelleri&email=" + encodeURIComponent(email))
