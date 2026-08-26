@@ -433,29 +433,7 @@
                 <iframe src="https://www.youtube.com/embed/{{ video.id }}" allowfullscreen></iframe>
             </div>
 
-            <div style="margin-top: 20px; text-align: center;">
-                {% include 'reklam_alani_1.html' ignore missing %}
-            </div>
-
-            <div class="aciklama-alani">
-                <div class="aciklama">{{ video.description }}</div>
-            </div>
-
-            {% if video.ai_metin %}
-            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
-                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
-                    ✨ Model Hakkında İpuçları ve Detaylar
-                </div>
-                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
-                    {{ video.ai_metin | safe }}
-                </div>
-            </div>
-            {% endif %}
-
-        </div>
-    </main>
-
-    <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+            <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
@@ -482,33 +460,27 @@
             </div>
         </div>
 
-        <!-- AKILLI PAYLAŞIM SCRİPTLERİ -->
-        <script>
-            function whatsappPaylas(baslik) {
-                var url = window.location.href;
-                var mesaj = baslik + " - Marifetli Eller'de harika bir model gördüm! Mutlaka incele: " + url;
-                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(mesaj), "_blank");
-            }
+            <div style="margin-top: 20px; text-align: center;">
+                {% include 'reklam_alani_1.html' ignore missing %}
+            </div>
 
-            function facebookPaylas() {
-                var url = window.location.href;
-                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
-            }
+            <div class="aciklama-alani">
+                <div class="aciklama">{{ video.description }}</div>
+            </div>
 
-            function pinterestPaylas(baslik) {
-                var url = window.location.href;
-                window.open("https://pinterest.com/pin/create/button/?url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(baslik), "_blank");
-            }
+            {% if video.ai_metin %}
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
+                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
+                    ✨ Model Hakkında İpuçları ve Detaylar
+                </div>
+                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
+                    {{ video.ai_metin | safe }}
+                </div>
+            </div>
+            {% endif %}
 
-            function instagramIcinKopyala() {
-                var sayfaLinki = window.location.href;
-                navigator.clipboard.writeText(sayfaLinki).then(function() {
-                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
-                }).catch(function(err) {
-                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
-                });
-            }
-        </script>
+        </div>
+    </main>
 
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
@@ -544,6 +516,33 @@
                 });
         });
     </script>
+     <!-- AKILLI PAYLAŞIM SCRİPTLERİ -->
+        <script>
+            function whatsappPaylas(baslik) {
+                var url = window.location.href;
+                var mesaj = baslik + " - Marifetli Eller'de harika bir model gördüm! Mutlaka incele: " + url;
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(mesaj), "_blank");
+            }
+
+            function facebookPaylas() {
+                var url = window.location.href;
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+            }
+
+            function pinterestPaylas(baslik) {
+                var url = window.location.href;
+                window.open("https://pinterest.com/pin/create/button/?url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(baslik), "_blank");
+            }
+
+            function instagramIcinKopyala() {
+                var sayfaLinki = window.location.href;
+                navigator.clipboard.writeText(sayfaLinki).then(function() {
+                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+                }).catch(function(err) {
+                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+                });
+            }
+        </script>
 
 </body>
 
