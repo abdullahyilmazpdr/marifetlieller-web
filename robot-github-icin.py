@@ -18,21 +18,110 @@ SITE_URL = 'https://marifetliel.com/'
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
 # ==========================================
-# ÇOKLU API ANAHTARI SİSTEMİ (ROUND-ROBIN)
+# ÇOKLU API ANAHTARI VE ÇOKLU MODEL SİSTEMİ
 # ==========================================
 gemini_keys_metni = os.environ.get('GEMINI_API_KEYS', '')
+GEMINI_API_KEYS = gemini_keys_metni.split(',') if gemini_keys_metni else []
 
-if gemini_keys_metni:
-    GEMINI_API_KEYS = gemini_keys_metni.split(',')
-else:
-    GEMINI_API_KEYS = []
+# Yöneticinin İstediği Öncelikli Modeller Listesi
+MODELLER = [
+    'gemini-flash-latest',
+    'gemini-3.6-flash',
+    'gemini-3.5-flash',
+    'gemini-3.6-flash-lite',
+    'gemini-3.5-flash-lite',
+    'gemini-2.5-flash' # Sistemin çökmemesi için Google'ın garanti mevcut olan sürümü
+]
 
 aktif_api_indeksi = 0
+aktif_model_indeksi = 0
 client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi]) if GEMINI_API_KEYS else None
-
-# UYARIYI ENGELLEMEK VE STABİLİTE İÇİN MODEL GÜNCELLENDİ
-SECILEN_MODEL = 'gemini-flash-latest' 
 AI_KOTALARI_DOLDU = False 
+
+# MERKEZİ YAPAY ZEKA MOTORU (Hem API hem Model Değiştirme Korumalı)
+def gemini_istek_gonder(prompt):
+    global aktif_api_indeksi, aktif_model_indeksi, client, AI_KOTALARI_DOLDU
+    
+    if AI_KOTALARI_DOLDU or not client:
+        return ""
+        
+    deneme = 0
+    # Tüm modelleri ve tüm API'leri en az 1 tur deneyebilmek için maksimum sınır
+    maks_deneme = (len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1) * len(MODELLER) * 2
+    
+    while deneme < maks_deneme:
+        secilen_model = MODELLER[aktif_model_indeksi]
+        try:
+            response = client.models.generate_content(model=secilen_model, contents=prompt)
+            time.sleep(4)
+            metin = response.text.replace("```html", "").replace("```", "").strip()
+            if len(metin) > 20:
+                return metin
+            return ""
+        except Exception as e:
+            hata = str(e).lower()
+            print(f"  X Hata ({secilen_model} | API {aktif_api_indeksi + 1}): {hata}")
+            
+            # 1. Hata Türü: Model Bulunamadı / Geçersiz İsim
+            if '404' in hata or 'not found' in hata or 'invalid' in hata or 'not supported' in hata:
+                aktif_model_indeksi += 1
+                if aktif_model_indeksi >= len(MODELLER):
+                    aktif_model_indeksi = 0
+                    aktif_api_indeksi += 1
+                    if aktif_api_indeksi >= len(GEMINI_API_KEYS):
+                        AI_KOTALARI_DOLDU = True
+                        print("  !!! TÜM MODELLER VE API'LER TÜKENDİ !!!")
+                        return ""
+                    client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
+                print(f"  🔄 MODEL GEÇERSİZ -> Yeni Model Deneniyor: {MODELLER[aktif_model_indeksi]}")
+            
+            # 2. Hata Türü: Kota Doldu, Timeout veya Diğerleri
+            else:
+                aktif_api_indeksi += 1
+                if aktif_api_indeksi >= len(GEMINI_API_KEYS):
+                    # API'ler bittiyse başa dönüp Modeli değiştirelim
+                    aktif_api_indeksi = 0
+                    aktif_model_indeksi += 1
+                    if aktif_model_indeksi >= len(MODELLER):
+                        AI_KOTALARI_DOLDU = True
+                        print("  !!! TÜM API'LERİN KOTASI DOLDU !!!")
+                        return ""
+                    print(f"  🔄 API'LER BİTTİ -> Yeni Model Deneniyor: {MODELLER[aktif_model_indeksi]}")
+                else:
+                    print(f"  🔄 KOTA DOLDU -> Yeni API'ye Geçildi: {aktif_api_indeksi + 1}")
+                
+                client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
+            
+            time.sleep(3)
+            deneme += 1
+
+    return ""
+
+def yapay_zeka_makale_yazdir(baslik, aciklama):
+    prompt = f"""
+    Sen yöresel el sanatları ve iğne oyası konusunda uzman, çok okunan bir blog yazarısın.
+    Şu YouTube videosu için web sitesinde yayınlanmak üzere SEO uyumlu, kadın ziyaretçileri sitede tutacak samimi bir makale yaz.
+    Video Başlığı: "{baslik}"
+    
+    LÜTFEN SADECE ŞU YAPIYI HTML ETİKETLERİ İLE (<h3>, <p>, <ul>, <li>, <strong>) VER (```html bloğu kullanma, doğrudan kodu ver):
+    1. <h3>Modelin Özellikleri ve Zarafeti</h3> 
+    2. <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3> 
+    3. <h3>Sıkça Sorulan Sorular</h3> 
+    """
+    return gemini_istek_gonder(prompt)
+
+def kategori_seo_uret(kategori_adi):
+    prompt = f"""
+    Sen yöresel el sanatları, iğne oyası ve mekik oyası konusunda uzman, güncel arama trendlerine hakim bir SEO içerik yazarısın. Sitenin adı 'Marifetli Eller'.
+    İçerik üreteceğin kategori: "{kategori_adi}"
+    
+    Görevlerin:
+    1. Önce bu kategori ismi için kullanıcıların Google'da en çok aratabileceği, niş ve ilgili anahtar kelimeleri (SGE uyumlu, semantik kelimeleri) kendi zihninde analiz et.
+    2. Ardından, bu belirlediğin özel anahtar kelimeleri metnin içine yapay durmayacak şekilde, doğal bir akışla yedirerek 2 paragraflık özgün bir SEO açıklama metni yaz. Ziyaretçiye değer katsın ve okuması keyifli olsun.
+    
+    LÜTFEN SADECE <p> ve vurgulamak istediğin yerler için <strong> etiketlerini kullan. Başka HTML veya Markdown (```) işareti KULLANMA. Bana anahtar kelime listesini verme, SADECE doğrudan web sitesine basılacak olan HTML formatındaki 2 paragrafı ver.
+    """
+    return gemini_istek_gonder(prompt)
 
 def onayli_modelleri_cek():
   csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?output=csv"
@@ -90,7 +179,6 @@ def populer_videolari_getir():
             baslik = item['snippet']['title']
             aciklama = item['snippet']['description'] 
             
-            # Bazı shorts videolarında 'high' kapak olmayabilir, güvenli çekim yapıyoruz
             thumbs = item['snippet'].get('thumbnails', {})
             resim = thumbs.get('high', {}).get('url') or thumbs.get('medium', {}).get('url') or thumbs.get('default', {}).get('url', '')
             
@@ -103,104 +191,6 @@ def populer_videolari_getir():
     except Exception as e:
         print(f"Popüler video çekme hatası: {e}")
         return []
-
-def api_anahtarini_degistir():
-    global aktif_api_indeksi, client, AI_KOTALARI_DOLDU
-    aktif_api_indeksi += 1
-    
-    if aktif_api_indeksi >= len(GEMINI_API_KEYS):
-        print("  !!! TÜM API KOTALARI DOLDU. SİTE HIZLICA OLUŞTURULUYOR !!!")
-        AI_KOTALARI_DOLDU = True
-        return False
-        
-    client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
-    print(f"  🔄 API DEĞİŞTİRİLDİ -> Şu an {aktif_api_indeksi + 1}. API kullanılıyor.")
-    return True
-
-def yapay_zeka_makale_yazdir(baslik, aciklama):
-    global client, AI_KOTALARI_DOLDU
-    
-    if AI_KOTALARI_DOLDU or not client:
-        return None
-        
-    prompt = f"""
-    Sen yöresel el sanatları ve iğne oyası konusunda uzman, çok okunan bir blog yazarısın.
-    Şu YouTube videosu için web sitesinde yayınlanmak üzere SEO uyumlu, kadın ziyaretçileri sitede tutacak samimi bir makale yaz.
-    Video Başlığı: "{baslik}"
-    
-    LÜTFEN SADECE ŞU YAPIYI HTML ETİKETLERİ İLE (<h3>, <p>, <ul>, <li>, <strong>) VER (```html bloğu kullanma, doğrudan kodu ver):
-    1. <h3>Modelin Özellikleri ve Zarafeti</h3> 
-    2. <h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3> 
-    3. <h3>Sıkça Sorulan Sorular</h3> 
-    """
-    
-    deneme_sayisi = 0
-    maksimum_deneme = len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1
-    
-    while deneme_sayisi < maksimum_deneme:
-        try:
-            response = client.models.generate_content(model=SECILEN_MODEL, contents=prompt)
-            time.sleep(7) 
-            metin = response.text.replace("```html", "").replace("```", "").strip()
-            
-            if len(metin) < 50:
-                print("  ! API çok kısa bir yanıt döndürdü, geçiliyor.")
-                return None
-            return metin
-            
-        except Exception as e:
-            hata_mesaji = str(e)
-            if '429' in hata_mesaji or 'RESOURCE_EXHAUSTED' in hata_mesaji or 'Quota' in hata_mesaji:
-                if not api_anahtarini_degistir():
-                    return None
-                deneme_sayisi += 1
-            else:
-                print(f"  X Bilinmeyen hata: {e}")
-                time.sleep(10)
-                return None
-                
-    return None
-
-def kategori_seo_uret(kategori_adi):
-    global client, AI_KOTALARI_DOLDU
-    if AI_KOTALARI_DOLDU or not client:
-        return ""
-        
-    prompt = f"""
-    Sen yöresel el sanatları, iğne oyası ve mekik oyası konusunda uzman, güncel arama trendlerine hakim bir SEO içerik yazarısın. Sitenin adı 'Marifetli Eller'.
-    İçerik üreteceğin kategori: "{kategori_adi}"
-    
-    Görevlerin:
-    1. Önce bu kategori ismi için kullanıcıların Google'da en çok aratabileceği, niş ve ilgili anahtar kelimeleri (SGE uyumlu, semantik kelimeleri) kendi zihninde analiz et.
-    2. Ardından, bu belirlediğin özel anahtar kelimeleri metnin içine yapay durmayacak şekilde, doğal bir akışla yedirerek 2 paragraflık özgün bir SEO açıklama metni yaz. Ziyaretçiye değer katsın ve okuması keyifli olsun.
-    
-    LÜTFEN SADECE <p> ve vurgulamak istediğin yerler için <strong> etiketlerini kullan. Başka HTML veya Markdown (```) işareti KULLANMA. Bana anahtar kelime listesini verme, SADECE doğrudan web sitesine basılacak olan HTML formatındaki 2 paragrafı ver.
-    """
-    
-    deneme_sayisi = 0
-    maksimum_deneme = len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1
-    
-    while deneme_sayisi < maksimum_deneme:
-        try:
-            response = client.models.generate_content(model=SECILEN_MODEL, contents=prompt)
-            time.sleep(5)
-            metin = response.text.replace("```html", "").replace("```", "").strip()
-            
-            if len(metin) < 20:
-                return ""
-            return metin
-            
-        except Exception as e:
-            hata_mesaji = str(e)
-            if '429' in hata_mesaji or 'RESOURCE_EXHAUSTED' in hata_mesaji or 'Quota' in hata_mesaji:
-                if not api_anahtarini_degistir():
-                    return ""
-                deneme_sayisi += 1
-            else:
-                print(f"  X Kategori SEO hatası: {e}")
-                time.sleep(5)
-                return ""
-    return ""
 
 def oynatma_listelerini_getir():
     request = youtube.playlists().list(part="snippet", channelId=KANAL_ID, maxResults=50)
@@ -349,18 +339,15 @@ def sayfalari_olustur():
                         print(f"  √ {video['title'][:30]}... (Önbellekten alındı)")
                         video['ai_metin'] = ai_cache[video['id']]
                     else:
-                        if AI_KOTALARI_DOLDU:
-                            video['ai_metin'] = ""
+                        print(f"  + {video['title'][:30]}... (Yapay Zeka Makale Yazıyor)")
+                        yeni_metin = yapay_zeka_makale_yazdir(video['title'], video['description'])
+                        if yeni_metin:
+                            video['ai_metin'] = yeni_metin
+                            ai_cache[video['id']] = yeni_metin
+                            with open(cache_dosyasi, 'w', encoding='utf-8') as f:
+                                json.dump(ai_cache, f, ensure_ascii=False, indent=4)
                         else:
-                            print(f"  + {video['title'][:30]}... (Yapay Zeka Makale Yazıyor)")
-                            yeni_metin = yapay_zeka_makale_yazdir(video['title'], video['description'])
-                            if yeni_metin:
-                                video['ai_metin'] = yeni_metin
-                                ai_cache[video['id']] = yeni_metin
-                                with open(cache_dosyasi, 'w', encoding='utf-8') as f:
-                                    json.dump(ai_cache, f, ensure_ascii=False, indent=4)
-                            else:
-                                video['ai_metin'] = ""
+                            video['ai_metin'] = ""
                     
                     html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
                     
@@ -416,18 +403,15 @@ def sayfalari_olustur():
                     print(f"  √ (Önbellekten alındı)")
                     video_data['ai_metin'] = ai_cache[video_data['id']]
                 else:
-                    if AI_KOTALARI_DOLDU:
-                        video_data['ai_metin'] = ""
+                    print(f"  + (Yapay Zeka Makale Yazıyor)")
+                    yeni_metin = yapay_zeka_makale_yazdir(video_data['title'], video_data['description'])
+                    if yeni_metin:
+                        video_data['ai_metin'] = yeni_metin
+                        ai_cache[video_data['id']] = yeni_metin
+                        with open(cache_dosyasi, 'w', encoding='utf-8') as f:
+                            json.dump(ai_cache, f, ensure_ascii=False, indent=4)
                     else:
-                        print(f"  + (Yapay Zeka Makale Yazıyor)")
-                        yeni_metin = yapay_zeka_makale_yazdir(video_data['title'], video_data['description'])
-                        if yeni_metin:
-                            video_data['ai_metin'] = yeni_metin
-                            ai_cache[video_data['id']] = yeni_metin
-                            with open(cache_dosyasi, 'w', encoding='utf-8') as f:
-                                json.dump(ai_cache, f, ensure_ascii=False, indent=4)
-                        else:
-                            video_data['ai_metin'] = ""
+                        video_data['ai_metin'] = ""
                             
                 html_icerik = template_video.render(
                     video=video_data, 
