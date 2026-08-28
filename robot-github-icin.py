@@ -31,7 +31,7 @@ aktif_api_indeksi = 0
 client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi]) if GEMINI_API_KEYS else None
 
 # UYARIYI ENGELLEMEK VE STABİLİTE İÇİN MODEL GÜNCELLENDİ
-SECILEN_MODEL = 'gemini-1.5-flash' 
+SECILEN_MODEL = 'gemini-flash-latest' 
 AI_KOTALARI_DOLDU = False 
 
 def onayli_modelleri_cek():
