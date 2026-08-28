@@ -387,11 +387,11 @@ def sayfalari_olustur():
                 
             # 3. Sayfayı ve Arama Motorunu Güncelle
             uretilen_sayfalar.append(dosya_adi)
-            tum_videolar_arama_icin.append({
+            tum_videolar_arama_icin[dosya_adi] = {
                 "baslik": video_data['title'],
                 "link": dosya_adi,
                 "resim": video_data['thumbnail']
-            })
+            }
     # ================================================================
 
     # 2. E-Tablodan Onaylı Modelleri Çek
