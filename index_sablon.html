@@ -496,6 +496,32 @@
     {% include 'header_sablon.html' %}
 
     <main>
+        <!-- YENİ EKLENEN: SİZDEN GELENLER VİTRİNİ -->
+        <div style="background: linear-gradient(135deg, #fff0f3 0%, #ffffff 100%); padding: 40px 30px; border-radius: 15px; border: 1px solid #ffdce3; margin-bottom: 50px; text-align: center; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.05);">
+            <h2 style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 28px; margin-top: 0;">✨ Sizden Gelen El Emekleri</h2>
+            <p style="color: var(--metin-acik); margin-bottom: 30px; font-size: 15px;">Topluluğumuzun paylaştığı harika modelleri kategorilerine göre inceleyin veya kendi eserinizi sergileyin.</p>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px;">
+                <!-- Kategori Linkleri (Hedef URL'leri ileride Python ile üreteceğimiz listeleme sayfaları olacak) -->
+                <a href="kullanici_kategori_igne_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🌸 İğne Oyası</a>
+                
+                <a href="kullanici_kategori_mekik_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧶 Mekik Oyası</a>
+                
+                <a href="kullanici_kategori_tig_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧵 Tığ Oyası</a>
+                
+                <a href="kullanici_kategori_orgu_modelleri.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧤 Örgü Modelleri</a>
+                
+                <a href="kullanici_kategori_diger_el_isleri.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">✨ Diğer El İşleri</a>
+            </div>
+
+            <a href="model-gonder.html" style="display: inline-block; background: var(--ana-renk); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.3);">
+                + Kendi Modelini Gönder
+            </a>
+        </div>
+        
+        <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
+        <div class="sayfa-baslik">
+            <h1>Model Arşivi Galerisi</h1>
         {% if is_ana_sayfa %}
         <div class="sayfa-baslik">
             <h1>Model Arşivi Galerisi</h1>
