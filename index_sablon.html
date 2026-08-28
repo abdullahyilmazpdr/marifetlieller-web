@@ -518,6 +518,38 @@
                 + Kendi Modelini Gönder
             </a>
         </div>
+
+        <!-- DİNAMİK VİTRİN ALANI -->
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 50px;">
+            
+            <!-- SOL BÖLÜM: Haftanın Popüler Videoları -->
+            <div style="flex: 2; min-width: 300px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 22px;">🔥 Haftanın Popüler Videoları</h3>
+                </div>
+                
+                <div class="populer-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Bu kısım Python robotu ile otomatik doldurulabilir. Şimdilik statik yer tutucu eklendi. -->
+                    <a href="#" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/bkkbqfsb-K4/hqdefault.jpg"></div>
+                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Harika İğne Oyası Modeli</h4></div>
+                    </a>
+                    <a href="#" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/IcO6wy327sE/hqdefault.jpg"></div>
+                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Yeni Başlayanlar İçin Mekik</h4></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SAĞ BÖLÜM: Son Eklenen 5 Model (Apps Script'ten Çekilecek) -->
+            <div style="flex: 1; min-width: 300px; background: var(--kutu-arka-plan); padding: 20px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                <h3 style="margin: 0 0 20px 0; font-family: 'Lora', serif; color: var(--ana-renk); font-size: 20px; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px;">🆕 Son Eklenenler</h3>
+                
+                <div id="sonEklenenlerListesi">
+                    <p style="font-size: 13px; color: #888; text-align: center;">Yeni modeller yükleniyor...</p>
+                </div>
+            </div>
+        </div>
         
         <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
         <div class="sayfa-baslik">
@@ -599,6 +631,45 @@
             });
     });
 </script>
+
+<script>
+            // Apps Script'ten onaylı son 5 modeli çekme
+            document.addEventListener("DOMContentLoaded", function () {
+                const url = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=son_modeller";
+                
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const liste = document.getElementById('sonEklenenlerListesi');
+                    if(data.length === 0) {
+                        liste.innerHTML = '<p style="font-size: 13px; color: #888;">Henüz eklenen model bulunmuyor.</p>';
+                        return;
+                    }
+                    
+                    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
+                    data.forEach(model => {
+                        // SEO URL Hesaplama
+                        let seo = model.baslik.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
+                        let url = seo.substring(0, 50).replace(/-+$/, '') + "-" + String(model.id).slice(-5) + ".html";
+                        
+                        html += `
+                            <a href="${url}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px;">
+                                <div style="background: var(--hover-renk); color: var(--ana-renk); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">✨</div>
+                                <div>
+                                    <h4 style="margin: 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">${model.baslik}</h4>
+                                    <span style="font-size: 11px; color: #888;">${model.yazar} • ${model.kategori}</span>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    html += '</div>';
+                    liste.innerHTML = html;
+                })
+                .catch(err => {
+                    document.getElementById('sonEklenenlerListesi').innerHTML = '<p style="font-size: 13px; color: red;">Modeller yüklenemedi.</p>';
+                });
+            });
+        </script>
 
 </body>
 
