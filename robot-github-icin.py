@@ -29,7 +29,9 @@ else:
 
 aktif_api_indeksi = 0
 client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi]) if GEMINI_API_KEYS else None
-SECILEN_MODEL = 'gemini-flash-latest'
+
+# UYARIYI ENGELLEMEK VE STABİLİTE İÇİN MODEL GÜNCELLENDİ
+SECILEN_MODEL = 'gemini-1.5-flash' 
 AI_KOTALARI_DOLDU = False 
 
 def onayli_modelleri_cek():
@@ -71,7 +73,6 @@ def onayli_modelleri_cek():
     print(f"E-Tablo okuma hatası: {e}")
     return []
 
-# YENİ EKLENEN: HAFTANIN POPÜLER VİDEOLARINI ÇEKME
 def populer_videolari_getir():
     print("\n--- Popüler Videolar Çekiliyor ---")
     try:
@@ -87,14 +88,16 @@ def populer_videolari_getir():
         for item in response.get('items', []):
             videoid = item['id']['videoId']
             baslik = item['snippet']['title']
-            aciklama = item['snippet']['description'] # Makale için eklendi
-            resim = item['snippet']['thumbnails']['high']['url']
+            aciklama = item['snippet']['description'] 
+            
+            # Bazı shorts videolarında 'high' kapak olmayabilir, güvenli çekim yapıyoruz
+            thumbs = item['snippet'].get('thumbnails', {})
+            resim = thumbs.get('high', {}).get('url') or thumbs.get('medium', {}).get('url') or thumbs.get('default', {}).get('url', '')
             
             baslik_seo = url_uyumlu_yap(baslik)
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
             
-            # Tüm bilgileri sözlüğe ekledik
             populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link})
         return populerler
     except Exception as e:
@@ -180,7 +183,7 @@ def kategori_seo_uret(kategori_adi):
     while deneme_sayisi < maksimum_deneme:
         try:
             response = client.models.generate_content(model=SECILEN_MODEL, contents=prompt)
-            time.sleep(5) # API'yi yormamak için 5 saniye bekle
+            time.sleep(5)
             metin = response.text.replace("```html", "").replace("```", "").strip()
             
             if len(metin) < 20:
@@ -248,18 +251,12 @@ def guvenli_dosya_adi(isim):
 
 def sitemap_olustur(sayfa_listesi):
     bugun = datetime.now().strftime("%Y-%m-%d")
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="[http://www.sitemaps.org/schemas/sitemap/0.9](http://www.sitemaps.org/schemas/sitemap/0.9)">\n'
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for sayfa in sayfa_listesi:
         xml += f'  <url>\n    <loc>{SITE_URL}{sayfa.replace(" ", "%20")}</loc>\n    <lastmod>{bugun}</lastmod>\n  </url>\n'
     xml += '</urlset>'
     with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(xml)
 
-# ==========================================
-# YÖNETİCİ KATEGORİ SIRALAMA LİSTESİ
-# ==========================================
-# Ana menüde ve "Tüm Kategoriler" sekmesinde en üstte çıkmasını istediğiniz 
-# oynatma listelerinin TAM İSİMLERİNİ sırasıyla buraya yazın.
-# Buraya yazmadıklarınız, otomatik olarak bu listenin altına eklenecektir.
 ISTENEN_SIRALAMA = [
     "İğne Oyası Yapılışı",
     "Mekik Oyası Yapılışı",
@@ -280,7 +277,6 @@ def sayfalari_olustur():
     else:
         ai_cache = {}
 
-    # SEO JSON Dosyasını Yükle
     seo_dosyasi = 'kategori_seo.json'
     if os.path.exists(seo_dosyasi):
         with open(seo_dosyasi, 'r', encoding='utf-8') as f:
@@ -295,26 +291,21 @@ def sayfalari_olustur():
     site_verisi = {} 
     ana_menuler = [] 
     uretilen_sayfalar = ['index.html']
-    tum_videolar_arama_icin = {} # Kopya videoları engellemek için liste yerine sözlük kullanıyoruz
+    tum_videolar_arama_icin = {} 
     tum_videolar_ham = []
 
-    # 1. YouTube'dan Popüler Videoları Çekme
     populer_videolar = populer_videolari_getir()
 
     listeler = oynatma_listelerini_getir()
     print(f"Sistem Başlatıldı. {len(listeler)} kategori bulundu.\n")
 
-    # --- YENİ EKLENEN: KATEGORİLERİ ÖZEL LİSTEYE GÖRE SIRALAMA ---
     def siralama_anahtari(liste_item):
         baslik = liste_item['snippet']['title']
         try:
-            # Başlık bizim özel listemizde varsa, oradaki sırasını (indeksini) ver
             return ISTENEN_SIRALAMA.index(baslik)
         except ValueError:
-            # Eğer özel listede yoksa, en sona atması için büyük bir sayı (999) ver
             return 999
 
-    # Çekilen oynatma listelerini belirlediğimiz kurala göre sıralıyoruz
     listeler.sort(key=siralama_anahtari)
     
     tum_kategoriler = []
@@ -322,164 +313,159 @@ def sayfalari_olustur():
         kat_adi = liste['snippet']['title']
         tum_kategoriler.append({'baslik': kat_adi, 'dosya_adi': f"kategori_{guvenli_dosya_adi(kat_adi)}.html"})
 
-    # Kategori Sıralama Altyapısı: Eğer ileride yöneticiden bir sıralama listesi gelirse burada tum_kategoriler'i sort edebiliriz.
-    
     for index, liste in enumerate(listeler):
-        time.sleep(0.5) 
-        kategori_adi = liste['snippet']['title']
-        playlist_id = liste['id']
-        kategori_dosya_adi = f"kategori_{guvenli_dosya_adi(kategori_adi)}.html"
-        
-        print(f"\n--- [{kategori_adi}] İşleniyor ---")
-        videolar = listedeki_videolari_getir(playlist_id)
-        if not videolar: continue
+        try:
+            time.sleep(0.5) 
+            kategori_adi = liste['snippet']['title']
+            playlist_id = liste['id']
+            kategori_dosya_adi = f"kategori_{guvenli_dosya_adi(kategori_adi)}.html"
             
-        site_verisi[kategori_adi] = {'dosya_adi': kategori_dosya_adi, 'ilk_resim': videolar[0]['thumbnail'], 'video_sayisi': len(videolar)}
-        if index < 4: ana_menuler.append({'baslik': kategori_adi, 'dosya_adi': kategori_dosya_adi})
-        uretilen_sayfalar.append(kategori_dosya_adi)
-        video_verileri_kategori_icin = []
+            print(f"\n--- [{kategori_adi}] İşleniyor ---")
+            videolar = listedeki_videolari_getir(playlist_id)
+            if not videolar: continue
+                
+            site_verisi[kategori_adi] = {'dosya_adi': kategori_dosya_adi, 'ilk_resim': videolar[0]['thumbnail'], 'video_sayisi': len(videolar)}
+            if index < 4: ana_menuler.append({'baslik': kategori_adi, 'dosya_adi': kategori_dosya_adi})
+            uretilen_sayfalar.append(kategori_dosya_adi)
+            video_verileri_kategori_icin = []
 
-        for video in videolar:
-            baslik_seo = url_uyumlu_yap(video['title'])
-            if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
-            dosya_adi = f"{baslik_seo}-{video['id']}.html" 
-            
-            tum_videolar_ham.append({
-                'id': video['id'],
-                'title': video['title'],
-                'description': video['description'],
-                'thumbnail': video['thumbnail'],
-                'kategori_adi': kategori_adi,
-                'kategori_dosya_adi': kategori_dosya_adi,
-                'dosya_adi': dosya_adi
-            })
+            for video in videolar:
+                try:
+                    baslik_seo = url_uyumlu_yap(video['title'])
+                    if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
+                    dosya_adi = f"{baslik_seo}-{video['id']}.html" 
+                    
+                    tum_videolar_ham.append({
+                        'id': video['id'],
+                        'title': video['title'],
+                        'description': video['description'],
+                        'thumbnail': video['thumbnail'],
+                        'kategori_adi': kategori_adi,
+                        'kategori_dosya_adi': kategori_dosya_adi,
+                        'dosya_adi': dosya_adi
+                    })
 
-            if video['id'] in ai_cache and len(ai_cache[video['id']]) > 50:
-                print(f"  √ {video['title'][:30]}... (Önbellekten alındı)")
-                video['ai_metin'] = ai_cache[video['id']]
-            else:
-                if AI_KOTALARI_DOLDU:
-                    video['ai_metin'] = ""
-                else:
-                    print(f"  + {video['title'][:30]}... (Yapay Zeka Makale Yazıyor)")
-                    yeni_metin = yapay_zeka_makale_yazdir(video['title'], video['description'])
-                    if yeni_metin:
-                        video['ai_metin'] = yeni_metin
-                        ai_cache[video['id']] = yeni_metin
-                        with open(cache_dosyasi, 'w', encoding='utf-8') as f:
-                            json.dump(ai_cache, f, ensure_ascii=False, indent=4)
+                    if video['id'] in ai_cache and len(ai_cache[video['id']]) > 50:
+                        print(f"  √ {video['title'][:30]}... (Önbellekten alındı)")
+                        video['ai_metin'] = ai_cache[video['id']]
                     else:
-                        video['ai_metin'] = ""
+                        if AI_KOTALARI_DOLDU:
+                            video['ai_metin'] = ""
+                        else:
+                            print(f"  + {video['title'][:30]}... (Yapay Zeka Makale Yazıyor)")
+                            yeni_metin = yapay_zeka_makale_yazdir(video['title'], video['description'])
+                            if yeni_metin:
+                                video['ai_metin'] = yeni_metin
+                                ai_cache[video['id']] = yeni_metin
+                                with open(cache_dosyasi, 'w', encoding='utf-8') as f:
+                                    json.dump(ai_cache, f, ensure_ascii=False, indent=4)
+                            else:
+                                video['ai_metin'] = ""
+                    
+                    html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
+                    
+                    with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
+                        f.write(html_icerik)
+
+                    uretilen_sayfalar.append(dosya_adi)
+                    video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
+
+                    tum_videolar_arama_icin[dosya_adi] = {
+                        "baslik": video['title'],
+                        "link": dosya_adi,
+                        "resim": video['thumbnail']
+                    }
+                except Exception as e:
+                    print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
+
+            if kategori_adi not in kategori_seo_sozluk or len(kategori_seo_sozluk[kategori_adi]) < 10:
+                print(f"  + Kategori SEO Metni Yazdırılıyor: {kategori_adi}")
+                yeni_seo = kategori_seo_uret(kategori_adi)
+                if yeni_seo:
+                    kategori_seo_sozluk[kategori_adi] = yeni_seo
+                    with open(seo_dosyasi, 'w', encoding='utf-8') as f:
+                        json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
+                else:
+                    kategori_seo_sozluk[kategori_adi] = "" 
             
-            html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
+            kat_seo_metni = kategori_seo_sozluk.get(kategori_adi, "")
+                
+            kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler,kategori_seo_metni=kat_seo_metni)
+            with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
             
-            with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
-                f.write(html_icerik)
+        except Exception as e:
+            print(f"! Kategori işlenirken genel hata (Atlanıyor): {e}")
 
-            uretilen_sayfalar.append(dosya_adi)
-            video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
-
-            # Linki (dosya_adi) anahtar kelime yaparak kopyaların üst üste yazılmasını sağlıyoruz
-            tum_videolar_arama_icin[dosya_adi] = {
-                "baslik": video['title'],
-                "link": dosya_adi,
-                "resim": video['thumbnail']
-            }
-
-        # --- KATEGORİ SEO METNİ KONTROLÜ VE ÜRETİMİ ---
-        if kategori_adi not in kategori_seo_sozluk or len(kategori_seo_sozluk[kategori_adi]) < 10:
-            print(f"  + Kategori SEO Metni Yazdırılıyor: {kategori_adi}")
-            yeni_seo = kategori_seo_uret(kategori_adi)
-            if yeni_seo:
-                kategori_seo_sozluk[kategori_adi] = yeni_seo
-                with open(seo_dosyasi, 'w', encoding='utf-8') as f:
-                    json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
-            else:
-                kategori_seo_sozluk[kategori_adi] = "" # Hata olursa boş bırak
-        
-        kat_seo_metni = kategori_seo_sozluk.get(kategori_adi, "")
-            
-        kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler,kategori_seo_metni=kat_seo_metni)
-        with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
-
-    # === YENİ: SERBEST POPÜLER VİDEOLAR İÇİN EKSİK SAYFALARI ÜRET ===
+    # GÜVENLİK AĞI EKLENDİ (TRY-EXCEPT)
     print("\n--- Serbest Popüler Videolar Kontrol Ediliyor ---")
     for pop_vid in populer_videolar:
-        dosya_adi = pop_vid['link']
-        
-        # Eğer bu popüler video oynatma listelerinde yoksa (sayfası üretilmemişse)
-        if dosya_adi not in uretilen_sayfalar:
-            print(f"  + Eksik popüler video bulundu, sayfası üretiliyor: {pop_vid['baslik']}")
+        try:
+            dosya_adi = pop_vid['link']
             
-            video_data = {
-                'id': pop_vid['id'],
-                'title': pop_vid['baslik'],
-                'description': pop_vid['description'],
-                'thumbnail': pop_vid['resim']
-            }
-            
-            # 1. Yapay Zeka Makalesi Yazdır (veya cache'den al)
-            if video_data['id'] in ai_cache and len(ai_cache[video_data['id']]) > 50:
-                print(f"  √ (Önbellekten alındı)")
-                video_data['ai_metin'] = ai_cache[video_data['id']]
-            else:
-                if AI_KOTALARI_DOLDU:
-                    video_data['ai_metin'] = ""
-                else:
-                    print(f"  + (Yapay Zeka Makale Yazıyor)")
-                    yeni_metin = yapay_zeka_makale_yazdir(video_data['title'], video_data['description'])
-                    if yeni_metin:
-                        video_data['ai_metin'] = yeni_metin
-                        ai_cache[video_data['id']] = yeni_metin
-                        with open(cache_dosyasi, 'w', encoding='utf-8') as f:
-                            json.dump(ai_cache, f, ensure_ascii=False, indent=4)
-                    else:
-                        video_data['ai_metin'] = ""
-                        
-            # 2. HTML Sayfasını Üret ve Kaydet
-            html_icerik = template_video.render(
-                video=video_data, 
-                kategori_adi="Popüler Videolar", 
-                kategori_dosya_adi="index.html", # Kategoriye dön butonu ana sayfaya atsın
-                tum_kategoriler=tum_kategoriler
-            )
-            
-            with open(dosya_adi, 'w', encoding='utf-8') as f: 
-                f.write(html_icerik)
+            if dosya_adi not in uretilen_sayfalar:
+                print(f"  + Eksik popüler video bulundu, sayfası üretiliyor: {pop_vid['baslik']}")
                 
-            # 3. Sayfayı ve Arama Motorunu Güncelle
-            uretilen_sayfalar.append(dosya_adi)
-            tum_videolar_arama_icin[dosya_adi] = {
-                "baslik": video_data['title'],
-                "link": dosya_adi,
-                "resim": video_data['thumbnail']
-            }
-    # ================================================================
+                video_data = {
+                    'id': pop_vid['id'],
+                    'title': pop_vid['baslik'],
+                    'description': pop_vid['description'],
+                    'thumbnail': pop_vid['resim']
+                }
+                
+                if video_data['id'] in ai_cache and len(ai_cache[video_data['id']]) > 50:
+                    print(f"  √ (Önbellekten alındı)")
+                    video_data['ai_metin'] = ai_cache[video_data['id']]
+                else:
+                    if AI_KOTALARI_DOLDU:
+                        video_data['ai_metin'] = ""
+                    else:
+                        print(f"  + (Yapay Zeka Makale Yazıyor)")
+                        yeni_metin = yapay_zeka_makale_yazdir(video_data['title'], video_data['description'])
+                        if yeni_metin:
+                            video_data['ai_metin'] = yeni_metin
+                            ai_cache[video_data['id']] = yeni_metin
+                            with open(cache_dosyasi, 'w', encoding='utf-8') as f:
+                                json.dump(ai_cache, f, ensure_ascii=False, indent=4)
+                        else:
+                            video_data['ai_metin'] = ""
+                            
+                html_icerik = template_video.render(
+                    video=video_data, 
+                    kategori_adi="Popüler Videolar", 
+                    kategori_dosya_adi="index.html", 
+                    tum_kategoriler=tum_kategoriler
+                )
+                
+                with open(dosya_adi, 'w', encoding='utf-8') as f: 
+                    f.write(html_icerik)
+                    
+                uretilen_sayfalar.append(dosya_adi)
+                tum_videolar_arama_icin[dosya_adi] = {
+                    "baslik": video_data['title'],
+                    "link": dosya_adi,
+                    "resim": video_data['thumbnail']
+                }
+        except Exception as e:
+            print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
 
-    # 2. E-Tablodan Onaylı Modelleri Çek
     onayli_modeller = onayli_modelleri_cek()
-    
-    # 2. E-Tablodan Onaylı Modelleri Çek
-    onayli_modeller = onayli_modelleri_cek()
-    
-    # 3. YENİ EKLENEN: Son 5 Modeli Ayrıştırma (Sondan başa doğru ilk 5'i al)
     son_5_model = list(reversed(onayli_modeller))[:5]
 
     template_kullanici_model = env.get_template('kullanici_model_sablon.html')
 
     for model in onayli_modeller:
-      model_html = template_kullanici_model.render(model=model)
-      dosya_yolu = os.path.join('', model['dosya_adi'])
+      try:
+          model_html = template_kullanici_model.render(model=model)
+          dosya_yolu = os.path.join('', model['dosya_adi'])
+    
+          with open(dosya_yolu, 'w', encoding='utf-8') as f:
+            f.write(model_html)
+    
+          uretilen_sayfalar.append(model['dosya_adi'])
+          print(f"Yayınlanan Model Sayfası Üretildi: {model['dosya_adi']}")
+      except Exception as e:
+          print(f"Kullanıcı modeli üretilirken hata: {e}")
 
-      with open(dosya_yolu, 'w', encoding='utf-8') as f:
-        f.write(model_html)
-
-      uretilen_sayfalar.append(model['dosya_adi'])
-      print(f"Yayınlanan Model Sayfası Üretildi: {model['dosya_adi']}")
-
-    # ==========================================
-    # KULLANICI KATEGORİ SAYFALARININ ÜRETİLMESİ
-    # ==========================================
     kullanici_kategorileri = {
         "İğne Oyası": "kullanici_kategori_igne_oyasi.html",
         "Mekik Oyası": "kullanici_kategori_mekik_oyasi.html",
@@ -488,74 +474,71 @@ def sayfalari_olustur():
         "Diğer El İşleri": "kullanici_kategori_diger_el_isleri.html"
     }
 
-    # Modelleri ait oldukları kategoriye göre gruplamak için boş sözlükler oluşturuyoruz
     kategori_modelleri = {k: [] for k in kullanici_kategorileri.keys()}
 
-    # Onaylı modelleri tarayıp ilgili kategori listesine ekliyoruz
     for model in onayli_modeller:
         kat = model['kategori']
         if kat in kategori_modelleri:
-            
-            # YENİ EKLENEN: Drive linklerini resim formatına (uc?export=view) çevirme işlemi
             medya_linki = str(model['medya'])
             if "drive.google.com/file/d/" in medya_linki:
                 try:
-                    # Linkin içinden sadece ID kodunu çekip, doğrudan resim linki oluşturuyoruz
                     dosya_id = medya_linki.split('/d/')[1].split('/')[0]
                     medya_linki = f"https://lh3.googleusercontent.com/d/{dosya_id}"
                 except:
-                    pass # Eğer bölme işleminde bir hata olursa orijinal link kalsın
+                    pass 
             
             kategori_modelleri[kat].append({
                 'title': model['baslik'],
                 'dosya_adi': model['dosya_adi'],
-                'thumbnail': medya_linki # Artık kırık resim yerine dönüştürülmüş linki gönderiyoruz
+                'thumbnail': medya_linki 
             })
 
     print("\nKullanıcı Kategori Sayfaları Oluşturuluyor...")
-    # Her bir kategori için HTML sayfasını üretiyoruz
     for kat_adi, dosya_adi in kullanici_kategorileri.items():
-        sayfa_basligi_tam = f"{kat_adi} (Sizden Gelenler)"
-        
-        # --- KATEGORİ SEO METNİ KONTROLÜ VE ÜRETİMİ ---
-        if sayfa_basligi_tam not in kategori_seo_sozluk or len(kategori_seo_sozluk[sayfa_basligi_tam]) < 10:
-            print(f"  + Kategori SEO Metni Yazdırılıyor: {sayfa_basligi_tam}")
-            yeni_seo = kategori_seo_uret(sayfa_basligi_tam)
-            if yeni_seo:
-                kategori_seo_sozluk[sayfa_basligi_tam] = yeni_seo
-                with open(seo_dosyasi, 'w', encoding='utf-8') as f:
-                    json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
-            else:
-                kategori_seo_sozluk[sayfa_basligi_tam] = ""
-        
-        kat_seo_metni = kategori_seo_sozluk.get(sayfa_basligi_tam, "")
-        kat_html = template_index.render(
-            is_ana_sayfa=False, 
-            sayfa_basligi=f"{kat_adi} (Sizden Gelenler)", 
-            videolar=kategori_modelleri[kat_adi], 
-            tum_kategoriler=tum_kategoriler,
-            kategori_seo_metni=kat_seo_metni
-        )
-        with open(dosya_adi, 'w', encoding='utf-8') as f:
-            f.write(kat_html)
-        
-        uretilen_sayfalar.append(dosya_adi)
-        print(f"  √ {dosya_adi} üretildi. ({len(kategori_modelleri[kat_adi])} model)")
-    # ==========================================
+        try:
+            sayfa_basligi_tam = f"{kat_adi} (Sizden Gelenler)"
+            
+            if sayfa_basligi_tam not in kategori_seo_sozluk or len(kategori_seo_sozluk[sayfa_basligi_tam]) < 10:
+                print(f"  + Kategori SEO Metni Yazdırılıyor: {sayfa_basligi_tam}")
+                yeni_seo = kategori_seo_uret(sayfa_basligi_tam)
+                if yeni_seo:
+                    kategori_seo_sozluk[sayfa_basligi_tam] = yeni_seo
+                    with open(seo_dosyasi, 'w', encoding='utf-8') as f:
+                        json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
+                else:
+                    kategori_seo_sozluk[sayfa_basligi_tam] = ""
+            
+            kat_seo_metni = kategori_seo_sozluk.get(sayfa_basligi_tam, "")
+            kat_html = template_index.render(
+                is_ana_sayfa=False, 
+                sayfa_basligi=f"{kat_adi} (Sizden Gelenler)", 
+                videolar=kategori_modelleri[kat_adi], 
+                tum_kategoriler=tum_kategoriler,
+                kategori_seo_metni=kat_seo_metni
+            )
+            with open(dosya_adi, 'w', encoding='utf-8') as f:
+                f.write(kat_html)
+            
+            uretilen_sayfalar.append(dosya_adi)
+            print(f"  √ {dosya_adi} üretildi. ({len(kategori_modelleri[kat_adi])} model)")
+        except Exception as e:
+            print(f"! Kullanıcı kategorisi işlenirken hata: {e}")
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
     
-    # ŞABLONA YENİ VERİLERİ (POPÜLER VİDEOLAR VE SON 5 MODEL) GÖNDERİYORUZ
-    index_icerik = template_index.render(
-        is_ana_sayfa=True, 
-        sayfa_basligi="Ana Sayfa", 
-        site_verisi=site_verisi, 
-        tum_kategoriler=tum_kategoriler,
-        populer_videolar=populer_videolar,  
-        son_modeller=son_5_model            
-    )
-    
-    with open('index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
+    try:
+        index_icerik = template_index.render(
+            is_ana_sayfa=True, 
+            sayfa_basligi="Ana Sayfa", 
+            site_verisi=site_verisi, 
+            tum_kategoriler=tum_kategoriler,
+            populer_videolar=populer_videolar,  
+            son_modeller=son_5_model            
+        )
+        with open('index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
+    except Exception as e:
+        print(f"Ana sayfa üretilirken hata: {e}")
+        
     sitemap_olustur(uretilen_sayfalar)
 
     template_giris = env.get_template('giris_sablon.html')
