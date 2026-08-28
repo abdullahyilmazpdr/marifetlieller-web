@@ -373,10 +373,21 @@ def sayfalari_olustur():
     for model in onayli_modeller:
         kat = model['kategori']
         if kat in kategori_modelleri:
+            
+            # YENİ EKLENEN: Drive linklerini resim formatına (uc?export=view) çevirme işlemi
+            medya_linki = str(model['medya'])
+            if "drive.google.com/file/d/" in medya_linki:
+                try:
+                    # Linkin içinden sadece ID kodunu çekip, doğrudan resim linki oluşturuyoruz
+                    dosya_id = medya_linki.split('/d/')[1].split('/')[0]
+                    medya_linki = f"https://drive.google.com/uc?export=view&id={dosya_id}"
+                except:
+                    pass # Eğer bölme işleminde bir hata olursa orijinal link kalsın
+            
             kategori_modelleri[kat].append({
                 'title': model['baslik'],
                 'dosya_adi': model['dosya_adi'],
-                'thumbnail': model['medya'] # Kapak fotoğrafı olarak yüklenen medyayı kullanıyoruz
+                'thumbnail': medya_linki # Artık kırık resim yerine dönüştürülmüş linki gönderiyoruz
             })
 
     print("\nKullanıcı Kategori Sayfaları Oluşturuluyor...")
