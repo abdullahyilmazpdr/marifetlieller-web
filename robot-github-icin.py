@@ -211,6 +211,22 @@ def sitemap_olustur(sayfa_listesi):
     xml += '</urlset>'
     with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(xml)
 
+# ==========================================
+# YÖNETİCİ KATEGORİ SIRALAMA LİSTESİ
+# ==========================================
+# Ana menüde ve "Tüm Kategoriler" sekmesinde en üstte çıkmasını istediğiniz 
+# oynatma listelerinin TAM İSİMLERİNİ sırasıyla buraya yazın.
+# Buraya yazmadıklarınız, otomatik olarak bu listenin altına eklenecektir.
+ISTENEN_SIRALAMA = [
+    "İğne Oyası Yapılışı",
+    "Mekik Oyası Yapılışı",
+    "Yazmada İğne Oyası Modelleri",
+    "Fular Modelleri ve Anlatımlı Yapılış Videoları",
+    "Keloğlan Modelleri",
+    "Kelebek Modelleri",
+    "İğne Oyası Havlu Kenarı Modelleri ve Yapılışları",
+]
+
 def sayfalari_olustur():
     if not os.path.exists('cikti_sayfalari'): os.makedirs('cikti_sayfalari')
 
@@ -236,6 +252,19 @@ def sayfalari_olustur():
 
     listeler = oynatma_listelerini_getir()
     print(f"Sistem Başlatıldı. {len(listeler)} kategori bulundu.\n")
+
+    # --- YENİ EKLENEN: KATEGORİLERİ ÖZEL LİSTEYE GÖRE SIRALAMA ---
+    def siralama_anahtari(liste_item):
+        baslik = liste_item['snippet']['title']
+        try:
+            # Başlık bizim özel listemizde varsa, oradaki sırasını (indeksini) ver
+            return ISTENEN_SIRALAMA.index(baslik)
+        except ValueError:
+            # Eğer özel listede yoksa, en sona atması için büyük bir sayı (999) ver
+            return 999
+
+    # Çekilen oynatma listelerini belirlediğimiz kurala göre sıralıyoruz
+    listeler.sort(key=siralama_anahtari)
     
     tum_kategoriler = []
     for liste in listeler:
