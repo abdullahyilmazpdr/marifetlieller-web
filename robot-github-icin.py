@@ -87,13 +87,15 @@ def populer_videolari_getir():
         for item in response.get('items', []):
             videoid = item['id']['videoId']
             baslik = item['snippet']['title']
+            aciklama = item['snippet']['description'] # Makale için eklendi
             resim = item['snippet']['thumbnails']['high']['url']
             
             baslik_seo = url_uyumlu_yap(baslik)
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
             
-            populerler.append({'baslik': baslik, 'resim': resim, 'link': link})
+            # Tüm bilgileri sözlüğe ekledik
+            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link})
         return populerler
     except Exception as e:
         print(f"Popüler video çekme hatası: {e}")
@@ -337,6 +339,63 @@ def sayfalari_olustur():
         kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
         with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
 
+    # === YENİ: SERBEST POPÜLER VİDEOLAR İÇİN EKSİK SAYFALARI ÜRET ===
+    print("\n--- Serbest Popüler Videolar Kontrol Ediliyor ---")
+    for pop_vid in populer_videolar:
+        dosya_adi = pop_vid['link']
+        
+        # Eğer bu popüler video oynatma listelerinde yoksa (sayfası üretilmemişse)
+        if dosya_adi not in uretilen_sayfalar:
+            print(f"  + Eksik popüler video bulundu, sayfası üretiliyor: {pop_vid['baslik']}")
+            
+            video_data = {
+                'id': pop_vid['id'],
+                'title': pop_vid['baslik'],
+                'description': pop_vid['description'],
+                'thumbnail': pop_vid['resim']
+            }
+            
+            # 1. Yapay Zeka Makalesi Yazdır (veya cache'den al)
+            if video_data['id'] in ai_cache and len(ai_cache[video_data['id']]) > 50:
+                print(f"  √ (Önbellekten alındı)")
+                video_data['ai_metin'] = ai_cache[video_data['id']]
+            else:
+                if AI_KOTALARI_DOLDU:
+                    video_data['ai_metin'] = ""
+                else:
+                    print(f"  + (Yapay Zeka Makale Yazıyor)")
+                    yeni_metin = yapay_zeka_makale_yazdir(video_data['title'], video_data['description'])
+                    if yeni_metin:
+                        video_data['ai_metin'] = yeni_metin
+                        ai_cache[video_data['id']] = yeni_metin
+                        with open(cache_dosyasi, 'w', encoding='utf-8') as f:
+                            json.dump(ai_cache, f, ensure_ascii=False, indent=4)
+                    else:
+                        video_data['ai_metin'] = ""
+                        
+            # 2. HTML Sayfasını Üret ve Kaydet
+            html_icerik = template_video.render(
+                video=video_data, 
+                kategori_adi="Popüler Videolar", 
+                kategori_dosya_adi="index.html", # Kategoriye dön butonu ana sayfaya atsın
+                tum_kategoriler=tum_kategoriler
+            )
+            
+            with open(dosya_adi, 'w', encoding='utf-8') as f: 
+                f.write(html_icerik)
+                
+            # 3. Sayfayı ve Arama Motorunu Güncelle
+            uretilen_sayfalar.append(dosya_adi)
+            tum_videolar_arama_icin.append({
+                "baslik": video_data['title'],
+                "link": dosya_adi,
+                "resim": video_data['thumbnail']
+            })
+    # ================================================================
+
+    # 2. E-Tablodan Onaylı Modelleri Çek
+    onayli_modeller = onayli_modelleri_cek()
+    
     # 2. E-Tablodan Onaylı Modelleri Çek
     onayli_modeller = onayli_modelleri_cek()
     
