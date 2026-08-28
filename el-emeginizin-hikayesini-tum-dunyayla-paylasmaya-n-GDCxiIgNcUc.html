@@ -5,11 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Dinamik SEO Etiketleri -->
-    <meta name="description"
-        content="Tesbih Başı Modelleri modelleri, anlatımlı yapılış videoları ve ipuçları.">
+    <!-- Dinamik SEO Etiketleri İçeri Alındı -->
+    <meta name="description" content="Merhabalar, Ben Ayşegül. İğne oyasından mekik oyasına, takı tasarımından el örgüsüne kadar tüm marifetlerinizi sergilemek artık ......">
+    <meta name="keywords"
+        content="iğne oyası, mekik oyası, oya çiçeği, Popüler Videolar, çeyizlik modeller, el işi, El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵">
+    <meta name="author" content="Marifetli Eller">
 
-    <title>Tesbih Başı Modelleri - Marifetli Eller</title>
+    <meta property="og:title" content="El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵 - Marifetli Eller">
+    <meta property="og:description" content="Merhabalar, Ben Ayşegül. İğne oyasından mekik oyasına, takı tasarımından el örgüsüne kadar tüm marif...">
+    <meta property="og:image" content="https://i.ytimg.com/vi/GDCxiIgNcUc/hqdefault.jpg">
+    <meta property="og:url" content="https://marifetliel.com/index.html">
+
+    <title>El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵 - Marifetli Eller</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -73,7 +80,7 @@
             --arka-plan: #fdfbfb;
             --kutu-arka-plan: #ffffff;
             --metin-koyu: #333333;
-            --metin-acik: #666666;
+            --metin-acik: #555555;
             --kenarlik: #f0e6e6;
             --hover-renk: #fff0f3;
         }
@@ -160,6 +167,7 @@
             border-radius: 3px;
             transition: all 0.3s ease;
         }
+
 
         /* Arama Çubuğu CSS'i */
         .arama-alani {
@@ -281,126 +289,21 @@
             display: block;
         }
 
+
         main {
             flex: 1;
             width: 100%;
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
-        .sayfa-baslik {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .sayfa-baslik h1 {
-            font-family: 'Lora', serif;
-            color: var(--ana-renk);
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .sayfa-baslik p {
-            color: var(--metin-acik);
-            font-size: 16px;
-            margin: 0;
-        }
-
-        .galeri-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .video-kart {
+        .video-kutu {
             background-color: var(--kutu-arka-plan);
+            padding: 30px;
             border-radius: 12px;
-            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             border: 1px solid var(--kenarlik);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-        }
-
-        .video-kart:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1);
-            border-color: #ffdce3;
-        }
-
-        .kart-resim {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-            background-color: #eee;
-            overflow: hidden;
-        }
-
-        .kart-resim img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .oynat-ikon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background-color: rgba(214, 51, 108, 0.9);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .oynat-ikon::after {
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 10px 0 10px 16px;
-            border-color: transparent transparent transparent #fff;
-            margin-left: 4px;
-        }
-
-        .video-kart:hover .oynat-ikon {
-            opacity: 1;
-        }
-
-        .kart-icerik {
-            padding: 15px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .kart-baslik {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--metin-koyu);
-            line-height: 1.4;
-            margin: 0 0 10px 0;
-        }
-
-        .video-kart:hover .kart-baslik {
-            color: var(--ana-renk);
-        }
-
-        .kart-tarih {
-            margin-top: auto;
-            font-size: 12px;
-            color: #999;
         }
 
         .geri-don {
@@ -424,6 +327,48 @@
             border-color: #ffdce3;
         }
 
+        h1 {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .video-iframe {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .video-iframe iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .aciklama-alani {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--kenarlik);
+        }
+
+        .aciklama {
+            font-size: 14px;
+            color: var(--metin-acik);
+            white-space: pre-line;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--ana-renk);
+        }
+
         footer {
             background-color: #2c3e50;
             color: #ecf0f1;
@@ -445,18 +390,12 @@
         }
 
         .sosyal-medya a {
-            display: inline-block;
             padding: 10px 20px;
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
             font-size: 14px;
-            transition: background 0.3s;
-        }
-
-        .sosyal-medya a:hover {
-            background-color: var(--ana-renk);
         }
 
         .footer-alt {
@@ -466,12 +405,7 @@
             color: #bdc3c7;
         }
 
-        /* Responsive ve Hamburger Menü */
         @media (max-width: 860px) {
-            .galeri-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            }
-
             .hamburger {
                 display: flex;
             }
@@ -762,176 +696,55 @@
 </script>
 
     <main>
-        
-            
-        <!-- YALNIZCA KATEGORİ SAYFALARINDA GÖRÜNECEK ALANLAR -->
-        <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
+        <a href="index.html" class="geri-don">← Popüler Videolar Kategorisine Dön</a>
 
-        <div class="sayfa-baslik">
-            <h1>Tesbih Başı Modelleri</h1>
+        <div class="video-kutu">
+            <h1>El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵</h1>
+
+            <div class="video-iframe">
+                <iframe src="https://www.youtube.com/embed/GDCxiIgNcUc" allowfullscreen></iframe>
+            </div>
+
+            <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                
+                <!-- WhatsApp Paylaş -->
+                <button onclick="whatsappPaylas('El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    💬 WhatsApp
+                </button>
+                
+                <!-- Facebook Paylaş -->
+                <button onclick="facebookPaylas()" style="background-color: #1877F2; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📘 Facebook
+                </button>
+
+                <!-- Pinterest Paylaş -->
+                <button onclick="pinterestPaylas('El emeğinizin hikayesini tüm dünyayla paylaşmaya ne dersiniz? 🌸🧵')" style="background-color: #E60023; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📌 Pinterest
+                </button>
+
+                <!-- Instagram (Bağlantı Kopyalama) -->
+                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📸 Instagram'da Paylaş
+                </button>
+            </div>
         </div>
 
-        <div class="galeri-grid">
+            <div style="margin-top: 20px; text-align: center;">
+                <!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- AdSense veya Admatic Banner Kodları buraya gelecek -->
+            </div>
+
+            <div class="aciklama-alani">
+                <div class="aciklama">Merhabalar, Ben Ayşegül. İğne oyasından mekik oyasına, takı tasarımından el örgüsüne kadar tüm marifetlerinizi sergilemek artık ...</div>
+            </div>
+
             
-            <a href="igne-oyasi-uc-boyutlu-lale-modeli-yapilisi-64-mode-O2u167VD_Jc.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/O2u167VD_Jc/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Üç Boyutlu Lale Modeli Yapılışı | 64. Model</h3>
-                </div>
-            </a>
-            
-            <a href="igne-oyasi-boncuk-sarma-ve-kiraz-modelinin-anlatim-m8NcjUMmco8.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/m8NcjUMmco8/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Boncuk Sarma ve Kiraz Modelinin Anlatımlı Yapılışı | 75. Model</h3>
-                </div>
-            </a>
-            
-            <a href="mekik-oyasi-cok-guzel-bir-cicek-modeli-ctbPX5B31nc.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/ctbPX5B31nc/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Mekik Oyası Çok Güzel Bir Çiçek Modeli</h3>
-                </div>
-            </a>
-            
-            <a href="igne-oyasi-uc-boyutlu-3d-gul-yapimi-77-model-I7LT1nTdDu8.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/I7LT1nTdDu8/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Üç Boyutlu (3D) Gül Yapımı | 77. Model</h3>
-                </div>
-            </a>
-            
-            <a href="igne-oyasi-kupeli-cicegi-anlatimli-yapilisi-29-mod-kgxgmDN0RzI.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/kgxgmDN0RzI/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Küpeli Çiçeği Anlatımlı Yapılışı | 29. Model</h3>
-                </div>
-            </a>
-            
-            <a href="bu-video-sizlere-igne-oyasi-adina-cok-sey-katacak-SFggWRfJFsQ.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/SFggWRfJFsQ/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Bu Video Sizlere İğne Oyası Adına Çok Şey Katacak | 480. Model</h3>
-                </div>
-            </a>
-            
-            <a href="kupeli-cicegi-anlatimli-yapilisi-29-model-N_7hcbEto0Q.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/N_7hcbEto0Q/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Küpeli Çiçeği Anlatımlı Yapılışı | 29. Model</h3>
-                </div>
-            </a>
-            
-            <a href="mekik-ve-igne-oyasi-ile-uc-boyutlu-cicek-yapilisi-7YuwihHU3gU.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/7YuwihHU3gU/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Mekik ve İğne Oyası İle Üç Boyutlu Çiçek Yapılışı</h3>
-                </div>
-            </a>
-            
-            <a href="puf-noktalariyla-uc-boyutlu-gelincik-modeli-anlati-TmAYdtxMz7M.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/TmAYdtxMz7M/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Püf Noktalarıyla Üç Boyutlu Gelincik Modeli Anlatımlı Yapılışı | 364. Model</h3>
-                </div>
-            </a>
-            
-            <a href="igne-oyasi-can-cicegi-anlatimli-yapilisi-34-model-uEFDtJky-3Y.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/uEFDtJky-3Y/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Çan Çiçeği Anlatımlı Yapılışı | 34. Model</h3>
-                </div>
-            </a>
-            
-            <a href="igne-oyasi-uc-boyutlu-cicek-modeli-anlatimli-yapil--dPGv5ilHrE.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/-dPGv5ilHrE/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">İğne Oyası Üç Boyutlu Çiçek Modeli Anlatımlı Yapılışı (Etkinlik Modeli) | 153. Model</h3>
-                </div>
-            </a>
-            
-            <a href="mekik-oyasi-uc-boyutlu-kupeli-ciceginin-yapragiyla-HioDSWFq4SM.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/HioDSWFq4SM/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Mekik Oyası Üç Boyutlu Küpeli Çiçeğinin Yaprağıyla Anlatımlı Yapılışı</h3>
-                </div>
-            </a>
-            
-            <a href="zeytin-dali-modeli-anlatimli-yapilisi-279-model-qYf9DzYAS4I.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/qYf9DzYAS4I/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Zeytin Dalı Modeli Anlatımlı Yapılışı | 279. Model</h3>
-                </div>
-            </a>
-            
-            <a href="mekikle-dolgulu-gul-oyasi-yapilisi-GS6aTvSRnT8.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/GS6aTvSRnT8/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Mekikle Dolgulu Gül Oyası Yapılışı</h3>
-                </div>
-            </a>
-            
-            <a href="yep-yeni-muhtesem-bir-tasarimin-puf-noktalariyla-a-_9ZR8UcNJVE.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://i.ytimg.com/vi/_9ZR8UcNJVE/hqdefault.jpg" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Yep Yeni Muhteşem Bir Tasarımın Püf Noktalarıyla Anlatımlı Yapılışı | Handcrafted Heart | 472. Model</h3>
-                </div>
-            </a>
-            
+
         </div>
-        
     </main>
-
-    <!-- SADECE ANA SAYFADA GÖRÜNECEK SEO METNİ -->
-        
-
-    <!-- KATEGORİYE ÖZEL SEO METNİ (EĞER VARSA) -->
-        
 
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
@@ -965,69 +778,57 @@
     </footer>
 
     <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
-        let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
-        if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
+            let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
+            if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
 
-        // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
+            // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
 
-        // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
-        fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
-            .then(response => response.text())
-            .then(data => {
-                if(data && !isNaN(data) && data !== "0") {
-                    document.getElementById("sayfa-sayac").innerText = data;
-                } else {
-                    document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
-                }
-            })
-            .catch(error => {
-                console.error("Sayaç hatası:", error);
-                document.getElementById("sayfa-sayac").innerText = "-";
-            });
-    });
-</script>
-
-<script>
-            // Apps Script'ten onaylı son 5 modeli çekme
-            document.addEventListener("DOMContentLoaded", function () {
-                const url = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=son_modeller";
-                
-                fetch(url)
-                .then(response => response.json())
+            // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
+            fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
+                .then(response => response.text())
                 .then(data => {
-                    const liste = document.getElementById('sonEklenenlerListesi');
-                    if(data.length === 0) {
-                        liste.innerHTML = '<p style="font-size: 13px; color: #888;">Henüz eklenen model bulunmuyor.</p>';
-                        return;
+                    if (data && !isNaN(data) && data !== "0") {
+                        document.getElementById("sayfa-sayac").innerText = data;
+                    } else {
+                        document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
                     }
-                    
-                    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
-                    data.forEach(model => {
-                        // SEO URL Hesaplama
-                        let seo = model.baslik.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
-                        let url = seo.substring(0, 50).replace(/-+$/, '') + "-" + String(model.id).slice(-5) + ".html";
-                        
-                        html += `
-                            <a href="${url}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px;">
-                                <div style="background: var(--hover-renk); color: var(--ana-renk); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">✨</div>
-                                <div>
-                                    <h4 style="margin: 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">${model.baslik}</h4>
-                                    <span style="font-size: 11px; color: #888;">${model.yazar} • ${model.kategori}</span>
-                                </div>
-                            </a>
-                        `;
-                    });
-                    html += '</div>';
-                    liste.innerHTML = html;
                 })
-                .catch(err => {
-                    document.getElementById('sonEklenenlerListesi').innerHTML = '<p style="font-size: 13px; color: red;">Modeller yüklenemedi.</p>';
+                .catch(error => {
+                    console.error("Sayaç hatası:", error);
+                    document.getElementById("sayfa-sayac").innerText = "-";
                 });
-            });
+        });
+    </script>
+     <!-- AKILLI PAYLAŞIM SCRİPTLERİ -->
+        <script>
+            function whatsappPaylas(baslik) {
+                var url = window.location.href;
+                var mesaj = baslik + " - Marifetli Eller'de harika bir model gördüm! Mutlaka incele: " + url;
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(mesaj), "_blank");
+            }
+
+            function facebookPaylas() {
+                var url = window.location.href;
+                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
+            }
+
+            function pinterestPaylas(baslik) {
+                var url = window.location.href;
+                window.open("https://pinterest.com/pin/create/button/?url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(baslik), "_blank");
+            }
+
+            function instagramIcinKopyala() {
+                var sayfaLinki = window.location.href;
+                navigator.clipboard.writeText(sayfaLinki).then(function() {
+                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+                }).catch(function(err) {
+                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+                });
+            }
         </script>
 
 </body>
