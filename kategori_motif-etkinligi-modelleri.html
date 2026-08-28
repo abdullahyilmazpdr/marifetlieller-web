@@ -234,7 +234,6 @@
         }
 
         .dropdown>a::after {
-            content: "▾";
             position: absolute;
             right: 0;
             top: 50%;
@@ -695,6 +694,7 @@
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
                         <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
+                        <a href="profil.html" style="background: var(--ana-renk); color: white; border: none; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: 500; transition: 0.2s;">👤 Profilim</a>
                         <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
                     </div>
                 `;
@@ -762,8 +762,79 @@
 </script>
 
     <main>
+
+        <!-- 1. KARŞILAMA EKRANI (HERO BANNER) -->
+        <div style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/assets/img/marifetliel.com-hero-banner.jpg') center/cover; color: white; padding: 80px 20px; text-align: center; border-radius: 15px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h1 style="font-family: 'Lora', serif; font-size: 38px; margin-top: 0; margin-bottom: 15px; color: #ffffff; vertical-align: middle;"> <span style="font-family: 'Cuisine', cursive; font-size: 46px; letter-spacing: 2px; margin-right: 5px;">Marifetli Eller</span>'e Hoş Geldiniz</h1>
+
+            <p style="font-size: 18px; max-width: 650px; margin: 0 auto 30px; line-height: 1.6; opacity: 0.9;">Anadolu'nun eşsiz el sanatları mirasını yaşatıyoruz. İğne oyası ve mekik oyası modellerini keşfedin, yapılışlarını öğrenin ve kendi eserlerinizi binlerce kişiyle paylaşın.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="#arsiv" style="background: var(--ana-renk); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(214,51,108,0.4);">Arşivi Keşfet</a>
+                <a href="model-gonder.html" style="background: rgba(255,255,255,0.15); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; border: 1px solid white; transition: 0.3s; backdrop-filter: blur(5px);">Kendi Modelini Gönder</a>
+            </div>
+        </div>
+
+        <!-- 2. DİNAMİK VİTRİN: POPÜLER VİDEOLAR & SON EKLENENLER -->
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 50px;">
+            
+            <!-- Sol: Popüler Videolar -->
+            <div style="flex: 2; min-width: 300px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 22px;">🔥 Haftanın Popüler Videoları</h3>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    
+                </div>
+            </div>
+
+            <!-- Sağ: Son Eklenen Modeller -->
+            <div style="flex: 1; min-width: 300px; background: var(--kutu-arka-plan); padding: 20px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                <h3 style="margin: 0 0 20px 0; font-family: 'Lora', serif; color: var(--ana-renk); font-size: 20px; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px;">🆕 Son Eklenenler</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    
+                    
+                    <p style="font-size: 13px; color: #888; text-align:center;">Henüz eklenen model bulunmuyor.</p>
+                    
+                </div>
+            </div>
+        </div>
+
         
-        <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
+        <!-- YENİ EKLENEN: SİZDEN GELENLER VİTRİNİ -->
+        <div style="background: linear-gradient(135deg, #fff0f3 0%, #ffffff 100%); padding: 40px 30px; border-radius: 15px; border: 1px solid #ffdce3; margin-bottom: 50px; text-align: center; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.05);">
+            <h2 style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 28px; margin-top: 0;">✨ Sizden Gelen El Emekleri</h2>
+            <p style="color: var(--metin-acik); margin-bottom: 30px; font-size: 15px;">Topluluğumuzun paylaştığı harika modelleri kategorilerine göre inceleyin veya kendi eserinizi sergileyin.</p>
+            
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px;">
+                <!-- Kategori Linkleri (Hedef URL'leri ileride Python ile üreteceğimiz listeleme sayfaları olacak) -->
+                <a href="kullanici_kategori_igne_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🌸 İğne Oyası</a>
+                
+                <a href="kullanici_kategori_mekik_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧶 Mekik Oyası</a>
+                
+                <a href="kullanici_kategori_tig_oyasi.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧵 Tığ Oyası</a>
+                
+                <a href="kullanici_kategori_orgu_modelleri.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">🧤 Örgü Modelleri</a>
+                
+                <a href="kullanici_kategori_diger_el_isleri.html" style="background: white; color: var(--metin-koyu); padding: 15px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--kenarlik); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">✨ Diğer El İşleri</a>
+            </div>
+
+            <a href="model-gonder.html" style="display: inline-block; background: var(--ana-renk); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.3);">
+                + Kendi Modelini Gönder
+            </a>
+        </div>
+        
+        <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
+        <div class="sayfa-baslik" id="arsiv">
+            <h1>Model Arşivi Galerisi</h1>
+            <p>İğne oyası ve oya çiçeği desenlerimizi kategoriler halinde keşfedin.</p>
+            
+        
+            
+        <!-- YALNIZCA KATEGORİ SAYFALARINDA GÖRÜNECEK ALANLAR -->
+        <a href="index.html" style="display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px;">← Ana Sayfaya Dön</a>
 
         <div class="sayfa-baslik">
             <h1>Motif Etkinliği Modelleri</h1>
@@ -814,6 +885,13 @@
         </div>
         
     </main>
+
+    <!-- SEO METNİ VE İÇ LİNKLEME ALANI -->
+        <div style="background-color: var(--kutu-arka-plan); padding: 40px 30px; border-radius: 15px; border: 1px solid var(--kenarlik); margin-top: 30px; margin-bottom: 30px; line-height: 1.8; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+            <h2 style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-top: 0;">Geleneksel El Sanatları: İğne ve Mekik Oyası</h2>
+            <p>Çeyizlerin vazgeçilmezi olan <a href="kategori_igne-oyasi-yapilisi.html" style="color: var(--ana-renk); font-weight: 500; text-decoration: none;">iğne oyası modelleri</a>, zarafeti ve ince işçiliğiyle göz kamaştırırken, <a href="kategori_mekik-oyasi-yapilisi.html" style="color: var(--ana-renk); font-weight: 500; text-decoration: none;">mekik oyası</a> tasarımları nostaljik dokunuşları günümüze taşıyor. <strong>Marifetli Eller</strong> olarak bu paha biçilemez kültürel mirası dijital dünyada yaşatmaya devam ediyoruz.</p>
+            <p>Sitemizde sadece hazır desenleri değil, aynı zamanda adım adım öğrenebileceğiniz <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html" style="color: var(--ana-renk); font-weight: 500; text-decoration: none;">iğne oyası dersleri</a> ve yapılış tekniklerini de detaylı makalelerimizle bulabilirsiniz. Havlu kenarlarından rengarenk <a href="kategori_yazmada-igne-oyasi-modelleri.html" style="color: var(--ana-renk); font-weight: 500; text-decoration: none;">yazma modellerine</a>, takı tasarımlarından çeyizlik namaz örtülerine kadar yüzlerce videoluk arşivimizi keşfedin. Türkiye'nin dört bir yanından hanımların el emeklerini paylaştığı topluluğumuza katılarak, siz de eserlerinizi on binlerce kişiye ulaştırabilirsiniz.</p>
+        </div>
 
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
@@ -872,6 +950,45 @@
             });
     });
 </script>
+
+<script>
+            // Apps Script'ten onaylı son 5 modeli çekme
+            document.addEventListener("DOMContentLoaded", function () {
+                const url = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=son_modeller";
+                
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const liste = document.getElementById('sonEklenenlerListesi');
+                    if(data.length === 0) {
+                        liste.innerHTML = '<p style="font-size: 13px; color: #888;">Henüz eklenen model bulunmuyor.</p>';
+                        return;
+                    }
+                    
+                    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
+                    data.forEach(model => {
+                        // SEO URL Hesaplama
+                        let seo = model.baslik.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
+                        let url = seo.substring(0, 50).replace(/-+$/, '') + "-" + String(model.id).slice(-5) + ".html";
+                        
+                        html += `
+                            <a href="${url}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px;">
+                                <div style="background: var(--hover-renk); color: var(--ana-renk); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">✨</div>
+                                <div>
+                                    <h4 style="margin: 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">${model.baslik}</h4>
+                                    <span style="font-size: 11px; color: #888;">${model.yazar} • ${model.kategori}</span>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    html += '</div>';
+                    liste.innerHTML = html;
+                })
+                .catch(err => {
+                    document.getElementById('sonEklenenlerListesi').innerHTML = '<p style="font-size: 13px; color: red;">Modeller yüklenemedi.</p>';
+                });
+            });
+        </script>
 
 </body>
 
