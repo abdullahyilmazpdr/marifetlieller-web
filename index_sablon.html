@@ -496,6 +496,49 @@
     {% include 'header_sablon.html' %}
 
     <main>
+
+        <!-- 2. DİNAMİK VİTRİN: POPÜLER VİDEOLAR & SON EKLENENLER -->
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 50px;">
+            
+            <!-- Sol: Popüler Videolar -->
+            <div style="flex: 2; min-width: 300px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 22px;">🔥 Haftanın Popüler Videoları</h3>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+                    {% for vid in populer_videolar %}
+                    <a href="{{ vid.link }}" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="{{ vid.resim }}" alt="{{ vid.baslik }}"></div>
+                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">{{ vid.baslik }}</h4></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sağ: Son Eklenen Modeller -->
+            <div style="flex: 1; min-width: 300px; background: var(--kutu-arka-plan); padding: 20px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
+                <h3 style="margin: 0 0 20px 0; font-family: 'Lora', serif; color: var(--ana-renk); font-size: 20px; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px;">🆕 Son Eklenenler</h3>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    {% for model in son_modeller %}
+                    <a href="{{ model.dosya_adi }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px; border: 1px solid transparent;" onmouseover="this.style.background='var(--hover-renk)'; this.style.borderColor='var(--kenarlik)';" onmouseout="this.style.background='transparent'; this.style.borderColor='transparent';">
+                        <div style="background: var(--hover-renk); color: var(--ana-renk); width: 45px; height: 45px; min-width: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">✨</div>
+                        <div>
+                            <h4 style="margin: 0 0 3px 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">{{ model.baslik }}</h4>
+                            <span style="font-size: 11px; color: #888;">{{ model.yazar }} • {{ model.kategori }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    
+                    {% if not son_modeller %}
+                    <p style="font-size: 13px; color: #888; text-align:center;">Henüz eklenen model bulunmuyor.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        
         <!-- YENİ EKLENEN: SİZDEN GELENLER VİTRİNİ -->
         <div style="background: linear-gradient(135deg, #fff0f3 0%, #ffffff 100%); padding: 40px 30px; border-radius: 15px; border: 1px solid #ffdce3; margin-bottom: 50px; text-align: center; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.05);">
             <h2 style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 28px; margin-top: 0;">✨ Sizden Gelen El Emekleri</h2>
@@ -517,38 +560,6 @@
             <a href="model-gonder.html" style="display: inline-block; background: var(--ana-renk); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.3);">
                 + Kendi Modelini Gönder
             </a>
-        </div>
-
-        <!-- DİNAMİK VİTRİN ALANI -->
-        <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 50px;">
-            
-            <!-- SOL BÖLÜM: Haftanın Popüler Videoları -->
-            <div style="flex: 2; min-width: 300px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px; margin-bottom: 20px;">
-                    <h3 style="margin: 0; font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 22px;">🔥 Haftanın Popüler Videoları</h3>
-                </div>
-                
-                <div class="populer-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
-                    <!-- Bu kısım Python robotu ile otomatik doldurulabilir. Şimdilik statik yer tutucu eklendi. -->
-                    <a href="#" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/bkkbqfsb-K4/hqdefault.jpg"></div>
-                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Harika İğne Oyası Modeli</h4></div>
-                    </a>
-                    <a href="#" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/IcO6wy327sE/hqdefault.jpg"></div>
-                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Yeni Başlayanlar İçin Mekik</h4></div>
-                    </a>
-                </div>
-            </div>
-
-            <!-- SAĞ BÖLÜM: Son Eklenen 5 Model (Apps Script'ten Çekilecek) -->
-            <div style="flex: 1; min-width: 300px; background: var(--kutu-arka-plan); padding: 20px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
-                <h3 style="margin: 0 0 20px 0; font-family: 'Lora', serif; color: var(--ana-renk); font-size: 20px; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px;">🆕 Son Eklenenler</h3>
-                
-                <div id="sonEklenenlerListesi">
-                    <p style="font-size: 13px; color: #888; text-align: center;">Yeni modeller yükleniyor...</p>
-                </div>
-            </div>
         </div>
         
         <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
@@ -575,7 +586,9 @@
         </div>
 
         {% else %}
-        <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
+            
+        <!-- YALNIZCA KATEGORİ SAYFALARINDA GÖRÜNECEK ALANLAR -->
+        <a href="index.html" style="display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px;">← Ana Sayfaya Dön</a>
 
         <div class="sayfa-baslik">
             <h1>{{ sayfa_basligi }}</h1>
