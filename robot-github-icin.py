@@ -380,7 +380,7 @@ def sayfalari_olustur():
                 try:
                     # Linkin içinden sadece ID kodunu çekip, doğrudan resim linki oluşturuyoruz
                     dosya_id = medya_linki.split('/d/')[1].split('/')[0]
-                    medya_linki = f"https://drive.google.com/uc?export=view&id={dosya_id}"
+                    medya_linki = f"https://lh3.googleusercontent.com/d/{dosya_id}"
                 except:
                     pass # Eğer bölme işleminde bir hata olursa orijinal link kalsın
             
