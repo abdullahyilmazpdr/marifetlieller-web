@@ -326,6 +326,46 @@ def sayfalari_olustur():
       uretilen_sayfalar.append(model['dosya_adi'])
       print(f"Yayınlanan Model Sayfası Üretildi: {model['dosya_adi']}")
 
+    # ==========================================
+    # KULLANICI KATEGORİ SAYFALARININ ÜRETİLMESİ
+    # ==========================================
+    kullanici_kategorileri = {
+        "İğne Oyası": "kullanici_kategori_igne_oyasi.html",
+        "Mekik Oyası": "kullanici_kategori_mekik_oyasi.html",
+        "Tığ Oyası": "kullanici_kategori_tig_oyasi.html",
+        "Örgü Modelleri": "kullanici_kategori_orgu_modelleri.html",
+        "Diğer El İşleri": "kullanici_kategori_diger_el_isleri.html"
+    }
+
+    # Modelleri ait oldukları kategoriye göre gruplamak için boş sözlükler oluşturuyoruz
+    kategori_modelleri = {k: [] for k in kullanici_kategorileri.keys()}
+
+    # Onaylı modelleri tarayıp ilgili kategori listesine ekliyoruz
+    for model in onayli_modeller:
+        kat = model['kategori']
+        if kat in kategori_modelleri:
+            kategori_modelleri[kat].append({
+                'title': model['baslik'],
+                'dosya_adi': model['dosya_adi'],
+                'thumbnail': model['medya'] # Kapak fotoğrafı olarak yüklenen medyayı kullanıyoruz
+            })
+
+    print("\nKullanıcı Kategori Sayfaları Oluşturuluyor...")
+    # Her bir kategori için HTML sayfasını üretiyoruz
+    for kat_adi, dosya_adi in kullanici_kategorileri.items():
+        kat_html = template_index.render(
+            is_ana_sayfa=False, 
+            sayfa_basligi=f"{kat_adi} (Sizden Gelenler)", 
+            videolar=kategori_modelleri[kat_adi], 
+            tum_kategoriler=tum_kategoriler
+        )
+        with open(dosya_adi, 'w', encoding='utf-8') as f:
+            f.write(kat_html)
+        
+        uretilen_sayfalar.append(dosya_adi)
+        print(f"  √ {dosya_adi} üretildi. ({len(kategori_modelleri[kat_adi])} model)")
+    # ==========================================
+
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
     
     # ŞABLONA YENİ VERİLERİ (POPÜLER VİDEOLAR VE SON 5 MODEL) GÖNDERİYORUZ
