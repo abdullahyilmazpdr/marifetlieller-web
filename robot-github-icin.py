@@ -158,6 +158,47 @@ def yapay_zeka_makale_yazdir(baslik, aciklama):
                 
     return None
 
+def kategori_seo_uret(kategori_adi):
+    global client, AI_KOTALARI_DOLDU
+    if AI_KOTALARI_DOLDU or not client:
+        return ""
+        
+    prompt = f"""
+    Sen yöresel el sanatları, iğne oyası ve mekik oyası konusunda uzman, güncel arama trendlerine hakim bir SEO içerik yazarısın. Sitenin adı 'Marifetli Eller'.
+    İçerik üreteceğin kategori: "{kategori_adi}"
+    
+    Görevlerin:
+    1. Önce bu kategori ismi için kullanıcıların Google'da en çok aratabileceği, niş ve ilgili anahtar kelimeleri (SGE uyumlu, semantik kelimeleri) kendi zihninde analiz et.
+    2. Ardından, bu belirlediğin özel anahtar kelimeleri metnin içine yapay durmayacak şekilde, doğal bir akışla yedirerek 2 paragraflık özgün bir SEO açıklama metni yaz. Ziyaretçiye değer katsın ve okuması keyifli olsun.
+    
+    LÜTFEN SADECE <p> ve vurgulamak istediğin yerler için <strong> etiketlerini kullan. Başka HTML veya Markdown (```) işareti KULLANMA. Bana anahtar kelime listesini verme, SADECE doğrudan web sitesine basılacak olan HTML formatındaki 2 paragrafı ver.
+    """
+    
+    deneme_sayisi = 0
+    maksimum_deneme = len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1
+    
+    while deneme_sayisi < maksimum_deneme:
+        try:
+            response = client.models.generate_content(model=SECILEN_MODEL, contents=prompt)
+            time.sleep(5) # API'yi yormamak için 5 saniye bekle
+            metin = response.text.replace("```html", "").replace("```", "").strip()
+            
+            if len(metin) < 20:
+                return ""
+            return metin
+            
+        except Exception as e:
+            hata_mesaji = str(e)
+            if '429' in hata_mesaji or 'RESOURCE_EXHAUSTED' in hata_mesaji or 'Quota' in hata_mesaji:
+                if not api_anahtarini_degistir():
+                    return ""
+                deneme_sayisi += 1
+            else:
+                print(f"  X Kategori SEO hatası: {e}")
+                time.sleep(5)
+                return ""
+    return ""
+
 def oynatma_listelerini_getir():
     request = youtube.playlists().list(part="snippet", channelId=KANAL_ID, maxResults=50)
     return request.execute().get('items', [])
@@ -239,6 +280,14 @@ def sayfalari_olustur():
     else:
         ai_cache = {}
 
+    # SEO JSON Dosyasını Yükle
+    seo_dosyasi = 'kategori_seo.json'
+    if os.path.exists(seo_dosyasi):
+        with open(seo_dosyasi, 'r', encoding='utf-8') as f:
+            kategori_seo_sozluk = json.load(f)
+    else:
+        kategori_seo_sozluk = {}
+    
     env = Environment(loader=FileSystemLoader('.'))
     template_video = env.get_template('video_sablon.html')
     template_index = env.get_template('index_sablon.html') 
@@ -336,8 +385,21 @@ def sayfalari_olustur():
                 "link": dosya_adi,
                 "resim": video['thumbnail']
             }
+
+        # --- KATEGORİ SEO METNİ KONTROLÜ VE ÜRETİMİ ---
+        if kategori_adi not in kategori_seo_sozluk or len(kategori_seo_sozluk[kategori_adi]) < 10:
+            print(f"  + Kategori SEO Metni Yazdırılıyor: {kategori_adi}")
+            yeni_seo = kategori_seo_uret(kategori_adi)
+            if yeni_seo:
+                kategori_seo_sozluk[kategori_adi] = yeni_seo
+                with open(seo_dosyasi, 'w', encoding='utf-8') as f:
+                    json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
+            else:
+                kategori_seo_sozluk[kategori_adi] = "" # Hata olursa boş bırak
+        
+        kat_seo_metni = kategori_seo_sozluk.get(kategori_adi, "")
             
-        kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
+        kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler,kategori_seo_metni=kat_seo_metni)
         with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
 
     # === YENİ: SERBEST POPÜLER VİDEOLAR İÇİN EKSİK SAYFALARI ÜRET ===
@@ -453,11 +515,26 @@ def sayfalari_olustur():
     print("\nKullanıcı Kategori Sayfaları Oluşturuluyor...")
     # Her bir kategori için HTML sayfasını üretiyoruz
     for kat_adi, dosya_adi in kullanici_kategorileri.items():
+        sayfa_basligi_tam = f"{kat_adi} (Sizden Gelenler)"
+        
+        # --- KATEGORİ SEO METNİ KONTROLÜ VE ÜRETİMİ ---
+        if sayfa_basligi_tam not in kategori_seo_sozluk or len(kategori_seo_sozluk[sayfa_basligi_tam]) < 10:
+            print(f"  + Kategori SEO Metni Yazdırılıyor: {sayfa_basligi_tam}")
+            yeni_seo = kategori_seo_uret(sayfa_basligi_tam)
+            if yeni_seo:
+                kategori_seo_sozluk[sayfa_basligi_tam] = yeni_seo
+                with open(seo_dosyasi, 'w', encoding='utf-8') as f:
+                    json.dump(kategori_seo_sozluk, f, ensure_ascii=False, indent=4)
+            else:
+                kategori_seo_sozluk[sayfa_basligi_tam] = ""
+        
+        kat_seo_metni = kategori_seo_sozluk.get(sayfa_basligi_tam, "")
         kat_html = template_index.render(
             is_ana_sayfa=False, 
             sayfa_basligi=f"{kat_adi} (Sizden Gelenler)", 
             videolar=kategori_modelleri[kat_adi], 
-            tum_kategoriler=tum_kategoriler
+            tum_kategoriler=tum_kategoriler,
+            kategori_seo_metni=kat_seo_metni
         )
         with open(dosya_adi, 'w', encoding='utf-8') as f:
             f.write(kat_html)
