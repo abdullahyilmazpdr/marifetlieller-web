@@ -496,6 +496,7 @@
     {% include 'header_sablon.html' %}
 
     <main>
+        {% if is_ana_sayfa %}
 
         <!-- 1. KARŞILAMA EKRANI (HERO BANNER) -->
         <div style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/assets/img/marifetliel.com-hero-banner.jpg') center/cover; color: white; padding: 80px 20px; text-align: center; border-radius: 15px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
@@ -576,9 +577,7 @@
         <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
         <div class="sayfa-baslik" id="arsiv">
             <h1>Model Arşivi Galerisi</h1>
-            <p>İğne oyası ve oya çiçeği desenlerimizi kategoriler halinde keşfedin.</p>
-            
-        {% if is_ana_sayfa %}
+            <p>İğne oyası ve oya çiçeği desenlerimizi kategoriler halinde keşfedin.</p><br>
 
         <div class="galeri-grid">
             {% for kategori_adi, veri in site_verisi.items() %}
