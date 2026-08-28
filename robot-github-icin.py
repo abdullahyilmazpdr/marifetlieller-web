@@ -246,7 +246,7 @@ def sayfalari_olustur():
     site_verisi = {} 
     ana_menuler = [] 
     uretilen_sayfalar = ['index.html']
-    tum_videolar_arama_icin = []
+    tum_videolar_arama_icin = {} # Kopya videoları engellemek için liste yerine sözlük kullanıyoruz
     tum_videolar_ham = []
 
     # 1. YouTube'dan Popüler Videoları Çekme
@@ -330,11 +330,12 @@ def sayfalari_olustur():
             uretilen_sayfalar.append(dosya_adi)
             video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
 
-            tum_videolar_arama_icin.append({
+            # Linki (dosya_adi) anahtar kelime yaparak kopyaların üst üste yazılmasını sağlıyoruz
+            tum_videolar_arama_icin[dosya_adi] = {
                 "baslik": video['title'],
                 "link": dosya_adi,
                 "resim": video['thumbnail']
-            })
+            }
             
         kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
         with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
@@ -500,7 +501,7 @@ def sayfalari_olustur():
     sitemap_olustur(uretilen_sayfalar)
 
     with open('arama_verisi.json', 'w', encoding='utf-8') as f:
-        json.dump(tum_videolar_arama_icin, f, ensure_ascii=False)
+        json.dump(list(tum_videolar_arama_icin.values()), f, ensure_ascii=False)
         
     with open('tum_videolar_ham.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_ham, f, ensure_ascii=False)
