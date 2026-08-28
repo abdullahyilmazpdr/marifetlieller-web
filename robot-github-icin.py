@@ -9,7 +9,6 @@ from jinja2 import Environment, FileSystemLoader
 import csv
 import io
 import requests
-import unicodedata
 
 # API ANAHTARLARI
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -21,47 +20,37 @@ youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 # ==========================================
 # ÇOKLU API ANAHTARI SİSTEMİ (ROUND-ROBIN)
 # ==========================================
-# 2. Gemini Anahtarlarını Çekme ve Listeye Çevirme
 gemini_keys_metni = os.environ.get('GEMINI_API_KEYS', '')
 
-# Eğer GitHub'dan metin geldiyse, virgüllerden bölüp Python listesine dönüştür
 if gemini_keys_metni:
     GEMINI_API_KEYS = gemini_keys_metni.split(',')
 else:
-    # Eğer bilgisayarınızda test yapıyorsanız ve sistem değişkeni yoksa
-    # hata vermemesi için boş liste atayabilir veya geçici test anahtarı yazabilirsiniz.
     GEMINI_API_KEYS = []
 
 aktif_api_indeksi = 0
-client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
+client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi]) if GEMINI_API_KEYS else None
 SECILEN_MODEL = 'gemini-flash-latest'
-AI_KOTALARI_DOLDU = False # Kota dolduğunda hızlı çıkış için bayrak
+AI_KOTALARI_DOLDU = False 
 
 def onayli_modelleri_cek():
-  # Google E-Tablonuzun "Web'de Yayınla" diyerek aldığınız CSV bağlantısı
   csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?output=csv"
 
   try:
     response = requests.get(csv_url)
     response.raise_for_status()
 
-    # CSV verisini oku
     f = io.StringIO(response.content.decode("utf-8"))
     reader = csv.reader(f)
 
     onayli_liste = []
-    basliklar = next(reader)  # İlk satır başlıkları atla
+    basliklar = next(reader)  
 
-    # DÖNGÜYÜ TEKE DÜŞÜRDÜK VE HİZALAMAYI DÜZELTTİK
     for satir in reader:
-      # Kolon sıralamanıza göre: [ID, Tarih, Yazar, Kategori, Baslik, Makale, Medya, Durum]
       if len(satir) >= 8 and satir[7] == "Onaylandı":
-            
-            # YENİ (SEO UYUMLU):
-            baslik_seo = url_uyumlu_yap(satir[4]) # Başlık 4. indekste
+            baslik_seo = url_uyumlu_yap(satir[4]) 
             if len(baslik_seo) > 50: 
                 baslik_seo = baslik_seo[:50].strip('-')
-            kisa_id = str(satir[0])[-5:] # Karmaşık ID'nin sadece son 5 hanesini alalım
+            kisa_id = str(satir[0])[-5:] 
             uretilen_dosya_adi = f"{baslik_seo}-{kisa_id}.html"
 
             model_verisi = {
@@ -82,6 +71,34 @@ def onayli_modelleri_cek():
     print(f"E-Tablo okuma hatası: {e}")
     return []
 
+# YENİ EKLENEN: HAFTANIN POPÜLER VİDEOLARINI ÇEKME
+def populer_videolari_getir():
+    print("\n--- Popüler Videolar Çekiliyor ---")
+    try:
+        request = youtube.search().list(
+            part="snippet", 
+            channelId=KANAL_ID, 
+            order="viewCount", 
+            type="video", 
+            maxResults=4
+        )
+        response = request.execute()
+        populerler = []
+        for item in response.get('items', []):
+            videoid = item['id']['videoId']
+            baslik = item['snippet']['title']
+            resim = item['snippet']['thumbnails']['high']['url']
+            
+            baslik_seo = url_uyumlu_yap(baslik)
+            if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
+            link = f"{baslik_seo}-{videoid}.html"
+            
+            populerler.append({'baslik': baslik, 'resim': resim, 'link': link})
+        return populerler
+    except Exception as e:
+        print(f"Popüler video çekme hatası: {e}")
+        return []
+
 def api_anahtarini_degistir():
     global aktif_api_indeksi, client, AI_KOTALARI_DOLDU
     aktif_api_indeksi += 1
@@ -98,7 +115,7 @@ def api_anahtarini_degistir():
 def yapay_zeka_makale_yazdir(baslik, aciklama):
     global client, AI_KOTALARI_DOLDU
     
-    if AI_KOTALARI_DOLDU:
+    if AI_KOTALARI_DOLDU or not client:
         return None
         
     prompt = f"""
@@ -113,7 +130,7 @@ def yapay_zeka_makale_yazdir(baslik, aciklama):
     """
     
     deneme_sayisi = 0
-    maksimum_deneme = len(GEMINI_API_KEYS)
+    maksimum_deneme = len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1
     
     while deneme_sayisi < maksimum_deneme:
         try:
@@ -147,19 +164,17 @@ def listedeki_videolari_getir(playlist_id):
     request = youtube.playlistItems().list(part="snippet", playlistId=playlist_id, maxResults=50)
     videolar = []
     response = None
-    for deneme in range(3):  # Hata verirse 3 kez tekrar deneme hakkı
+    for deneme in range(3): 
         try:
             response = request.execute()
-            break  # Başarılı olursa döngüden çık ve devam et
+            break 
         except Exception as e:
             print(f"YouTube bağlantısı yoruldu (Deneme {deneme+1}/3). 2 saniye bekleniyor... Hata: {e}")
-            time.sleep(2)  # 2 saniye nefes al ve tekrar dene
+            time.sleep(2)  
             
-    # Eğer 3 denemede de yanıt gelmediyse boş liste dön (programın çökmesini engeller)
     if not response:
         return []
 
-    # Yanıt başarıyla alındıysa döngüye sok
     for item in request.execute().get('items', []):
         snippet = item['snippet']
         if 'videoId' in snippet['resourceId']:
@@ -174,27 +189,18 @@ def listedeki_videolari_getir(playlist_id):
     return videolar
 
 def url_uyumlu_yap(metin):
-    # Türkçe karakterleri İngilizce'ye çevir ve küçük harf yap
     metin = str(metin).lower()
     metin = metin.replace('ı', 'i').replace('ğ', 'g').replace('ü', 'u').replace('ş', 's').replace('ö', 'o').replace('ç', 'c')
-    # Özel karakterleri temizle ve boşlukları tireye dönüştür
     metin = re.sub(r'[^a-z0-9\s-]', '', metin)
     metin = re.sub(r'[-\s]+', '-', metin).strip('-')
     return metin
 
 def guvenli_dosya_adi(isim):
-    # Türkçe karakterleri İngilizceye çevir
     isim = isim.replace('ı', 'i').replace('İ', 'i').replace('ğ', 'g').replace('Ğ', 'g')
     isim = isim.replace('ü', 'u').replace('Ü', 'u').replace('ş', 's').replace('Ş', 's')
     isim = isim.replace('ö', 'o').replace('Ö', 'o').replace('ç', 'c').replace('Ç', 'c')
-    
-    # Tüm harfleri küçük yap
     isim = isim.lower()
-    
-    # Alfasayısal olmayan (boşluk dahil) her şeyi tireye (-) çevir
     isim = re.sub(r'[^a-z0-9]+', '-', isim)
-    
-    # Baştaki ve sondaki fazlalık tireleri temizle, en fazla 50 karakter al
     return isim.strip('-')[:50]
 
 def sitemap_olustur(sayfa_listesi):
@@ -223,9 +229,10 @@ def sayfalari_olustur():
     ana_menuler = [] 
     uretilen_sayfalar = ['index.html']
     tum_videolar_arama_icin = []
-    
-    # 2. Robot (Güncelleyici) için Ham Veritabanı
     tum_videolar_ham = []
+
+    # 1. YouTube'dan Popüler Videoları Çekme
+    populer_videolar = populer_videolari_getir()
 
     listeler = oynatma_listelerini_getir()
     print(f"Sistem Başlatıldı. {len(listeler)} kategori bulundu.\n")
@@ -235,8 +242,10 @@ def sayfalari_olustur():
         kat_adi = liste['snippet']['title']
         tum_kategoriler.append({'baslik': kat_adi, 'dosya_adi': f"kategori_{guvenli_dosya_adi(kat_adi)}.html"})
 
+    # Kategori Sıralama Altyapısı: Eğer ileride yöneticiden bir sıralama listesi gelirse burada tum_kategoriler'i sort edebiliriz.
+    
     for index, liste in enumerate(listeler):
-        time.sleep(0.5)  # YouTube'u yormamak için her kategoride yarım saniye bekle
+        time.sleep(0.5) 
         kategori_adi = liste['snippet']['title']
         playlist_id = liste['id']
         kategori_dosya_adi = f"kategori_{guvenli_dosya_adi(kategori_adi)}.html"
@@ -251,15 +260,10 @@ def sayfalari_olustur():
         video_verileri_kategori_icin = []
 
         for video in videolar:
-            # ESKİ: dosya_adi = f"video_{video['id']}.html" 
-            
-            # YENİ (SEO UYUMLU):
             baslik_seo = url_uyumlu_yap(video['title'])
-            # Başlık çok uzunsa ilk 50 karakterini alalım ki URL destan gibi olmasın
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             dosya_adi = f"{baslik_seo}-{video['id']}.html" 
             
-            # Güncelleyici Robot İçin Veriyi Kaydet
             tum_videolar_ham.append({
                 'id': video['id'],
                 'title': video['title'],
@@ -270,7 +274,6 @@ def sayfalari_olustur():
                 'dosya_adi': dosya_adi
             })
 
-            # YAPAY ZEKA KONTROLÜ
             if video['id'] in ai_cache and len(ai_cache[video['id']]) > 50:
                 print(f"  √ {video['title'][:30]}... (Önbellekten alındı)")
                 video['ai_metin'] = ai_cache[video['id']]
@@ -288,10 +291,8 @@ def sayfalari_olustur():
                     else:
                         video['ai_metin'] = ""
             
-            # HTML içeriği render edilir
             html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
             
-            # Oluşturulan içerik dosyaya yazdırılır
             with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
                 f.write(html_icerik)
 
@@ -307,48 +308,55 @@ def sayfalari_olustur():
         kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler)
         with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
 
-    # 1. E-Tablodan Onaylı Modelleri Çek
+    # 2. E-Tablodan Onaylı Modelleri Çek
     onayli_modeller = onayli_modelleri_cek()
+    
+    # 3. YENİ EKLENEN: Son 5 Modeli Ayrıştırma (Sondan başa doğru ilk 5'i al)
+    son_5_model = list(reversed(onayli_modeller))[:5]
 
     template_kullanici_model = env.get_template('kullanici_model_sablon.html')
 
     for model in onayli_modeller:
-      # Her model için HTML içeriği üret
       model_html = template_kullanici_model.render(model=model)
       dosya_yolu = os.path.join('', model['dosya_adi'])
 
       with open(dosya_yolu, 'w', encoding='utf-8') as f:
         f.write(model_html)
 
-      # Google'ın dizine eklemesi için sitemap listesine dahil et
       uretilen_sayfalar.append(model['dosya_adi'])
       print(f"Yayınlanan Model Sayfası Üretildi: {model['dosya_adi']}")
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
-    index_icerik = template_index.render(is_ana_sayfa=True, sayfa_basligi="Ana Sayfa", site_verisi=site_verisi, tum_kategoriler=tum_kategoriler)
+    
+    # ŞABLONA YENİ VERİLERİ (POPÜLER VİDEOLAR VE SON 5 MODEL) GÖNDERİYORUZ
+    index_icerik = template_index.render(
+        is_ana_sayfa=True, 
+        sayfa_basligi="Ana Sayfa", 
+        site_verisi=site_verisi, 
+        tum_kategoriler=tum_kategoriler,
+        populer_videolar=populer_videolar,  
+        son_modeller=son_5_model            
+    )
+    
     with open('index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
     sitemap_olustur(uretilen_sayfalar)
 
-    # Giriş Sayfasını Oluştur ve Çıktı Klasörüne Aktar
     template_giris = env.get_template('giris_sablon.html')
     giris_icerik = template_giris.render()
     with open('giris.html', 'w', encoding='utf-8') as f: f.write(giris_icerik)
-    uretilen_sayfalar.append('giris.html') # Sitemap'e (Site Haritasına) dahil et
+    uretilen_sayfalar.append('giris.html') 
 
-    # Profil Sayfasını Oluştur ve Çıktı Klasörüne Aktar
     template_profil = env.get_template('profil_sablon.html')
     profil_icerik = template_profil.render(tum_kategoriler=tum_kategoriler)
     with open('profil.html', 'w', encoding='utf-8') as f: f.write(profil_icerik)
-    uretilen_sayfalar.append('profil.html') # Sitemap'e eklemek için
+    uretilen_sayfalar.append('profil.html') 
 
-    # Model Gönderme Sayfasını Oluştur
     template_model = env.get_template('model_sablon.html')
     model_icerik = template_model.render(tum_kategoriler=tum_kategoriler)
     with open('model-gonder.html', 'w', encoding='utf-8') as f: 
         f.write(model_icerik)
     uretilen_sayfalar.append('model-gonder.html')
     
-    # AdSense Zorunlu Sayfalarını Site Haritasına Ekle
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
     sitemap_olustur(uretilen_sayfalar)
 
