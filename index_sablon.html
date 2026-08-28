@@ -576,11 +576,9 @@
         <!-- MEVCUT ARŞİV BAŞLIĞI VE LİSTESİ BURADAN DEVAM EDECEK -->
         <div class="sayfa-baslik" id="arsiv">
             <h1>Model Arşivi Galerisi</h1>
-        {% if is_ana_sayfa %}
-        <div class="sayfa-baslik">
-            <h1>Model Arşivi Galerisi</h1>
             <p>İğne oyası ve oya çiçeği desenlerimizi kategoriler halinde keşfedin.</p>
-        </div>
+            
+        {% if is_ana_sayfa %}
 
         <div class="galeri-grid">
             {% for kategori_adi, veri in site_verisi.items() %}
