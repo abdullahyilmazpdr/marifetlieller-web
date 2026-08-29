@@ -245,197 +245,123 @@
         .seo-makalesi { background-color: var(--kutu-arka-plan); padding: 40px 30px; border-radius: 15px; border: 1px solid var(--kenarlik); margin-top: 50px; margin-bottom: 20px; line-height: 1.8; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); text-align: left; }
         .seo-makalesi h2 { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-top: 0; margin-bottom: 15px; }
 
-        header {
-            background-color: var(--kutu-arka-plan);
-            border-bottom: 1px solid var(--kenarlik);
-            padding: 20px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
+        .geri-don {
+            display: inline-flex;
             align-items: center;
-            padding: 0 20px;
-            flex-wrap: wrap;
-        }
-
-        .logo a {
-            font-family: 'Lora', serif;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--ana-renk);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo a::before {
-            content: "🌸";
-            font-size: 28px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .nav-links a {
+            margin-bottom: 25px;
             text-decoration: none;
             color: var(--metin-koyu);
             font-weight: 500;
             font-size: 14px;
-            transition: color 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .nav-links a:hover {
-            color: var(--ana-renk);
-        }
-
-        /* Arama ve Hamburger CSS */
-        .hamburger {
-            display: none;
-            cursor: pointer;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--ana-renk);
-            border-radius: 3px;
+            padding: 8px 16px;
+            background-color: var(--kutu-arka-plan);
+            border-radius: 30px;
+            border: 1px solid var(--kenarlik);
             transition: all 0.3s ease;
         }
 
-        /* Arama Çubuğu CSS'i */
-        .arama-alani {
-            position: relative;
-            margin-left: auto;
-            width: 250px;
-        }
-
-        .arama-kutu {
-            width: 100%;
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--kenarlik);
-            outline: none;
-            font-family: inherit;
-        }
-
-        .arama-sonuclari {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 300px;
-            background: #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            margin-top: 5px;
-        }
-
-        .arama-sonuc-oge {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-decoration: none;
-            color: var(--metin-koyu);
-            transition: background 0.2s;
-        }
-
-        .arama-sonuc-oge:hover {
-            background: var(--hover-renk);
+        .geri-don:hover {
             color: var(--ana-renk);
-        }
-
-        .arama-sonuc-oge img {
-            width: 50px;
-            height: 35px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-
-        .arama-sonuc-oge span {
-            font-size: 13px;
-            font-weight: 500;
-            line-height: 1.2;
-        }
-
-        /* AÇILIR MENÜ (DROPDOWN) CSS */
-        .dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .dropdown>a {
-            padding-right: 15px;
-            cursor: pointer;
-        }
-
-        .dropdown>a::after {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 12px;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: var(--kutu-arka-plan);
-            min-width: 250px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow-y: auto;
-            max-height: 500px;
-            z-index: 1000;
-            border: 1px solid var(--kenarlik);
-        }
-
-        .dropdown-content a {
-            display: block;
-            padding: 12px 16px;
-            color: var(--metin-koyu);
-            border-bottom: 1px solid var(--kenarlik);
-            white-space: normal;
-            line-height: 1.4;
-            margin: 0;
-            font-size: 13px;
-        }
-
-        .dropdown-content a:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-content a:hover {
             background-color: var(--hover-renk);
-            color: var(--ana-renk);
-            padding-left: 22px;
+            border-color: #ffdce3;
         }
 
-        .dropdown:hover .dropdown-content {
-            display: block;
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .sosyal-medya {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .sosyal-medya a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .sosyal-medya a:hover {
+            background-color: var(--ana-renk);
+        }
+
+        .footer-alt {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Responsive ve Hamburger Menü */
+        @media (max-width: 860px) {
+            .galeri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+                gap: 15px;
+                padding-top: 15px;
+                border-top: 1px solid var(--kenarlik);
+            }
+
+            .nav-links.aktif {
+                display: flex;
+            }
+
+            .arama-alani {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .arama-sonuclari {
+                width: 100%;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                white-space: normal;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--kenarlik);
+                border-radius: 0;
+                max-height: none;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .dropdown.aktif .dropdown-content {
+                display: block;
+            }
         }
 
     </style>
