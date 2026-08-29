@@ -803,7 +803,8 @@
                 document.getElementById('yukleniyorGostergesi').style.display = 'none';
                 document.getElementById('aiMesaji').innerHTML = data.mesaj;
                 
-                modelleriEkranaBas(data.arama_terimleri || ["iğne", "mekik", "oyası"]);
+                // YENİ: Hem arama terimlerini hem de uygun kategoriyi gönderiyoruz
+                modelleriEkranaBas(data.arama_terimleri || ["iğne", "mekik", "oyası"], data.uygun_kategori);
                 
                 document.getElementById('sonucAlani').style.display = 'block';
                 document.getElementById('yuklemeAlani').style.display = 'block';
@@ -819,20 +820,17 @@
             });
         }
 
-        function modelleriEkranaBas(terimler) {
+        function modelleriEkranaBas(terimler, uygunKategori) {
             let sonuclar = [];
             let eklenenLinkler = new Set();
 
-            // 1. Yapay Zekanın verdiği terimleri veritabanında arıyoruz
             if (terimler && terimler.length > 0) {
                 terimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
-                    // Derin Arama: Başlık, YouTube açıklaması VEYA Yapay Zeka makalesi içinde arar
                     let eslesenler = veritabani.filter(v => {
                         let basliktaVar = v.baslik && v.baslik.toLowerCase().includes(aranan);
                         let aciklamadaVar = v.aciklama && v.aciklama.toLowerCase().includes(aranan);
                         let makaledeVar = v.makale && v.makale.toLowerCase().includes(aranan);
-                        
                         return basliktaVar || aciklamadaVar || makaledeVar;
                     });
                     
@@ -845,23 +843,18 @@
                 });
             }
 
-            // 2. EKSİKLERİ TAMAMLAMA: Eğer eşleşen model sayısı 3'ten azsa, arşivi tarayıp boşlukları dolduruyoruz
             if (sonuclar.length < 3 && veritabani.length >= 3) {
-                // Veritabanını karıştır
                 let karisikArsiv = [...veritabani].sort(() => 0.5 - Math.random());
-                
                 for (let i = 0; i < karisikArsiv.length; i++) {
                     let m = karisikArsiv[i];
                     if (!eklenenLinkler.has(m.link)) {
                         sonuclar.push(m);
                         eklenenLinkler.add(m.link);
                     }
-                    // Tam 3 modele ulaştığımızda döngüyü durdur
                     if (sonuclar.length >= 3) break; 
                 }
             }
 
-            // 3. Bulunan 3 Modeli Ekrana Bas
             const grid = document.getElementById('oneriGrid');
             grid.innerHTML = sonuclar.slice(0, 3).map(video => `
                 <a href="${video.link}" class="video-kart">
@@ -873,6 +866,21 @@
                     </div>
                 </a>
             `).join('');
+
+            // YENİ EKLENEN: YAPAY ZEKANIN SEÇTİĞİ KATEGORİYE YÖNLENDİRME BUTONU
+            if (uygunKategori) {
+                // Python tarafında ürettiğimiz URL formatının aynısını JavaScript ile üretiyoruz
+                let katSeo = uygunKategori.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
+                let katLink = "kategori_" + katSeo.substring(0, 50).replace(/-+$/, '') + ".html";
+
+                grid.innerHTML += `
+                    <div style="grid-column: 1 / -1; text-align: center; margin-top: 30px;">
+                        <a href="${katLink}" style="display: inline-block; background: #fff; color: var(--ana-renk); padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 15px; border: 2px solid var(--ana-renk); transition: 0.3s; box-shadow: 0 4px 15px rgba(214,51,108,0.1);" onmouseover="this.style.background='var(--ana-renk)'; this.style.color='#fff';" onmouseout="this.style.background='#fff'; this.style.color='var(--ana-renk)';">
+                            Daha Fazla ${uygunKategori} Göster 🌸
+                        </a>
+                    </div>
+                `;
+            }
         }
     </script>
 </body>
