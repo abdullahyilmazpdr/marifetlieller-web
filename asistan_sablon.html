@@ -530,7 +530,14 @@
             if (terimler && terimler.length > 0) {
                 terimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
-                    let eslesenler = veritabani.filter(v => v.baslik.toLowerCase().includes(aranan));
+                    // Derin Arama: Başlık, YouTube açıklaması VEYA Yapay Zeka makalesi içinde arar
+                    let eslesenler = veritabani.filter(v => {
+                        let basliktaVar = v.baslik && v.baslik.toLowerCase().includes(aranan);
+                        let aciklamadaVar = v.aciklama && v.aciklama.toLowerCase().includes(aranan);
+                        let makaledeVar = v.makale && v.makale.toLowerCase().includes(aranan);
+                        
+                        return basliktaVar || aciklamadaVar || makaledeVar;
+                    });
                     
                     eslesenler.forEach(m => {
                         if(!eklenenLinkler.has(m.link)) {
