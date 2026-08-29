@@ -357,10 +357,13 @@ def sayfalari_olustur():
                     uretilen_sayfalar.append(dosya_adi)
                     video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
 
+                    # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                     tum_videolar_arama_icin[dosya_adi] = {
-                        "baslik": video['title'],
+                        "baslik": str(video.get('title', '')),
                         "link": dosya_adi,
-                        "resim": video['thumbnail']
+                        "resim": video.get('thumbnail', ''),
+                        "aciklama": str(video.get('description', '')),
+                        "makale": str(video.get('ai_metin', ''))
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -424,10 +427,13 @@ def sayfalari_olustur():
                     f.write(html_icerik)
                     
                 uretilen_sayfalar.append(dosya_adi)
+                # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                 tum_videolar_arama_icin[dosya_adi] = {
-                    "baslik": video_data['title'],
+                    "baslik": str(video.get('title', '')),
                     "link": dosya_adi,
-                    "resim": video_data['thumbnail']
+                    "resim": video.get('thumbnail', ''),
+                    "aciklama": str(video.get('description', '')),
+                    "makale": str(video.get('ai_metin', ''))
                 }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
