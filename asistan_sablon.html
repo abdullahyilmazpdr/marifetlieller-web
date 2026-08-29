@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- GELİŞMİŞ SEO ETİKETLERİ -->
+    <meta name="description" content="Marifetli Eller Yapay Zeka Stil Danışmanı ile yazma, havlu veya kumaşınızın fotoğrafını yükleyin, sistem kumaşınızı analiz edip size en uygun iğne oyası ve mekik oyası modellerini anında önersin.">
+    <meta name="keywords" content="iğne oyası model önerisi, hangi yazmaya hangi oya, mekik oyası modelleri, çeyizlik iğne oyası, yapay zeka el işi, marifetli eller">
+    <title>Yapay Zeka Stil Danışmanı - Model Öneri Asistanı | Marifetli Eller</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    {% include 'izleme_kodlari.html' ignore missing %}
+
+    <style>
+        :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --metin-acik: #666666; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        main { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        
+        .asistan-kutusu { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.08); text-align: center; border: 1px solid var(--kenarlik); }
+        .asistan-baslik { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 32px; margin-top: 0; margin-bottom: 10px; }
+        
+        .yukleme-alani { border: 2px dashed #d6336c80; border-radius: 15px; padding: 40px 20px; background: var(--hover-renk); cursor: pointer; transition: 0.3s; margin-top: 30px; position: relative; }
+        .yukleme-alani:hover { background: #ffe6eb; border-color: var(--ana-renk); }
+        .yukleme-alani input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor: pointer; }
+        
+        .onizleme-kapsayici { display: none; margin-top: 25px; }
+        .onizleme-resim { max-width: 250px; max-height: 250px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; }
+        
+        .btn-analiz { display: none; background: var(--ana-renk); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: 600; border-radius: 30px; margin-top: 25px; cursor: pointer; transition: 0.3s; font-family: 'Poppins', sans-serif; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.4); }
+        .btn-analiz:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(214, 51, 108, 0.5); }
+        
+        .yukleniyor { display: none; margin-top: 30px; color: var(--ana-renk); font-weight: 500; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--hover-renk); border-top: 4px solid var(--ana-renk); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .sonuc-alani { display: none; margin-top: 40px; text-align: left; }
+        .mesaj-kutusu { background: linear-gradient(135deg, #fff0f3 0%, #ffffff 100%); padding: 25px; border-radius: 15px; border-left: 5px solid var(--ana-renk); font-size: 15px; line-height: 1.6; color: var(--metin-koyu); margin-bottom: 30px; }
+        
+        .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .video-kart { background-color: var(--kutu-arka-plan); border-radius: 12px; overflow: hidden; border: 1px solid var(--kenarlik); transition: transform 0.3s ease; display: flex; flex-direction: column; text-decoration: none; }
+        .video-kart:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1); border-color: #ffdce3; }
+        .kart-resim { position: relative; width: 100%; padding-top: 56.25%; background-color: #eee; overflow: hidden; }
+        .kart-resim img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .kart-icerik { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+        .kart-baslik { font-size: 14px; font-weight: 600; color: var(--metin-koyu); line-height: 1.4; margin: 0; }
+        
+        /* SEO Makale Kutu Stili */
+        .seo-makalesi { background-color: var(--kutu-arka-plan); padding: 40px 30px; border-radius: 15px; border: 1px solid var(--kenarlik); margin-top: 50px; margin-bottom: 20px; line-height: 1.8; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); text-align: left; }
+        .seo-makalesi h2 { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-top: 0; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    {% include 'header_sablon.html' ignore missing %}
+
+    <main>
+        <article class="asistan-kutusu">
+            <h1 class="asistan-baslik">Yapay Zeka Stil Danışmanı 🪄</h1>
+            <p style="color: var(--metin-acik); max-width: 700px; margin: 0 auto;">Kumaşınızın, yazmanızın veya havlunuzun fotoğrafını yükleyin. Yapay zekamız renkleri ve deseni inceleyerek, bu kumaşa en çok yakışacak modelleri arşivimizden sizin için bulsun!</p>
+            
+            <div class="yukleme-alani" id="yuklemeAlani">
+                <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
+                <strong style="color: var(--ana-renk); display: block; font-size: 18px;">Fotoğraf Yüklemek İçin Tıklayın</strong>
+                <span style="font-size: 13px; color: #888;">(Veya fotoğrafı buraya sürükleyin)</span>
+                <input type="file" id="resimInput" accept="image/*" capture="environment" aria-label="Kumaş fotoğrafı yükle">
+            </div>
+
+            <div class="onizleme-kapsayici" id="onizlemeKapsayici">
+                <img id="onizlemeResim" class="onizleme-resim" src="" alt="Yüklenen kumaş görseli">
+                <br>
+                <button class="btn-analiz" id="btnAnaliz" onclick="analiziBaslat()">Sihri Başlat ✨</button>
+            </div>
+
+            <div class="yukleniyor" id="yukleniyorGostergesi">
+                <div class="spinner"></div>
+                <div>Yapay zeka kumaşınızı inceliyor, renk uyumlarını hesaplıyor... Lütfen bekleyin. 🌸</div>
+            </div>
+
+            <div class="sonuc-alani" id="sonucAlani">
+                <h2 style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 15px;">Danışmanımızın Sizin İçin Analizi</h2>
+                <div class="mesaj-kutusu" id="aiMesaji"></div>
+                
+                <h2 style="font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 20px; margin-top: 40px; margin-bottom: 20px;">Sizin İçin Seçtiğimiz En Uyumlu Modeller</h2>
+                <div class="galeri-grid" id="oneriGrid"></div>
+            </div>
+        </article>
+
+        <!-- SGE VE ARAMA MOTORLARI İÇİN SEMANTİK SEO MAKALESİ -->
+        <section class="seo-makalesi">
+            <h2>Yapay Zeka ile İğne Oyası ve Mekik Oyası Model Seçimi</h2>
+            <p>Geleneksel el sanatlarımız olan <strong>iğne oyası</strong> ve <strong>mekik oyası</strong> yapımında en çok vakit alan ve kararsız kalınan aşamalardan biri, yazma, tülbent veya havlu desenine en uygun modeli seçmektir. <em>Marifetli Eller Yapay Zeka Stil Danışmanı</em>, bu süreci sizin için tamamen dijitalleştiriyor ve kişiselleştiriyor. Çeyizlik hazırlıklarınızda veya günlük hobi çalışmalarınızda, kumaşınızın veya aparatınızın fotoğrafını çekip sisteme yüklemeniz yeterli.</p>
+            <p>Sistemimiz, yüklediğiniz görseldeki renk tonlarını, kumaşın yapısını ve desenin ağırlığını saniyeler içinde özel bir yapay zeka görüş algoritmasıyla (Vision AI) analiz eder. Ardından, devasa <strong>anlatımlı yapılış videoları</strong> arşivimizi tarayarak, o kumaşa en çok yakışacak, zarafetinizi yansıtacak en uyumlu 3 farklı oya modelini size önerir. Sıralı, çıtı pıtı, gösterişli, keloğlan veya çiçekli modeller arasından nokta atışı tavsiyeler alarak el emeği göz nuru eserlerinizi çok daha uyumlu ve kusursuz hale getirebilirsiniz.</p>
+        </section>
+
+        <!-- SAYAÇ GÖRÜNÜMÜ -->
+        <div style="font-size: 13px; color: #888; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px; padding-top: 20px; border-top: 1px solid var(--kenarlik);">
+            <span style="font-size: 16px;">👁️</span> Stil danışmanımız bugüne kadar <b id="sayfa-sayac" style="color: var(--ana-renk);">...</b> kez kullanıldı
+        </div>
+
+    </main>
+
+    {% include 'footer_sablon.html' ignore missing %}
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+        
+        let islenmisResimBase64 = "";
+        let veritabani = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Veritabanını arkaplanda yükle
+            fetch('arama_verisi.json').then(res => res.json()).then(data => { veritabani = data; });
+            
+            // Sayaç İşlemini Başlat
+            let sayfaID = "akilliasistan"; 
+            fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
+                .then(response => response.text())
+                .then(data => {
+                    if(data && !isNaN(data) && data !== "0") {
+                        document.getElementById("sayfa-sayac").innerText = data;
+                    } else {
+                        document.getElementById("sayfa-sayac").innerText = "1"; 
+                    }
+                })
+                .catch(error => {
+                    console.error("Sayaç okunamadı:", error);
+                    document.getElementById("sayfa-sayac").innerText = "-";
+                });
+        });
+
+        document.getElementById('resimInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            document.getElementById('onizlemeResim').src = url;
+            document.getElementById('onizlemeKapsayici').style.display = 'block';
+            document.getElementById('yuklemeAlani').style.display = 'none';
+            document.getElementById('btnAnaliz').style.display = 'inline-block';
+            document.getElementById('sonucAlani').style.display = 'none';
+
+            resmiKucult(file, function(base64Data) {
+                islenmisResimBase64 = base64Data;
+            });
+        });
+
+        function resmiKucult(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    
+                    let width = img.width; let height = img.height;
+                    const maxW = 600; const maxH = 600;
+
+                    if (width > height) { if (width > maxW) { height *= maxW / width; width = maxW; } } 
+                    else { if (height > maxH) { width *= maxH / height; height = maxH; } }
+                    
+                    canvas.width = width; canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.6));
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function analiziBaslat() {
+            if (!islenmisResimBase64) return;
+
+            document.getElementById('btnAnaliz').style.display = 'none';
+            document.getElementById('yukleniyorGostergesi').style.display = 'block';
+            document.getElementById('sonucAlani').style.display = 'none';
+
+            const formData = new URLSearchParams();
+            formData.append('islem', 'asistan_analiz');
+            formData.append('resim_base64', islenmisResimBase64);
+            formData.append('mime_type', 'image/jpeg');
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                document.getElementById('aiMesaji').innerHTML = data.mesaj;
+                
+                modelleriEkranaBas(data.arama_terimleri || ["iğne", "mekik", "oyası"]);
+                
+                document.getElementById('sonucAlani').style.display = 'block';
+                document.getElementById('yuklemeAlani').style.display = 'block';
+                document.getElementById('onizlemeKapsayici').style.display = 'none';
+                
+                // Analiz bitince ekranı yavaşça aşağı, sonuca doğru kaydır
+                document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            })
+            .catch(error => {
+                alert("Bağlantı hatası oluştu. Lütfen tekrar deneyin.");
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                document.getElementById('btnAnaliz').style.display = 'inline-block';
+            });
+        }
+
+        function modelleriEkranaBas(terimler) {
+            let sonuclar = [];
+            let eklenenLinkler = new Set();
+
+            terimler.forEach(terim => {
+                let eslesenler = veritabani.filter(v => v.baslik.toLowerCase().includes(terim.toLowerCase()));
+                eslesenler.forEach(m => {
+                    if(!eklenenLinkler.has(m.link)) {
+                        sonuclar.push(m);
+                        eklenenLinkler.add(m.link);
+                    }
+                });
+            });
+
+            if(sonuclar.length === 0 && veritabani.length > 0) {
+                sonuclar = veritabani.sort(() => 0.5 - Math.random());
+            }
+
+            const grid = document.getElementById('oneriGrid');
+            grid.innerHTML = sonuclar.slice(0, 3).map(video => `
+                <a href="${video.link}" class="video-kart">
+                    <div class="kart-resim">
+                        <img src="${video.resim}" alt="${video.baslik}">
+                    </div>
+                    <div class="kart-icerik">
+                        <h3 class="kart-baslik">${video.baslik}</h3>
+                    </div>
+                </a>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
