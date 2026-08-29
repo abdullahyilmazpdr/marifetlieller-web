@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from googleapiclient.discovery import build
 from google import genai
+from google.genai import types
 from jinja2 import Environment, FileSystemLoader
 import csv
 import io
@@ -109,6 +110,58 @@ def yapay_zeka_makale_yazdir(baslik, aciklama):
     3. <h3>Sıkça Sorulan Sorular</h3> 
     """
     return gemini_istek_gonder(prompt)
+
+def model_gorsel_analizi_yap(resim_url, baslik):
+    global client, AI_KOTALARI_DOLDU
+    if AI_KOTALARI_DOLDU or not client:
+        return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+        
+    try:
+        # Resmi indiriyoruz
+        resim_data = requests.get(resim_url, timeout=10).content
+    except:
+        return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+
+    prompt = f"""
+    Sen uzman bir oya ve el işi analistisin. Sana '{baslik}' başlıklı bir eğitim videosunun kapak fotoğrafını gönderiyorum.
+    Görevlerin:
+    1. Resimdeki oya modelini/motifini dikkatlice incele (şekli, tarzı, belirgin renkleri, tekniği).
+    2. Bu modeli bir kullanıcının arama çubuğunda aratabileceği EN BELİRGİN 5-6 spesifik anahtar kelimeyi (Örn: "menekşe", "karanfil", "sıralı", "keloğlan", "zarif yaprak", "sarı lacivert") belirle.
+    3. Bu modelin aşağıdaki kategorilerden HANGİSİNE en çok (Baskın olarak) ait olduğunu seç:
+       ["İğne Oyası Yapılışı", "Mekik Oyası Yapılışı", "Yazmada İğne Oyası Modelleri", "Fular Modelleri ve Anlatımlı Yapılış Videoları", "Keloğlan Modelleri", "Kelebek Modelleri", "İğne Oyası Havlu Kenarı Modelleri ve Yapılışları"]
+
+    SADECE GEÇERLİ BİR JSON DÖNDÜR. Markdown veya açıklama kullanma. Format:
+    {{
+      "anahtar_kelimeler": ["kelime1", "kelime2", "kelime3", "kelime4", "kelime5"],
+      "baskin_kategori": "Seçilen Kategori Adı"
+    }}
+    """
+    
+    deneme = 0
+    maks_deneme = (len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1) * 2
+    
+    while deneme < maks_deneme:
+        try:
+            # Resmi ve metni Gemini'ye gönderiyoruz
+            response = client.models.generate_content(
+                model=SECILEN_MODEL,
+                contents=[
+                    prompt,
+                    types.Part.from_bytes(data=resim_data, mime_type='image/jpeg')
+                ]
+            )
+            time.sleep(4)
+            metin = response.text.replace("```json", "").replace("```", "").strip()
+            return json.loads(metin)
+        except Exception as e:
+            hata = str(e).lower()
+            if '429' in hata or 'quota' in hata or 'exhausted' in hata:
+                if not api_anahtarini_degistir():
+                    return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+            time.sleep(3)
+            deneme += 1
+            
+    return {"anahtar_kelimeler": [], "baskin_kategori": ""}
 
 def kategori_seo_uret(kategori_adi):
     prompt = f"""
@@ -281,6 +334,14 @@ def sayfalari_olustur():
             kategori_seo_sozluk = json.load(f)
     else:
         kategori_seo_sozluk = {}
+
+    # Görsel Analiz Cache Dosyası
+    vision_cache_dosyasi = 'vision_cache.json'
+    if os.path.exists(vision_cache_dosyasi):
+        with open(vision_cache_dosyasi, 'r', encoding='utf-8') as f:
+            vision_cache = json.load(f)
+    else:
+        vision_cache = {}
     
     env = Environment(loader=FileSystemLoader('.'))
     template_video = env.get_template('video_sablon.html')
@@ -366,12 +427,27 @@ def sayfalari_olustur():
                     video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
 
                     # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
+                    # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
+                    if video['id'] in vision_cache:
+                        print(f"    √ Görsel analiz hafızadan alındı.")
+                        gorsel_verisi = vision_cache[video['id']]
+                    else:
+                        print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
+                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
+                        if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
+                            vision_cache[video['id']] = gorsel_verisi
+                            with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
+                                json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                    # -------------------------------------------
+
                     tum_videolar_arama_icin[dosya_adi] = {
                         "baslik": str(video.get('title', '')),
                         "link": dosya_adi,
                         "resim": video.get('thumbnail', ''),
                         "aciklama": str(video.get('description', '')),
-                        "makale": str(video.get('ai_metin', ''))
+                        "makale": str(video.get('ai_metin', '')),
+                        "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), # YENİ
+                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) # YENİ
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -436,13 +512,28 @@ def sayfalari_olustur():
                     
                 uretilen_sayfalar.append(dosya_adi)
                 # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
-                tum_videolar_arama_icin[dosya_adi] = {
-                    "baslik": str(video.get('title', '')),
-                    "link": dosya_adi,
-                    "resim": video.get('thumbnail', ''),
-                    "aciklama": str(video.get('description', '')),
-                    "makale": str(video.get('ai_metin', ''))
-                }
+                # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
+                    if video['id'] in vision_cache:
+                        print(f"    √ Görsel analiz hafızadan alındı.")
+                        gorsel_verisi = vision_cache[video['id']]
+                    else:
+                        print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
+                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
+                        if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
+                            vision_cache[video['id']] = gorsel_verisi
+                            with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
+                                json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                    # -------------------------------------------
+
+                    tum_videolar_arama_icin[dosya_adi] = {
+                        "baslik": str(video.get('title', '')),
+                        "link": dosya_adi,
+                        "resim": video.get('thumbnail', ''),
+                        "aciklama": str(video.get('description', '')),
+                        "makale": str(video.get('ai_metin', '')),
+                        "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), # YENİ
+                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) # YENİ
+                    }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
 
