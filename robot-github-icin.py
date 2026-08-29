@@ -138,11 +138,19 @@ def onayli_modelleri_cek():
 
     for satir in reader:
       if len(satir) >= 8 and satir[7] == "Onaylandı":
-            baslik_seo = url_uyumlu_yap(satir[4]) 
-            if len(baslik_seo) > 50: 
-                baslik_seo = baslik_seo[:50].strip('-')
-            kisa_id = str(satir[0])[-5:] 
-            uretilen_dosya_adi = f"{baslik_seo}-{kisa_id}.html"
+            
+            # YENİ: Eğer tabloda sabit bir URL varsa onu kullan, yoksa başlıkta üret ve sabitle
+            sabit_url_degeri = satir[10] if len(satir) > 10 and satir[10].strip() != "" else ""
+            
+            if sabit_url_degeri:
+                uretilen_dosya_adi = sabit_url_degeri
+            else:
+                baslik_seo = url_uyumlu_yap(satir[4]) 
+                if len(baslik_seo) > 50: 
+                    baslik_seo = baslik_seo[:50].strip('-')
+                kisa_id = str(satir[0])[-5:] 
+                uretilen_dosya_adi = f"{baslik_seo}-{kisa_id}.html"
+                # (İsteğe bağlı: İleride bu ilk üretilen adı Apps Script ile otomatik olarak K sütununa da yazdırabiliriz)
 
             model_verisi = {
                 "id": satir[0],
@@ -153,7 +161,7 @@ def onayli_modelleri_cek():
                 "makale": satir[5],
                 "medya": satir[6],
                 "durum": satir[7],
-                "dosya_adi": uretilen_dosya_adi,
+                "dosya_adi": uretilen_dosya_adi, # Sabit dosya adı artık mühürlendi!
             }
             onayli_liste.append(model_verisi)
 
