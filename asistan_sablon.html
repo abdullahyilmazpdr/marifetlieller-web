@@ -16,6 +16,201 @@
     <style>
         :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --metin-acik: #666666; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+
+        header {
+            background-color: var(--kutu-arka-plan);
+            border-bottom: 1px solid var(--kenarlik);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ana-renk);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo a::before {
+            content: "🌸";
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--ana-renk);
+        }
+
+        /* Arama ve Hamburger CSS */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--ana-renk);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Arama Çubuğu CSS'i */
+        .arama-alani {
+            position: relative;
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .arama-kutu {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--kenarlik);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .arama-sonuclari {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .arama-sonuc-oge {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            transition: background 0.2s;
+        }
+
+        .arama-sonuc-oge:hover {
+            background: var(--hover-renk);
+            color: var(--ana-renk);
+        }
+
+        .arama-sonuc-oge img {
+            width: 50px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .arama-sonuc-oge span {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* AÇILIR MENÜ (DROPDOWN) CSS */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown>a {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .dropdown>a::after {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--kutu-arka-plan);
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+            z-index: 1000;
+            border: 1px solid var(--kenarlik);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--metin-koyu);
+            border-bottom: 1px solid var(--kenarlik);
+            white-space: normal;
+            line-height: 1.4;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-renk);
+            color: var(--ana-renk);
+            padding-left: 22px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        
         main { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
         
         .asistan-kutusu { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.08); text-align: center; border: 1px solid var(--kenarlik); }
@@ -49,6 +244,200 @@
         /* SEO Makale Kutu Stili */
         .seo-makalesi { background-color: var(--kutu-arka-plan); padding: 40px 30px; border-radius: 15px; border: 1px solid var(--kenarlik); margin-top: 50px; margin-bottom: 20px; line-height: 1.8; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); text-align: left; }
         .seo-makalesi h2 { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-top: 0; margin-bottom: 15px; }
+
+        header {
+            background-color: var(--kutu-arka-plan);
+            border-bottom: 1px solid var(--kenarlik);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ana-renk);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo a::before {
+            content: "🌸";
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--ana-renk);
+        }
+
+        /* Arama ve Hamburger CSS */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--ana-renk);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Arama Çubuğu CSS'i */
+        .arama-alani {
+            position: relative;
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .arama-kutu {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--kenarlik);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .arama-sonuclari {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .arama-sonuc-oge {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            transition: background 0.2s;
+        }
+
+        .arama-sonuc-oge:hover {
+            background: var(--hover-renk);
+            color: var(--ana-renk);
+        }
+
+        .arama-sonuc-oge img {
+            width: 50px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .arama-sonuc-oge span {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* AÇILIR MENÜ (DROPDOWN) CSS */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown>a {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .dropdown>a::after {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--kutu-arka-plan);
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+            z-index: 1000;
+            border: 1px solid var(--kenarlik);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--metin-koyu);
+            border-bottom: 1px solid var(--kenarlik);
+            white-space: normal;
+            line-height: 1.4;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-renk);
+            color: var(--ana-renk);
+            padding-left: 22px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
