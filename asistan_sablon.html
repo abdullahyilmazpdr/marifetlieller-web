@@ -526,20 +526,38 @@
             let sonuclar = [];
             let eklenenLinkler = new Set();
 
-            terimler.forEach(terim => {
-                let eslesenler = veritabani.filter(v => v.baslik.toLowerCase().includes(terim.toLowerCase()));
-                eslesenler.forEach(m => {
-                    if(!eklenenLinkler.has(m.link)) {
+            // 1. Yapay Zekanın verdiği terimleri veritabanında arıyoruz
+            if (terimler && terimler.length > 0) {
+                terimler.forEach(terim => {
+                    let aranan = terim.toLowerCase().trim();
+                    let eslesenler = veritabani.filter(v => v.baslik.toLowerCase().includes(aranan));
+                    
+                    eslesenler.forEach(m => {
+                        if(!eklenenLinkler.has(m.link)) {
+                            sonuclar.push(m);
+                            eklenenLinkler.add(m.link);
+                        }
+                    });
+                });
+            }
+
+            // 2. EKSİKLERİ TAMAMLAMA: Eğer eşleşen model sayısı 3'ten azsa, arşivi tarayıp boşlukları dolduruyoruz
+            if (sonuclar.length < 3 && veritabani.length >= 3) {
+                // Veritabanını karıştır
+                let karisikArsiv = [...veritabani].sort(() => 0.5 - Math.random());
+                
+                for (let i = 0; i < karisikArsiv.length; i++) {
+                    let m = karisikArsiv[i];
+                    if (!eklenenLinkler.has(m.link)) {
                         sonuclar.push(m);
                         eklenenLinkler.add(m.link);
                     }
-                });
-            });
-
-            if(sonuclar.length === 0 && veritabani.length > 0) {
-                sonuclar = veritabani.sort(() => 0.5 - Math.random());
+                    // Tam 3 modele ulaştığımızda döngüyü durdur
+                    if (sonuclar.length >= 3) break; 
+                }
             }
 
+            // 3. Bulunan 3 Modeli Ekrana Bas
             const grid = document.getElementById('oneriGrid');
             grid.innerHTML = sonuclar.slice(0, 3).map(video => `
                 <a href="${video.link}" class="video-kart">
