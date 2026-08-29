@@ -828,11 +828,28 @@
                 terimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
                     let eslesenler = veritabani.filter(v => {
+                        // 1. ÖNCELİK: Yapay Zekanın kapağa bakarak çıkardığı özel anahtar kelimeler
+                        let ozelKelimeEslesti = false;
+                        if (v.ai_anahtar_kelimeler && v.ai_anahtar_kelimeler.length > 0) {
+                            ozelKelimeEslesti = v.ai_anahtar_kelimeler.some(k => k.toLowerCase().includes(aranan));
+                        }
+                        
+                        // 2. ÖNCELİK: Derin Arama (Başlık, Makale, Açıklama)
                         let basliktaVar = v.baslik && v.baslik.toLowerCase().includes(aranan);
                         let aciklamadaVar = v.aciklama && v.aciklama.toLowerCase().includes(aranan);
                         let makaledeVar = v.makale && v.makale.toLowerCase().includes(aranan);
-                        return basliktaVar || aciklamadaVar || makaledeVar;
+                        
+                        return ozelKelimeEslesti || basliktaVar || aciklamadaVar || makaledeVar;
                     });
+                    
+                    // Kategoriye Göre Puanlama ve Sıralama (Doğru kategoridekileri öne al)
+                    if (uygunKategori) {
+                        eslesenler.sort((a, b) => {
+                            let aKategoriPuan = (a.baskin_kategori === uygunKategori) ? 1 : 0;
+                            let bKategoriPuan = (b.baskin_kategori === uygunKategori) ? 1 : 0;
+                            return bKategoriPuan - aKategoriPuan;
+                        });
+                    }
                     
                     eslesenler.forEach(m => {
                         if(!eklenenLinkler.has(m.link)) {
