@@ -661,7 +661,14 @@
             return;
         }
 
-        const filtrelenmis = videoVeritabani.filter(video => video.baslik.toLowerCase().includes(input));
+        const filtrelenmis = videoVeritabani.filter(video => {
+            const aranan = input.toLowerCase().trim();
+            const basliktaVar = video.baslik && video.baslik.toLowerCase().includes(aranan);
+            const aciklamadaVar = video.aciklama && video.aciklama.toLowerCase().includes(aranan);
+            const makaledeVar = video.makale && video.makale.toLowerCase().includes(aranan);
+            
+            return basliktaVar || aciklamadaVar || makaledeVar;
+        });
 
         if (filtrelenmis.length > 0) {
             sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
@@ -696,20 +703,23 @@
             <div style="font-size: 13px; color: #888; margin-bottom: 25px;">Yazar: <b>Ayşegül YILMAZ</b> | Tarih: 02.08.2026</div>
 
             
-            <div style="margin-bottom: 25px; text-align: center;">
-                
-                
-                <!-- Google Drive linkinden ID'yi çıkarıp doğrudan (lh3) sunucuya bağlayan akıllı filtre -->
-                
-                    
-                    
-                
-                
-                <img src="https://lh3.googleusercontent.com/d/1p1touN5XHyPp00osG5S5JxFpVbLC_GY3" alt="İğne Oyası Çiçek Yapılışı"
-                    style="max-width: 100%; border-radius: 8px; max-height: 500px; object-fit: cover;">
-                
-            </div>
-            
+<div style="width: 100%; margin-bottom: 25px; text-align: center; background-color: #fcfcfc; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 12px; padding: 10px;">
+    
+    
+    
+    <!-- Google Drive linkinden ID'yi çıkarıp doğrudan (lh3) sunucuya bağlayan akıllı filtre -->
+    
+        
+        
+    
+    
+    <!-- FOTOĞRAFLARIN SÜNMESİNİ VE TAŞMASINI ENGELLEYEN ASIL KISIM (object-fit: contain) -->
+    <img src="https://lh3.googleusercontent.com/d/1p1touN5XHyPp00osG5S5JxFpVbLC_GY3" alt="İğne Oyası Çiçek Yapılışı"
+        style="width: 100%; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
+        
+    
+</div>
+
 
             <div
                 style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px;">

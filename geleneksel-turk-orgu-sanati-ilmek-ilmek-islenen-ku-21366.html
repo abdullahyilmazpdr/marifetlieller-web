@@ -4,23 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    <meta name="description" content="...">
-    <meta name="keywords"
-        content="iğne oyası, mekik oyası, oya çiçeği, Yeni Başlayanlar İçin İğne Oyası, çeyizlik modeller, el işi, Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model">
-    <meta name="author" content="Marifetli Eller">
-
-    <meta property="og:title" content="Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model - Marifetli Eller">
-    <meta property="og:description" content="...">
-    <meta property="og:image" content="https://i.ytimg.com/vi/mUMG2dM45ys/hqdefault.jpg">
-    <meta property="og:url" content="https://marifetliel.com/kategori_yeni-baslayanlar-icin-igne-oyasi.html">
-
-    <title>Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model - Marifetli Eller</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-
+    <title>Geleneksel Türk Örgü Sanatı: İlmek İlmek İşlenen Kültürel Mirasımız - Marifetli Eller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
 <!-- İleride GA4 kodunuzu buraya yapıştırın -->
 <!-- Google tag (gtag.js) -->
@@ -55,20 +40,17 @@
 
 <!-- Admatic veya diğer reklam ağları meta kodları -->
 <!-- Kodlar buraya gelecek -->
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <style>
-        *,
-        *::before,
-        *::after {
+        /* TEMEL AYARLAR */
+        *, *::before, *::after {
             box-sizing: border-box;
         }
 
-        html,
-        body {
+        html, body {
             max-width: 100%;
             overflow-x: hidden;
             margin: 0;
@@ -80,7 +62,7 @@
             --arka-plan: #fdfbfb;
             --kutu-arka-plan: #ffffff;
             --metin-koyu: #333333;
-            --metin-acik: #555555;
+            --metin-acik: #666666;
             --kenarlik: #f0e6e6;
             --hover-renk: #fff0f3;
         }
@@ -95,6 +77,7 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
+        /* HEADER CSS */
         header {
             background-color: var(--kutu-arka-plan);
             border-bottom: 1px solid var(--kenarlik);
@@ -152,7 +135,7 @@
             color: var(--ana-renk);
         }
 
-        /* Arama ve Hamburger CSS */
+        /* HAMBURGER */
         .hamburger {
             display: none;
             cursor: pointer;
@@ -168,8 +151,7 @@
             transition: all 0.3s ease;
         }
 
-
-        /* Arama Çubuğu CSS'i */
+        /* ARAMA VE DROPDOWN CSS */
         .arama-alani {
             position: relative;
             margin-left: auto;
@@ -229,7 +211,6 @@
             line-height: 1.2;
         }
 
-        /* AÇILIR MENÜ (DROPDOWN) CSS */
         .dropdown {
             position: relative;
             display: flex;
@@ -283,22 +264,23 @@
             background-color: var(--hover-renk);
             color: var(--ana-renk);
             padding-left: 22px;
+            transition: all 0.2s;
         }
 
         .dropdown:hover .dropdown-content {
             display: block;
         }
 
-
+        /* MAIN VE İÇERİK BÖLÜMÜ */
         main {
             flex: 1;
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
-        .video-kutu {
+        .icerik-kutusu {
             background-color: var(--kutu-arka-plan);
             padding: 30px;
             border-radius: 12px;
@@ -331,44 +313,127 @@
             font-family: 'Lora', serif;
             font-size: 24px;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             line-height: 1.4;
+            color: var(--ana-renk);
         }
 
-        .video-iframe {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
+        .sayfa-baslik {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .sayfa-baslik h1 {
+            font-family: 'Lora', serif;
+            color: var(--ana-renk);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .sayfa-baslik p {
+            color: var(--metin-acik);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* GALERİ VE KARTLAR */
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .video-kart {
+            background-color: var(--kutu-arka-plan);
+            border-radius: 12px;
             overflow: hidden;
-            border-radius: 8px;
-            background: #000;
+            border: 1px solid var(--kenarlik);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
         }
 
-        .video-iframe iframe {
+        .video-kart:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1);
+            border-color: #ffdce3;
+        }
+
+        .kart-resim {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .kart-resim img {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: cover;
         }
 
-        .aciklama-alani {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid var(--kenarlik);
+        .oynat-ikon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(214, 51, 108, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .aciklama {
+        .oynat-ikon::after {
+            content: "";
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 16px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 4px;
+        }
+
+        .video-kart:hover .oynat-ikon {
+            opacity: 1;
+        }
+
+        .kart-icerik {
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kart-baslik {
             font-size: 14px;
-            color: var(--metin-acik);
-            white-space: pre-line;
-            background: #fafafa;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--ana-renk);
+            font-weight: 600;
+            color: var(--metin-koyu);
+            line-height: 1.4;
+            margin: 0 0 10px 0;
         }
 
+        .video-kart:hover .kart-baslik {
+            color: var(--ana-renk);
+        }
+
+        .kart-tarih {
+            margin-top: auto;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* FOOTER CSS */
         footer {
             background-color: #2c3e50;
             color: #ecf0f1;
@@ -390,12 +455,18 @@
         }
 
         .sosyal-medya a {
+            display: inline-block;
             padding: 10px 20px;
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
             font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .sosyal-medya a:hover {
+            background-color: var(--ana-renk);
         }
 
         .footer-alt {
@@ -405,7 +476,12 @@
             color: #bdc3c7;
         }
 
+        /* RESPONSIVE & MOBİL (Medya Sorguları) */
         @media (max-width: 860px) {
+            .galeri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
             .hamburger {
                 display: flex;
             }
@@ -459,7 +535,6 @@
 </head>
 
 <body>
-
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
@@ -508,92 +583,6 @@
             <div class="dropdown">
                 <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
-                    
-                    
-                    <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
-                    
-                    <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
-                    
-                    <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
-                    
-                    <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
-                    
-                    <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
-                    
-                    <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
-                    
-                    <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
-                    
-                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
-                    
-                    <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
-                    
-                    <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
-                    
-                    <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
-                    
-                    <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
-                    
-                    <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
-                    
-                    <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
-                    
-                    <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
-                    
-                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
-                    
-                    <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
-                    
-                    <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
-                    
-                    <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
-                    
-                    <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
-                    
-                    <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
-                    
-                    <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
-                    
-                    <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
-                    
-                    <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
-                    
-                    <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
-                    
-                    <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
-                    
-                    <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
-                    
-                    <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
-                    
-                    <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
-                    
                     
                 </div>
             </div>
@@ -704,34 +693,61 @@
 </script>
 
     <main>
-        <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html" class="geri-don">← Yeni Başlayanlar İçin İğne Oyası Kategorisine Dön</a>
+        <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
 
-        <div class="video-kutu">
-            <h1>Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model</h1>
+        <div class="icerik-kutusu">
+            <span
+                style="background: var(--hover-renk); color: var(--ana-renk); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">Örgü Modelleri</span>
 
-            <div class="video-iframe">
-                <iframe src="https://www.youtube.com/embed/mUMG2dM45ys" allowfullscreen></iframe>
+            <h1>Geleneksel Türk Örgü Sanatı: İlmek İlmek İşlenen Kültürel Mirasımız</h1>
+            <div style="font-size: 13px; color: #888; margin-bottom: 25px;">Yazar: <b>Ayşegül YILMAZ</b> | Tarih: 29.08.2026</div>
+
+            
+<div style="width: 100%; margin-bottom: 25px; text-align: center; background-color: #fcfcfc; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 12px; padding: 10px;">
+    
+    
+    
+    <!-- Google Drive linkinden ID'yi çıkarıp doğrudan (lh3) sunucuya bağlayan akıllı filtre -->
+    
+        
+    
+    
+    <!-- FOTOĞRAFLARIN SÜNMESİNİ VE TAŞMASINI ENGELLEYEN ASIL KISIM (object-fit: contain) -->
+    <img src="https://lh3.googleusercontent.com/d/1sW40VcRwFMNlmTxv4fCmQBurOz8kDasZ" alt="Geleneksel Türk Örgü Sanatı: İlmek İlmek İşlenen Kültürel Mirasımız"
+        style="width: 100%; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
+        
+    
+</div>
+
+
+            <div
+                style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px;">
+                <p>Anadolu'nun köklü el sanatları geleneğinde <strong>örgü modelleri</strong>, yalnızca soğuktan korunmak için yapılan bir üretim aracı değil; aynı zamanda duyguların, umutların ve ince zevklerin ilmeklere döküldüğü sessiz bir iletişim dilidir. Geçmişten günümüze çeyiz sandıklarının baş köşesinde yer alan beş şişle örülmüş yün çoraplar, motif motif işlenmiş bebek yelekleri ve sıcacık tutan hırkalar, nesilden nesile aktarılan paha biçilemez bir kültürel mirastır.</p><br>
+    
+<p><strong>Marifetli Eller</strong> olarak, geleneksel el sanatlarının zarafetini örgünün sıcak dokusuyla buluşturuyoruz. Örgü Modelleri arşivimizde; yöresel desenlerden ilham alan klasik tasarımlardan, modern ve pratik tığ işi motiflere kadar geniş bir yelpazeyi keşfedebilirsiniz. Siz de kış aylarının vazgeçilmezi olan bu sıcacık el emeklerini inceleyebilir, adım adım anlatımlı yapılış videolarından ilham alarak kendi örgü projelerinize hayat verebilirsiniz. Şişlerinizi ve rengarenk iplerinizi hazırlayın; kendi ördüğünüz eşsiz modelleri topluluğumuzla paylaşarak bu güzel geleneği hep birlikte yaşatalım!</p>
             </div>
+        </div>
+    </main>
 
-            <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+    <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                 
                 <!-- WhatsApp Paylaş -->
-                <button onclick="whatsappPaylas('Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                <a href="https://api.whatsapp.com/send?text=Geleneksel Türk Örgü Sanatı: İlmek İlmek İşlenen Kültürel Mirasımız - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: geleneksel-turk-orgu-sanati-ilmek-ilmek-islenen-ku-21366.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     💬 WhatsApp
-                </button>
+                </a>
                 
                 <!-- Facebook Paylaş -->
-                <button onclick="facebookPaylas()" style="background-color: #1877F2; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=geleneksel-turk-orgu-sanati-ilmek-ilmek-islenen-ku-21366.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     📘 Facebook
-                </button>
+                </a>
 
                 <!-- Pinterest Paylaş -->
-                <button onclick="pinterestPaylas('Yeni Ve Farklı Çıtı Pıtı Bir Modelin Anlatımlı Yapılışı | 349. Model')" style="background-color: #E60023; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                <a href="https://pinterest.com/pin/create/button/?url=geleneksel-turk-orgu-sanati-ilmek-ilmek-islenen-ku-21366.html&description=Geleneksel Türk Örgü Sanatı: İlmek İlmek İşlenen Kültürel Mirasımız" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     📌 Pinterest
-                </button>
+                </a>
 
                 <!-- Instagram (Bağlantı Kopyalama) -->
                 <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
@@ -740,48 +756,10 @@
             </div>
         </div>
 
-            <div style="margin-top: 20px; text-align: center;">
-                <!-- Google AdSense Doğrulama Kodları Başlangıcı -->
-<!-- AdSense veya Admatic Banner Kodları buraya gelecek -->
-            </div>
-
-            <div class="aciklama-alani">
-                <div class="aciklama"></div>
-            </div>
-
-            
-            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
-                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
-                    ✨ Model Hakkında İpuçları ve Detaylar
-                </div>
-                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
-                    <h3>Modelin Özellikleri ve Zarafeti</h3>
-<p>Sevgili marifetli hanımlar, çeyiz bohçalarının ve günlük yazmaların vazgeçilmezi olan iğne oyalarında yine harika bir tasarımla karşınızdayım! <strong>349. Model</strong> olarak sizlere sunduğumuz bu zarif çalışma, tam anlamıyla "çıtı pıtı" tabirinin hakkını veriyor. Zarafetiyle göz dolduran bu model, hem gözü yormayan kibar yapısıyla hem de duruşundaki asaletle tülbentlerinize çok yakışacak.</p>
-<p>Özellikle <strong>yeni başlayan iğne oyası meraklıları</strong> ve "Ağır modeller beni yoruyor, şöyle hem şık hem de çabuk ilerleyen bir örnek arıyorum" diyenler için biçilmiş kaftan. Alt zürafasından üst çıtırlarına kadar her ilmeğinde ayrı bir emek barındıran bu tasarım, tülbent kenarlarında adeta minik çiçekler açtırıyor. Yapımı oldukça keyifli olan bu modeli işlerken zamanın nasıl geçtiğini anlamayacaksınız!</p>
-
-<h3>Renk Uyumu ve İp Seçimi Tavsiyeleri</h3>
-<p>Bir iğne oyasını gösteren en önemli detay doğru renk ve ip tercihidir. <strong>Çıtı pıtı iğne oyası modelleri</strong> işlenirken kullanılan malzemelerin kalitesi, modelin kalıp gibi durmasını sağlar. İşte bu özel modelde kusursuz sonucu yakalamanız için birkaç küçük tüyo:</p>
-<ul>
-    <li><strong>İp Kalitesi:</strong> Oyanızın ütüye dayanıklı olması ve yıkandığında bozulmaması için kaliteli <strong>suni ipek</strong> veya 50 katlı polyester oya iplerini tercih etmelisiniz. Özellikle kalıp gibi duran zürafalar için ipinizi elinizde hafifçe esneterek kullanmayı unutmayın.</li>
-    <li><strong>Yazma Renk Uyumu:</strong> Eğer desenli bir yazma kenarına yapıyorsanız, tülbentin zemin rengini alt kök kısmında, içindeki en canlı iki baskın rengi ise üst çıtır desenlerinde kullanabilirsiniz.</li>
-    <li><strong>Tek Renk Şıklığı:</strong> Düz renk (siyah, beyaz veya toz pembe) yazmalarda ise zıt renklerin uyumundan faydalanabilir ya da krem ve pastel tonlarla çok daha modern, zarif bir hava yakalayabilirsiniz.</li>
-</ul>
-
-<h3>Sıkça Sorulan Sorular</h3>
-<p><strong>1. Bu model iğne oyasına yeni başlayanlar için uygun mudur?</strong><br>
-Evet, kesinlikle! Model temel zürafa ve tekniklere dayandığı için el alışkanlığı kazanmak isteyen hanımlar videoyu izleyerek rahatlıkla uygulayabilirler.</p>
-
-<p><strong>2. İğne oyasının kalıp gibi durması ve bozulmaması için nasıl ütülenmeli?</strong><br>
-Oyanızı ütülerken mutlaka tersinden, üzerine nemli ince bir tülbent örterek orta ısıdaki ütü ile bastırmadan ütülemelisiniz. Bu sayede ipleriniz parlamaz ve şeklini uzun süre korur.</p>
-
-<p><strong>3. Bir yazma kenarına bu modelden kaç günde bitirebilirim?</strong><br>
-Modelimiz oldukça akıcı ve hafif olduğu için eli pratik olan hanımlar günde birkaç saatlik çalışma ile 3-4 gün içinde bir tülbendi rahatlıkla tamamlayabilir.</p>
-                </div>
-            </div>
-            
-
+    <!-- YENİ: YAZAR SORUMLULUK REDDİ BEYANI -->
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6;">
+            <strong>⚠️ Sorumluluk Reddi:</strong> Bu sayfada yer alan model, metin, görsel veya videolar tamamen yazarımız <strong>Ayşegül YILMAZ</strong> tarafından oluşturulmuş ve platformumuza eklenmiştir. İçeriğin özgünlüğü, telif hakları ve sorumluluğu tamamen yazarın kendisine aittir. Marifetli Eller platformu, kullanıcılar tarafından yüklenen içeriklerden doğabilecek hukuki veya telif ihlali durumlarından sorumlu tutulamaz. Herhangi bir hak ihlali olduğunu düşünüyorsanız lütfen İletişim sayfamızdan bize bildirin.
         </div>
-    </main>
 
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
@@ -839,35 +817,19 @@ Modelimiz oldukça akıcı ve hafif olduğu için eli pratik olan hanımlar gün
                     document.getElementById("sayfa-sayac").innerText = "-";
                 });
         });
-    </script>
-     <!-- AKILLI PAYLAŞIM SCRİPTLERİ -->
-        <script>
-            function whatsappPaylas(baslik) {
-                var url = window.location.href;
-                var mesaj = baslik + " - Marifetli Eller'de harika bir model gördüm! Mutlaka incele: " + url;
-                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(mesaj), "_blank");
-            }
 
-            function facebookPaylas() {
-                var url = window.location.href;
-                window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url), "_blank");
-            }
-
-            function pinterestPaylas(baslik) {
-                var url = window.location.href;
-                window.open("https://pinterest.com/pin/create/button/?url=" + encodeURIComponent(url) + "&description=" + encodeURIComponent(baslik), "_blank");
-            }
-
-            function instagramIcinKopyala() {
+        function instagramIcinKopyala() {
+                // Sayfanın tam URL'sini alır
                 var sayfaLinki = window.location.href;
+                
+                // Panoya kopyalar
                 navigator.clipboard.writeText(sayfaLinki).then(function() {
                     alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
                 }).catch(function(err) {
                     alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
                 });
             }
-        </script>
-
+    </script>
 </body>
 
 </html>

@@ -675,7 +675,14 @@
             return;
         }
 
-        const filtrelenmis = videoVeritabani.filter(video => video.baslik.toLowerCase().includes(input));
+        const filtrelenmis = videoVeritabani.filter(video => {
+            const aranan = input.toLowerCase().trim();
+            const basliktaVar = video.baslik && video.baslik.toLowerCase().includes(aranan);
+            const aciklamadaVar = video.aciklama && video.aciklama.toLowerCase().includes(aranan);
+            const makaledeVar = video.makale && video.makale.toLowerCase().includes(aranan);
+            
+            return basliktaVar || aciklamadaVar || makaledeVar;
+        });
 
         if (filtrelenmis.length > 0) {
             sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
