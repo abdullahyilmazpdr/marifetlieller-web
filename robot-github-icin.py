@@ -540,6 +540,13 @@ def sayfalari_olustur():
     with open('model-gonder.html', 'w', encoding='utf-8') as f: 
         f.write(model_icerik)
     uretilen_sayfalar.append('model-gonder.html')
+
+    # Yapay Zeka Asistan Sayfasını Oluştur
+    template_asistan = env.get_template('asistan_sablon.html')
+    asistan_icerik = template_asistan.render(tum_kategoriler=tum_kategoriler)
+    with open('akilli-asistan.html', 'w', encoding='utf-8') as f: 
+        f.write(asistan_icerik)
+    uretilen_sayfalar.append('akilli-asistan.html')
     
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
     sitemap_olustur(uretilen_sayfalar)
