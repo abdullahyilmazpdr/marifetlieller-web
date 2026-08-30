@@ -563,7 +563,7 @@
                 });
             }
 
-            if (sonuclar.length < 3 && veritabani.length >= 3) {
+            if (sonuclar.length < 3 && veritabani.length >= 6) {
                 let karisikArsiv = [...veritabani].sort(() => 0.5 - Math.random());
                 for (let i = 0; i < karisikArsiv.length; i++) {
                     let m = karisikArsiv[i];
@@ -571,12 +571,12 @@
                         sonuclar.push(m);
                         eklenenLinkler.add(m.link);
                     }
-                    if (sonuclar.length >= 3) break; 
+                    if (sonuclar.length >= 6) break; 
                 }
             }
 
             const grid = document.getElementById('oneriGrid');
-            grid.innerHTML = sonuclar.slice(0, 3).map(video => `
+            grid.innerHTML = sonuclar.slice(0, 6).map(video => `
                 <a href="${video.link}" class="video-kart">
                     <div class="kart-resim">
                         <img src="${video.resim}" alt="${video.baslik}">
