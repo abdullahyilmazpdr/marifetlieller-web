@@ -120,6 +120,15 @@
                 </table>
             </div>
         </div>
+
+        <!-- FAVORİLER VİTRİNİ -->
+<div style="margin-top: 40px;">
+    <h3 style="color: #d6336c; border-bottom: 2px solid #eee; padding-bottom: 10px;">❤️ Kaydettiğim Modeller</h3>
+    
+    <div id="favoriGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px;">
+        <p style="color: #777;">Favori modelleriniz yükleniyor...</p>
+    </div>
+</div>
     </main>
 
     <!-- YÖNETİCİ PANELİ (Sadece yetkili e-posta giriş yaptığında görünür) -->
@@ -346,5 +355,48 @@
             });
         }
     </script>
+    function favorileriGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        if(!userEmail) return;
+
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+        
+        let formData = new URLSearchParams();
+        formData.append("islem", "favorileri_getir");
+        formData.append("email", userEmail);
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(favoriler => {
+            const grid = document.getElementById("favoriGrid");
+            
+            if(favoriler.length === 0) {
+                grid.innerHTML = "<p style='color: #888; grid-column: 1/-1;'>Henüz hiç favori modeliniz yok. Hemen arşivi keşfetmeye başlayın!</p>";
+                return;
+            }
+
+            // Favorileri ekrana şık kartlar halinde basıyoruz
+            grid.innerHTML = favoriler.map(fav => `
+                <a href="${fav.link}" style="text-decoration: none; color: inherit; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; transition: 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="${fav.resim}" alt="${fav.baslik}" style="width: 100%; height: 150px; object-fit: cover;">
+                    <div style="padding: 15px;">
+                        <h4 style="margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4;">${fav.baslik}</h4>
+                    </div>
+                </a>
+            `).join('');
+        })
+        .catch(err => {
+            document.getElementById("favoriGrid").innerHTML = "<p style='color: red;'>Favoriler yüklenirken bir hata oluştu.</p>";
+        });
+    }
+
+    // Sayfa yüklendiğinde favorileri getirme fonksiyonunu otomatik tetikle
+    document.addEventListener("DOMContentLoaded", function() {
+        // Mevcut profil yükleme fonksiyonlarınız buradadır...
+        favorileriGetir(); 
+    });
 </body>
 </html>
