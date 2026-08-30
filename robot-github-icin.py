@@ -244,14 +244,15 @@ def onayli_modelleri_cek():
     return []
 
 def populer_videolari_getir():
-    print("\n--- Popüler Videolar Çekiliyor ---")
+    print("\n--- Haftanın Popüler Videoları Çekiliyor ---")
     try:
+        # 1. Aşama: YOUTUBE API DENEMESİ (En çok izlenenler)
         request = youtube.search().list(
             part="snippet", 
             channelId=KANAL_ID, 
             order="viewCount", 
             type="video", 
-            maxResults=4
+            maxResults=5 # Kullanıcı deneyimi için 5'e çıkardık
         )
         response = request.execute()
         populerler = []
@@ -269,8 +270,72 @@ def populer_videolari_getir():
             
             populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link})
         return populerler
+        
     except Exception as e:
-        print(f"Popüler video çekme hatası: {e}")
+        print(f"  ! YouTube API Kotası Doldu. Yapay Zeka Trend Motoruna Geçiliyor...")
+        import random # Güvenlik için içeride import ediyoruz
+        
+        # 2. Aşama: YAPAY ZEKA İLE TREND FALLBACK
+        if os.path.exists('tum_videolar_ham.json'):
+            try:
+                with open('tum_videolar_ham.json', 'r', encoding='utf-8') as f:
+                    tum_videolar = json.load(f)
+
+                if not tum_videolar:
+                    return []
+
+                # AI token sınırını aşmamak için arşivden rastgele 100 model seçiyoruz
+                orneklem = random.sample(tum_videolar, min(100, len(tum_videolar)))
+                secenekler_metni = "\n".join([f"ID: {v['id']} | Başlık: {v['title']}" for v in orneklem])
+
+                prompt = f"""
+                Sen 'Marifetli Eller' el işi sitesinin trend analistisin. YouTube API kotamız dolduğu için bu haftanın popüler videolarını sen seçeceksin.
+                Aşağıda arşivimizde bulunan rastgele 100 adet modelin listesi var.
+                Görevlerin:
+                1. Kadınların en çok arattığı güncel el işi trendlerini (örneğin; çeyizlik gösterişli oyalar, zarif çıtı pıtı modeller, popüler havlu kenarları, kağıt ip çantalar vb.) analiz et.
+                2. Bu vizyonla, aşağıdaki listeden en çok dikkat çekecek ve sitemizde tıklanacak tam 5 adet modeli seç.
+
+                SADECE GEÇERLİ BİR JSON DÖNDÜR. Markdown kullanma. Format:
+                {{
+                    "trend_idler": ["id1", "id2", "id3", "id4", "id5"]
+                }}
+
+                Liste:
+                {secenekler_metni}
+                """
+
+                ai_yanit = gemini_istek_gonder(prompt)
+                try:
+                    # Markdown kalıntılarını temizleyip JSON'a çeviriyoruz
+                    ai_veri = json.loads(ai_yanit.replace("```json", "").replace("```", "").strip())
+                    secilen_idler = ai_veri.get("trend_idler", [])
+                except:
+                    secilen_idler = []
+
+                populerler = []
+                for v in tum_videolar:
+                    if v['id'] in secilen_idler:
+                        populerler.append({
+                            'id': v['id'],
+                            'baslik': v['title'],
+                            'description': v['description'],
+                            'resim': v['thumbnail'],
+                            'link': v['dosya_adi']
+                        })
+                        if len(populerler) == 5:
+                            break
+
+                # Eğer yapay zeka JSON'u bozarsa mecburi yedek olarak son 5 videoyu göster
+                if not populerler:
+                    populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi']} for v in tum_videolar[-5:]]
+                else:
+                    print("  √ Yapay Zeka bu haftanın trend 5 modelini başarıyla seçti!")
+
+                return populerler
+
+            except Exception as ex:
+                print(f"  ! AI Trend Seçim Hatası: {ex}")
+                return []
         return []
 
 def oynatma_listelerini_getir():
