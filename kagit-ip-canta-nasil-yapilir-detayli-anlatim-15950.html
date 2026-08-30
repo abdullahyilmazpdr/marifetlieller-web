@@ -4,16 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Dinamik SEO Etiketleri -->
-    <meta name="description"
-        content="Diğer El İşleri (Sizden Gelenler) modelleri, anlatımlı yapılış videoları ve ipuçları.">
-
-    <title>Diğer El İşleri (Sizden Gelenler) - Marifetli Eller</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-
+    <title>Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım - Marifetli Eller</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
 <!-- İleride GA4 kodunuzu buraya yapıştırın -->
 <!-- Google tag (gtag.js) -->
@@ -48,20 +40,17 @@
 
 <!-- Admatic veya diğer reklam ağları meta kodları -->
 <!-- Kodlar buraya gelecek -->
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <style>
-        *,
-        *::before,
-        *::after {
+        /* TEMEL AYARLAR */
+        *, *::before, *::after {
             box-sizing: border-box;
         }
 
-        html,
-        body {
+        html, body {
             max-width: 100%;
             overflow-x: hidden;
             margin: 0;
@@ -88,6 +77,7 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
+        /* HEADER CSS */
         header {
             background-color: var(--kutu-arka-plan);
             border-bottom: 1px solid var(--kenarlik);
@@ -145,7 +135,7 @@
             color: var(--ana-renk);
         }
 
-        /* Arama ve Hamburger CSS */
+        /* HAMBURGER */
         .hamburger {
             display: none;
             cursor: pointer;
@@ -161,7 +151,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Arama Çubuğu CSS'i */
+        /* ARAMA VE DROPDOWN CSS */
         .arama-alani {
             position: relative;
             margin-left: auto;
@@ -221,7 +211,6 @@
             line-height: 1.2;
         }
 
-        /* AÇILIR MENÜ (DROPDOWN) CSS */
         .dropdown {
             position: relative;
             display: flex;
@@ -275,18 +264,58 @@
             background-color: var(--hover-renk);
             color: var(--ana-renk);
             padding-left: 22px;
+            transition: all 0.2s;
         }
 
         .dropdown:hover .dropdown-content {
             display: block;
         }
 
+        /* MAIN VE İÇERİK BÖLÜMÜ */
         main {
             flex: 1;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
+        }
+
+        .icerik-kutusu {
+            background-color: var(--kutu-arka-plan);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--kenarlik);
+        }
+
+        .geri-don {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 16px;
+            background-color: var(--kutu-arka-plan);
+            border-radius: 30px;
+            border: 1px solid var(--kenarlik);
+            transition: all 0.3s ease;
+        }
+
+        .geri-don:hover {
+            color: var(--ana-renk);
+            background-color: var(--hover-renk);
+            border-color: #ffdce3;
+        }
+
+        h1 {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            color: var(--ana-renk);
         }
 
         .sayfa-baslik {
@@ -307,6 +336,7 @@
             margin: 0;
         }
 
+        /* GALERİ VE KARTLAR */
         .galeri-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -403,27 +433,7 @@
             color: #999;
         }
 
-        .geri-don {
-            display: inline-flex;
-            align-items: center;
-            margin-bottom: 25px;
-            text-decoration: none;
-            color: var(--metin-koyu);
-            font-weight: 500;
-            font-size: 14px;
-            padding: 8px 16px;
-            background-color: var(--kutu-arka-plan);
-            border-radius: 30px;
-            border: 1px solid var(--kenarlik);
-            transition: all 0.3s ease;
-        }
-
-        .geri-don:hover {
-            color: var(--ana-renk);
-            background-color: var(--hover-renk);
-            border-color: #ffdce3;
-        }
-
+        /* FOOTER CSS */
         footer {
             background-color: #2c3e50;
             color: #ecf0f1;
@@ -466,7 +476,7 @@
             color: #bdc3c7;
         }
 
-        /* Responsive ve Hamburger Menü */
+        /* RESPONSIVE & MOBİL (Medya Sorguları) */
         @media (max-width: 860px) {
             .galeri-grid {
                 grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -525,7 +535,6 @@
 </head>
 
 <body>
-
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
@@ -574,92 +583,6 @@
             <div class="dropdown">
                 <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
-                    
-                    
-                    <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
-                    
-                    <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
-                    
-                    <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
-                    
-                    <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
-                    
-                    <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
-                    
-                    <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
-                    
-                    <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
-                    
-                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
-                    
-                    <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
-                    
-                    <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
-                    
-                    <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
-                    
-                    <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
-                    
-                    <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
-                    
-                    <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
-                    
-                    <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
-                    
-                    <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
-                    
-                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
-                    
-                    <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
-                    
-                    <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
-                    
-                    <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
-                    
-                    <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
-                    
-                    <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
-                    
-                    <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
-                    
-                    <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
-                    
-                    <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
-                    
-                    <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
-                    
-                    <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
-                    
-                    <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
-                    
-                    <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
-                    
-                    <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
-                    
-                    <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
-                    
-                    <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
-                    
                     
                 </div>
             </div>
@@ -770,52 +693,88 @@
 </script>
 
     <main>
-        
-            
-        <!-- YALNIZCA KATEGORİ SAYFALARINDA GÖRÜNECEK ALANLAR -->
         <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
 
-        <div class="sayfa-baslik">
-            <h1>Diğer El İşleri (Sizden Gelenler)</h1>
-        </div>
+        <div class="icerik-kutusu">
+            <span
+                style="background: var(--hover-renk); color: var(--ana-renk); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">Diğer El İşleri</span>
 
-        <div class="galeri-grid">
+            <h1>Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım</h1>
+            <div style="font-size: 13px; color: #888; margin-bottom: 25px;">Yazar: <b>Fatoş Aksu </b> | Tarih: 30.08.2026</div>
+
             
-            <a href="kanvas-ve-makrome-ipiyle-yapilmis-5-harika-canta-m-67095.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://lh3.googleusercontent.com/d/1H4ouXXTtSjq5P6oPUXXAQNcNF22Fgn1y" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Kanvas ve Makrome İpiyle Yapılmış 5 Harika Çanta Modeli</h3>
-                </div>
-            </a>
-            
-            <a href="kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html" class="video-kart">
-                <div class="kart-resim">
-                    <img src="https://lh3.googleusercontent.com/d/1tLicAN_k08OPkyklITS9VIKh6-_XhcFM" alt="Video resmi">
-                    <div class="oynat-ikon"></div>
-                </div>
-                <div class="kart-icerik">
-                    <h3 class="kart-baslik">Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım</h3>
-                </div>
-            </a>
-            
-        </div>
+<div style="width: 100%; margin-bottom: 25px; text-align: center; background-color: #fcfcfc; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 12px; padding: 10px;">
+    
+    
+    
+    <!-- Google Drive linkinden ID'yi çıkarıp doğrudan (lh3) sunucuya bağlayan akıllı filtre -->
+    
         
+        
+    
+    
+    <!-- FOTOĞRAFLARIN SÜNMESİNİ VE TAŞMASINI ENGELLEYEN ASIL KISIM (object-fit: contain) -->
+    <img src="https://lh3.googleusercontent.com/d/1tLicAN_k08OPkyklITS9VIKh6-_XhcFM" alt="Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım"
+        style="width: 100%; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
+        
+    
+</div>
+
+
+            <div
+                style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px;">
+                Malzemeler 
+kağıt ip
+2-3 numara tığ
+
+
+Yapılışı
+
+Sihirli halkıyla başlıyoruz
+
+3 zincir çekerek başlıyoruz
+
+1.sıra 3 travzan 4 zincir (4 tane yap)
+2.sıra ve sonrasında 3 zincir çek köşelere kadar artırma yok köşeye gelince 3 travzan 4 zincir tekrar 3 travzan yaparak her sırada aynı şekilde ilerliyoruz 
+
+Ben 5 sıra yaptım siz isterseniz daha fazla yapabilirsiniz 4 kenar olacak şekilde ilerleyin 
+İsteğiniz kadar adet 
+Ve istediğiniz büyüklükte yapabilirsiniz 
+            </div>
+        </div>
     </main>
 
-    <!-- SADECE ANA SAYFADA GÖRÜNECEK SEO METNİ -->
-        
+    <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                
+                <!-- WhatsApp Paylaş -->
+                <a href="https://api.whatsapp.com/send?text=Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    💬 WhatsApp
+                </a>
+                
+                <!-- Facebook Paylaş -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📘 Facebook
+                </a>
 
-    <!-- KATEGORİYE ÖZEL SEO METNİ (EĞER VARSA) -->
-        
-        <div style="background-color: var(--kutu-arka-plan); padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); margin-top: 40px; margin-bottom: 20px; line-height: 1.7; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02);">
-            <p>Marifetli Eller ailesinin en renkli köşesi olan <strong>Diğer El İşleri (Sizden Gelenler)</strong> kategorisinde, Türkiye'nin dört bir yanından sizlerin binbir emekle hazırladığı <strong>el emeği göz nuru</strong> tasarımları bir araya getiriyoruz. Klasik iğne oyası ve mekik oyası geleneklerimizin ötesine geçerek; ahşap boyamadan keçe sanatına, <strong>geri dönüşüm projelerinden</strong> farklı örgü ve punch tekniklerine kadar geniş bir hobi dünyasını burada sergiliyoruz. Siz de evde kendi imkanlarınızla hazırladığınız yaratıcı <strong>kendin yap (DIY) fikirlerini</strong> ve el becerilerinizi topluluğumuzla paylaşabilir, marifetlerinizi binlerce el sanatı tutkununa ilham kaynağı olarak sunabilirsiniz.</p>
+                <!-- Pinterest Paylaş -->
+                <a href="https://pinterest.com/pin/create/button/?url=kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html&description=Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📌 Pinterest
+                </a>
 
-<p>Her biri buram buram samimiyet ve özgünlük taşıyan bu <strong>özel tasarım el işi modelleri</strong>, sadece seyretmek için değil, yeni bir hobi edinmek isteyenler için de zengin bir fikir kütüphanesi niteliğindedir. Sezonun trend <strong>evde el işi örnekleri</strong>, takipçilerimizin pratik anlatımları ve kişisel dokunuşlarıyla zenginleşen bu sayfamızda, aradığınız o farklı ve sıra dışı <strong>hobi dünyası tasarımlarını</strong> kolayca keşfedebilirsiniz. Emeğinize değer katmak ve <strong>Marifetli Eller</strong> vitrininde gururla yerinizi almak için ürettiğiniz eşsiz el yapımı ürünleri bizimle paylaşmayı unutmayın.</p>
+                <!-- Instagram (Bağlantı Kopyalama) -->
+                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📸 Instagram'da Paylaş
+                </button>
+            </div>
         </div>
-        
+
+    <!-- YENİ: YAZAR SORUMLULUK REDDİ BEYANI -->
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6;">
+            <strong>⚠️ Sorumluluk Reddi:</strong> Bu sayfada yer alan model, metin, görsel veya videolar tamamen yazarımız <strong>Fatoş Aksu </strong> tarafından oluşturulmuş ve platformumuza eklenmiştir. İçeriğin özgünlüğü, telif hakları ve sorumluluğu tamamen yazarın kendisine aittir. Marifetli Eller platformu, kullanıcılar tarafından yüklenen içeriklerden doğabilecek hukuki veya telif ihlali durumlarından sorumlu tutulamaz. Herhangi bir hak ihlali olduğunu düşünüyorsanız lütfen İletişim sayfamızdan bize bildirin.
+        </div>
 
     <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
     <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
@@ -849,71 +808,43 @@
     </footer>
 
     <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
-        let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
-        if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
+            let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
+            if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
 
-        // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
+            // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
 
-        // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
-        fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
-            .then(response => response.text())
-            .then(data => {
-                if(data && !isNaN(data) && data !== "0") {
-                    document.getElementById("sayfa-sayac").innerText = data;
-                } else {
-                    document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
-                }
-            })
-            .catch(error => {
-                console.error("Sayaç hatası:", error);
-                document.getElementById("sayfa-sayac").innerText = "-";
-            });
-    });
-</script>
-
-<script>
-            // Apps Script'ten onaylı son 5 modeli çekme
-            document.addEventListener("DOMContentLoaded", function () {
-                const url = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=son_modeller";
-                
-                fetch(url)
-                .then(response => response.json())
+            // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
+            fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
+                .then(response => response.text())
                 .then(data => {
-                    const liste = document.getElementById('sonEklenenlerListesi');
-                    if(data.length === 0) {
-                        liste.innerHTML = '<p style="font-size: 13px; color: #888;">Henüz eklenen model bulunmuyor.</p>';
-                        return;
+                    if (data && !isNaN(data) && data !== "0") {
+                        document.getElementById("sayfa-sayac").innerText = data;
+                    } else {
+                        document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
                     }
-                    
-                    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
-                    data.forEach(model => {
-                        // SEO URL Hesaplama
-                        let seo = model.baslik.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
-                        let url = seo.substring(0, 50).replace(/-+$/, '') + "-" + String(model.id).slice(-5) + ".html";
-                        
-                        html += `
-                            <a href="${url}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px;">
-                                <div style="background: var(--hover-renk); color: var(--ana-renk); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">✨</div>
-                                <div>
-                                    <h4 style="margin: 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">${model.baslik}</h4>
-                                    <span style="font-size: 11px; color: #888;">${model.yazar} • ${model.kategori}</span>
-                                </div>
-                            </a>
-                        `;
-                    });
-                    html += '</div>';
-                    liste.innerHTML = html;
                 })
-                .catch(err => {
-                    document.getElementById('sonEklenenlerListesi').innerHTML = '<p style="font-size: 13px; color: red;">Modeller yüklenemedi.</p>';
+                .catch(error => {
+                    console.error("Sayaç hatası:", error);
+                    document.getElementById("sayfa-sayac").innerText = "-";
                 });
-            });
-        </script>
+        });
 
+        function instagramIcinKopyala() {
+                // Sayfanın tam URL'sini alır
+                var sayfaLinki = window.location.href;
+                
+                // Panoya kopyalar
+                navigator.clipboard.writeText(sayfaLinki).then(function() {
+                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+                }).catch(function(err) {
+                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+                });
+            }
+    </script>
 </body>
 
 </html>
