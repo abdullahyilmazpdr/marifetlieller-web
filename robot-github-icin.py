@@ -428,26 +428,26 @@ def sayfalari_olustur():
 
                     # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                     # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
-                    if video_data['id'] in vision_cache:
+                    if video['id'] in vision_cache:
                         print(f"    √ Görsel analiz hafızadan alındı.")
-                        gorsel_verisi = vision_cache[video_data['id']]
+                        gorsel_verisi = vision_cache[video['id']]
                     else:
                         print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
-                        gorsel_verisi = model_gorsel_analizi_yap(video_data['thumbnail'], video_data['title'])
+                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
                         if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
-                            vision_cache[video_data['id']] = gorsel_verisi
+                            vision_cache[video['id']] = gorsel_verisi
                             with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
                                 json.dump(vision_cache, f, ensure_ascii=False, indent=4)
                     # -------------------------------------------
-    
+
                     tum_videolar_arama_icin[dosya_adi] = {
-                        "baslik": str(video_data.get('title', '')),
+                        "baslik": str(video.get('title', '')),
                         "link": dosya_adi,
-                        "resim": video_data.get('thumbnail', ''),
-                        "aciklama": str(video_data.get('description', '')),
-                        "makale": str(video_data.get('ai_metin', '')),
+                        "resim": video.get('thumbnail', ''),
+                        "aciklama": str(video.get('description', '')),
+                        "makale": str(video.get('ai_metin', '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
-                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", "Popüler Videolar") 
+                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) 
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -513,26 +513,26 @@ def sayfalari_olustur():
                 uretilen_sayfalar.append(dosya_adi)
                 # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                 # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
-                if video_data['id'] in vision_cache:
+                if video['id'] in vision_cache:
                     print(f"    √ Görsel analiz hafızadan alındı.")
-                    gorsel_verisi = vision_cache[video_data['id']]
+                    gorsel_verisi = vision_cache[video['id']]
                 else:
                     print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
-                    gorsel_verisi = model_gorsel_analizi_yap(video_data['thumbnail'], video_data['title'])
+                    gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
                     if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
-                        vision_cache[video_data['id']] = gorsel_verisi
+                        vision_cache[video['id']] = gorsel_verisi
                         with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
                             json.dump(vision_cache, f, ensure_ascii=False, indent=4)
                 # -------------------------------------------
 
                 tum_videolar_arama_icin[dosya_adi] = {
-                    "baslik": str(video_data.get('title', '')),
+                    "baslik": str(video.get('title', '')),
                     "link": dosya_adi,
-                    "resim": video_data.get('thumbnail', ''),
-                    "aciklama": str(video_data.get('description', '')),
-                    "makale": str(video_data.get('ai_metin', '')),
+                    "resim": video.get('thumbnail', ''),
+                    "aciklama": str(video.get('description', '')),
+                    "makale": str(video.get('ai_metin', '')),
                     "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
-                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", "Popüler Videolar") 
+                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) 
                 }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
