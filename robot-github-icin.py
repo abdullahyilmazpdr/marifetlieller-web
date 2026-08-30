@@ -343,6 +343,10 @@ def sayfalari_olustur():
     else:
         vision_cache = {}
     
+    # YENİ EKLENEN: GitHub Actions 6 saat sınırına takılmamak için her çalışmada işlenecek maksimum yeni resim sayısı
+    maks_yeni_analiz = 100
+    yapilan_yeni_analiz = 0
+    
     env = Environment(loader=FileSystemLoader('.'))
     template_video = env.get_template('video_sablon.html')
     template_index = env.get_template('index_sablon.html') 
@@ -432,12 +436,19 @@ def sayfalari_olustur():
                         print(f"    √ Görsel analiz hafızadan alındı.")
                         gorsel_verisi = vision_cache[video['id']]
                     else:
-                        print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
-                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
-                        if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
-                            vision_cache[video['id']] = gorsel_verisi
-                            with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
-                                json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                        # Eğer belirlediğimiz 100 resimlik sınıra henüz ulaşmadıysak API'ye gönder
+                        if yapilan_yeni_analiz < maks_yeni_analiz:
+                            print(f"    + Kapak fotoğrafı AI ile analiz ediliyor... (Limit: {yapilan_yeni_analiz + 1}/{maks_yeni_analiz})")
+                            gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
+                            if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
+                                vision_cache[video['id']] = gorsel_verisi
+                                with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
+                                    json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                            yapilan_yeni_analiz += 1
+                        else:
+                            # Sınıra ulaşıldıysa bu videoyu şimdilik atla, sonraki robota bırak
+                            print(f"    ⏳ Limit doldu. Bu görsel sonraki çalışmaya bırakıldı.")
+                            gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": kategori_adi}
                     # -------------------------------------------
 
                     tum_videolar_arama_icin[dosya_adi] = {
@@ -517,12 +528,19 @@ def sayfalari_olustur():
                     print(f"    √ Görsel analiz hafızadan alındı.")
                     gorsel_verisi = vision_cache[video['id']]
                 else:
-                    print(f"    + Kapak fotoğrafı AI ile analiz ediliyor...")
-                    gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
-                    if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
-                        vision_cache[video['id']] = gorsel_verisi
-                        with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
-                            json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                    # Eğer belirlediğimiz 100 resimlik sınıra henüz ulaşmadıysak API'ye gönder
+                    if yapilan_yeni_analiz < maks_yeni_analiz:
+                        print(f"    + Kapak fotoğrafı AI ile analiz ediliyor... (Limit: {yapilan_yeni_analiz + 1}/{maks_yeni_analiz})")
+                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
+                        if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
+                            vision_cache[video['id']] = gorsel_verisi
+                            with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
+                                json.dump(vision_cache, f, ensure_ascii=False, indent=4)
+                        yapilan_yeni_analiz += 1
+                    else:
+                        # Sınıra ulaşıldıysa bu videoyu şimdilik atla, sonraki robota bırak
+                        print(f"    ⏳ Limit doldu. Bu görsel sonraki çalışmaya bırakıldı.")
+                        gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": kategori_adi}
                 # -------------------------------------------
 
                 tum_videolar_arama_icin[dosya_adi] = {
@@ -662,6 +680,17 @@ def sayfalari_olustur():
     with open('tum_videolar_ham.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_ham, f, ensure_ascii=False)
         
+    # YENİ EKLENEN: ZİNCİRLEME OTOMASYON KONTROLÜ
+    devam_dosyasi = 'devam_edecek.txt'
+    if yapilan_yeni_analiz >= maks_yeni_analiz:
+        with open(devam_dosyasi, 'w', encoding='utf-8') as f:
+            f.write('devam')
+        print(f"⏳ {maks_yeni_analiz} limitine ulaşıldı. Kalan resimler için zincirleme tetikleme notu bırakıldı!")
+    else:
+        if os.path.exists(devam_dosyasi):
+            os.remove(devam_dosyasi)
+        print("✅ Tüm resimler tamamen işlendi. Zincirleme döngüsü durduruldu.")
+
     print("İşlem tamamlandı! Web sitesi oluşturuldu.")
 
 if __name__ == '__main__':
