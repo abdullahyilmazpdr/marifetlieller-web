@@ -1,9 +1,28 @@
 <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
-        <!-- LOGO -->
-        <a href="index.html" style="font-family: 'Allura', cursive; font-size: 32px; font-weight: 400; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px; -webkit-text-stroke: 0.8px var(--ana-renk);">Marifetli Eller</a>
+        <!-- LOGO (SVG İğne/Kalp + Allura Font) -->
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- İğne ve Kalp (İplik) İkonu (SVG Kod) -->
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Kırmızı İplik (Kalp) -->
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="var(--ana-renk)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <!-- İğne (Koyu Renk) -->
+                    <line x1="3" y1="21" x2="21" y2="3" stroke="#2c3e50" stroke-width="2" stroke-linecap="round"></line>
+                    <!-- İğne Deliği (Arkaplanla Aynı Renk Kesik) -->
+                    <line x1="17.5" y1="6.5" x2="19" y2="5" stroke="#ffffff" stroke-width="1.5"></line>
+                </svg>
 
+                <!-- Marifetli Eller Yazısı (Allura Fontu + Dış Çizgi Dolgunluğu) -->
+                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                    Marifetli Eller
+                </span>
+
+            </a>
+        </div>
+        
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
