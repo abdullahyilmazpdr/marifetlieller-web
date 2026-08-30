@@ -112,7 +112,7 @@ def yapay_zeka_makale_yazdir(baslik, aciklama):
     return gemini_istek_gonder(prompt)
 
 def model_gorsel_analizi_yap(resim_url, baslik):
-    global client, AI_KOTALARI_DOLDU
+    global aktif_api_indeksi, aktif_model_indeksi, client, AI_KOTALARI_DOLDU
     if AI_KOTALARI_DOLDU or not client:
         return {"anahtar_kelimeler": [], "baskin_kategori": ""}
         
@@ -138,13 +138,14 @@ def model_gorsel_analizi_yap(resim_url, baslik):
     """
     
     deneme = 0
-    maks_deneme = (len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1) * 2
+    maks_deneme = (len(GEMINI_API_KEYS) if GEMINI_API_KEYS else 1) * len(MODELLER)
     
     while deneme < maks_deneme:
+        secilen_model = MODELLER[aktif_model_indeksi]
         try:
             # Resmi ve metni Gemini'ye gönderiyoruz
             response = client.models.generate_content(
-                model=SECILEN_MODEL,
+                model=secilen_model,
                 contents=[
                     prompt,
                     types.Part.from_bytes(data=resim_data, mime_type='image/jpeg')
@@ -155,9 +156,28 @@ def model_gorsel_analizi_yap(resim_url, baslik):
             return json.loads(metin)
         except Exception as e:
             hata = str(e).lower()
+            print(f"    X Görsel Analiz Hatası ({secilen_model} | API {aktif_api_indeksi + 1}): {hata}")
+            
+            # API veya Model değiştirme mantığı
             if '429' in hata or 'quota' in hata or 'exhausted' in hata:
-                if not api_anahtarini_degistir():
-                    return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+                aktif_api_indeksi += 1
+                if aktif_api_indeksi >= len(GEMINI_API_KEYS):
+                    aktif_api_indeksi = 0
+                    aktif_model_indeksi += 1
+                    if aktif_model_indeksi >= len(MODELLER):
+                        AI_KOTALARI_DOLDU = True
+                        return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+                client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
+            else:
+                aktif_model_indeksi += 1
+                if aktif_model_indeksi >= len(MODELLER):
+                    aktif_model_indeksi = 0
+                    aktif_api_indeksi += 1
+                    if aktif_api_indeksi >= len(GEMINI_API_KEYS):
+                        AI_KOTALARI_DOLDU = True
+                        return {"anahtar_kelimeler": [], "baskin_kategori": ""}
+                client = genai.Client(api_key=GEMINI_API_KEYS[aktif_api_indeksi])
+            
             time.sleep(3)
             deneme += 1
             
