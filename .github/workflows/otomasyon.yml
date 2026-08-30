@@ -42,3 +42,12 @@ jobs:
           
           # 2. BURADA TOKEN İLE PUSH YETKİSİ VERİYORUZ
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
+          # ZİNCİRLEME OTOMASYON ADIMI (EN ALTA EKLENECEK)
+      - name: Kalan Videolar İçin Sistemi Yeniden Tetikle (Zincirleme)
+        if: hashFiles('devam_edecek.txt') != ''
+        run: |
+          curl -X POST https://api.github.com/repos/abdullahyilmazpdr/marifetlieller-web/dispatches \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GH_PAT }}" \
+          -d '{"event_type": "model_onaylandi"}'
