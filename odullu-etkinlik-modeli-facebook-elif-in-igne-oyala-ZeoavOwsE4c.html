@@ -672,6 +672,9 @@
                     </div>
                 `;
             } else {
+                // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
+                localStorage.removeItem("kullaniciEmail");
+                localStorage.removeItem("kullaniciAdi");
                 kullaniciAlan.innerHTML = `
                     <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
                 `;
