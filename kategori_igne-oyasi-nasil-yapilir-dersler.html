@@ -13,7 +13,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-
+    
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    
     <!-- Google Analytics Kodları Başlangıcı -->
 <!-- İleride GA4 kodunuzu buraya yapıştırın -->
 <!-- Google tag (gtag.js) -->
@@ -117,11 +119,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .logo a::before {
-            content: "🌸";
-            font-size: 28px;
         }
 
         .nav-links {
@@ -529,11 +526,22 @@
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
-        <!-- LOGO -->
+        <!-- LOGO (Orijinal İğne Görseli + Allura Font) -->
         <div class="logo">
-            <a href="index.html" style="font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px;">Marifetli Eller</a>
-        </div>
+            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- Orijinal İğne/Kalp Görseliniz -->
+                <!-- Dosya adındaki boşluk sorun yaratmasın diye logo-igne.png olarak değiştirmeyi unutmayın -->
+                <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
 
+                <!-- Marifetli Eller Yazısı (Allura Fontu) -->
+                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                    Marifetli Eller
+                </span>
+
+            </a>
+        </div>
+        
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">

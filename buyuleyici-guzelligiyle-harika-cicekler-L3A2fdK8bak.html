@@ -21,6 +21,8 @@
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
     <!-- Google Analytics Kodları Başlangıcı -->
 <!-- İleride GA4 kodunuzu buraya yapıştırın -->
 <!-- Google tag (gtag.js) -->
@@ -124,11 +126,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .logo a::before {
-            content: "🌸";
-            font-size: 28px;
         }
 
         .nav-links {
@@ -456,6 +453,33 @@
             }
         }
     </style>
+
+    <!-- FAVORİ BUTONU VE STİLİ -->
+<style>
+  .favori-btn {
+    background-color: #fff;
+    color: #d6336c;
+    border: 2px solid #d6336c;
+    padding: 8px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .favori-btn:hover {
+    background-color: #d6336c;
+    color: #fff;
+  }
+  .favori-btn.aktif {
+    background-color: #d6336c;
+    color: #fff;
+  }
+</style>
 </head>
 
 <body>
@@ -463,11 +487,22 @@
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
-        <!-- LOGO -->
+        <!-- LOGO (Orijinal İğne Görseli + Allura Font) -->
         <div class="logo">
-            <a href="index.html" style="font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px;">Marifetli Eller</a>
-        </div>
+            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- Orijinal İğne/Kalp Görseliniz -->
+                <!-- Dosya adındaki boşluk sorun yaratmasın diye logo-igne.png olarak değiştirmeyi unutmayın -->
+                <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
 
+                <!-- Marifetli Eller Yazısı (Allura Fontu) -->
+                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                    Marifetli Eller
+                </span>
+
+            </a>
+        </div>
+        
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
@@ -717,6 +752,10 @@
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+
+                <button id="btnFavori_L3A2fdK8bak" class="favori-btn" onclick="favoriIslemiYap(this, 'L3A2fdK8bak', 'Büyüleyici Güzelliğiyle Harika Çiçekler', '', 'https://i.ytimg.com/vi/L3A2fdK8bak/hqdefault.jpg')">
+                  <span class="kalp-ikon">🤍</span> Favorilere Ekle
+                </button>
                 
                 <!-- WhatsApp Paylaş -->
                 <button onclick="whatsappPaylas('Büyüleyici Güzelliğiyle Harika Çiçekler')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
@@ -870,6 +909,59 @@ Mekik oyasından bu harika çiçekler sizleri de büyüleyecek. Tüm detaylarıy
                 });
             }
         </script>
+
+    <!-- FAVORİ İŞLEMİ JAVASCRIPT KODU -->
+<script>
+  function favoriIslemiYap(btn, modelId, baslik, link, resim) {
+      // LocalStorage'dan kullanıcının giriş yapıp yapmadığını kontrol ediyoruz
+      const userEmail = localStorage.getItem("kullaniciEmail");
+      
+      if (!userEmail) {
+          alert("Favorilere eklemek için lütfen önce giriş yapın.");
+          window.location.href = "giris.html";
+          return;
+      }
+
+      // Butonu meşgul durumuna al
+      btn.innerHTML = "⏳ İşleniyor...";
+      btn.disabled = true;
+
+      // Uygulamanızın yayınlanan Google Apps Script URL'si
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+
+      let formData = new URLSearchParams();
+      formData.append("islem", "favori_islem");
+      formData.append("email", userEmail);
+      formData.append("model_id", modelId);
+      formData.append("baslik", baslik);
+      formData.append("link", link);
+      formData.append("resim", resim);
+
+      fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+          btn.disabled = false;
+          if (data.durum === "eklendi") {
+              btn.classList.add("aktif");
+              btn.innerHTML = "❤️ Favorilerde";
+          } else if (data.durum === "cikarildi") {
+              btn.classList.remove("aktif");
+              btn.innerHTML = "🤍 Favorilere Ekle";
+          } else {
+              alert(data.mesaj);
+              btn.innerHTML = "🤍 Favorilere Ekle";
+          }
+      })
+      .catch(err => {
+          alert("Bağlantı hatası oluştu.");
+          btn.disabled = false;
+          btn.innerHTML = "🤍 Favorilere Ekle";
+      });
+  }
+</script>
 
 </body>
 

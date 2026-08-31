@@ -53,7 +53,6 @@
         header { background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100; }
         .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px; }
         .logo a { font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo a::before { content: "🌸"; font-size: 28px; }
         .nav-links { display: flex; gap: 20px; align-items: center; flex: 1; justify-content: flex-end; }
         .nav-links a { text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px; transition: color 0.3s ease; white-space: nowrap; }
         .nav-links a:hover { color: var(--ana-renk); }
@@ -123,11 +122,22 @@
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
     <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
         
-        <!-- LOGO -->
+        <!-- LOGO (Orijinal İğne Görseli + Allura Font) -->
         <div class="logo">
-            <a href="index.html" style="font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px;">Marifetli Eller</a>
-        </div>
+            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- Orijinal İğne/Kalp Görseliniz -->
+                <!-- Dosya adındaki boşluk sorun yaratmasın diye logo-igne.png olarak değiştirmeyi unutmayın -->
+                <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
 
+                <!-- Marifetli Eller Yazısı (Allura Fontu) -->
+                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                    Marifetli Eller
+                </span>
+
+            </a>
+        </div>
+        
         <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
         <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
             <div class="arama-alani" style="position: relative; width: 220px;">
@@ -369,6 +379,66 @@
             Gönderdiğiniz modellerin onay durumunu ve düzeltme taleplerini buradan yönetin.</p>
         </div>
 
+        <!-- KULLANICI KİMLİK VE ROZET KARTI -->
+<div style="background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 30px; border-top: 5px solid #d6336c; position: relative;">
+    
+    <!-- Profil Düzenle Butonu -->
+    <button onclick="profilDuzenleModalAc()" style="position: absolute; top: 20px; right: 20px; background: #f8f9fa; border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; color: #555; font-weight: 600; transition: 0.3s;">
+        ✏️ Profili Düzenle
+    </button>
+
+    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+        <!-- Avatar Kısmı -->
+        <div style="width: 80px; height: 80px; background: #fce4ec; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: #d6336c; flex-shrink: 0;">
+            👤
+        </div>
+        
+        <!-- Bilgi Kısmı -->
+        <div style="flex: 1;">
+            <h2 id="profilIsimAlani" style="margin: 0 0 5px 0; font-size: 22px; color: #333;">Kullanıcı Yükleniyor...</h2>
+            
+            <!-- ROZET ALANI -->
+            <div id="rozetAlani" style="display: inline-block; background: #fff3cd; color: #856404; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px;">
+                ⏳ Rozet Hesaplanıyor...
+            </div>
+            
+            <!-- Hakkımda Kısmı -->
+            <p id="hakkimdaAlani" style="margin: 0; color: #666; font-size: 14px; line-height: 1.5; font-style: italic;">
+                Biyografi henüz eklenmedi. Profili düzenle butonuna basarak kendinizden bahsedin.
+            </p>
+            
+            <!-- Sosyal Medya İkonları -->
+            <div id="sosyalMedyaAlani" style="margin-top: 15px; display: flex; gap: 10px;">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PROFİL DÜZENLEME GİZLİ PENCERESİ (MODAL) -->
+<div id="profilDuzenleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px;">
+        <h3 style="margin-top: 0; color: #d6336c;">Profilimi Düzenle</h3>
+        
+        <label style="font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 5px;">Hakkımda (Kısa Biyografi)</label>
+        <textarea id="editHakkimda" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; font-family: inherit; box-sizing: border-box;" placeholder="El işine ne zaman başladınız? Neler yapmaktan hoşlanırsınız?"></textarea>
+        
+        <label style="font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 5px;">Instagram Kullanıcı Adı (Veya Linki)</label>
+        <input type="text" id="editInstagram" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;" placeholder="Örn: marifetlieller42">
+        
+        <label style="font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 5px;">YouTube Kanal Linki</label>
+        <input type="url" id="editYoutube" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; box-sizing: border-box;" placeholder="https://youtube.com/marifetliellerimiz">
+
+        <label style="font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 5px;">Facebook Kullanıcı Adı (Veya Linki)</label>
+        <input type="text" id="editFacebook" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; box-sizing: border-box;" placeholder="Örn: marifetliel">
+        
+        <div style="display: flex; gap: 10px;">
+            <button onclick="profilKaydet()" id="btnProfilKaydet" style="flex: 1; background: #d6336c; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Kaydet</button>
+            <button onclick="document.getElementById('profilDuzenleModal').style.display='none'" style="flex: 1; background: #ccc; color: #333; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">İptal</button>
+        </div>
+    </div>
+</div>
+
         <div class="panel-kutu">
             <h3 style="margin-top:0;">👤 Hesap Bilgileri</h3>
             <p><strong>Hoş Geldin, </strong> <span id="kullaniciAdi">Yükleniyor...</span></p>
@@ -394,6 +464,15 @@
                 </table>
             </div>
         </div>
+
+        <!-- FAVORİLER VİTRİNİ -->
+<div style="margin-top: 40px;">
+    <h3 style="color: #d6336c; border-bottom: 2px solid #eee; padding-bottom: 10px;">❤️ Kaydettiğim Modeller</h3>
+    
+    <div id="favoriGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px;">
+        <p style="color: #777;">Favori modelleriniz yükleniyor...</p>
+    </div>
+</div>
     </main>
 
     <!-- YÖNETİCİ PANELİ (Sadece yetkili e-posta giriş yaptığında görünür) -->
@@ -642,6 +721,141 @@
                 btn.disabled = false;
             });
         }
-    </script>
+    
+    function favorileriGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        if(!userEmail) return;
+
+        //const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+        
+        let formData = new URLSearchParams();
+        formData.append("islem", "favorileri_getir");
+        formData.append("email", userEmail);
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(favoriler => {
+            const grid = document.getElementById("favoriGrid");
+            
+            if(favoriler.length === 0) {
+                grid.innerHTML = "<p style='color: #888; grid-column: 1/-1;'>Henüz hiç favori modeliniz yok. Hemen arşivi keşfetmeye başlayın!</p>";
+                return;
+            }
+
+            // Favorileri ekrana şık kartlar halinde basıyoruz
+            grid.innerHTML = favoriler.map(fav => `
+                <a href="${fav.link}" style="text-decoration: none; color: inherit; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: block; transition: 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="${fav.resim}" alt="${fav.baslik}" style="width: 100%; height: 150px; object-fit: cover;">
+                    <div style="padding: 15px;">
+                        <h4 style="margin: 0; font-size: 14px; font-weight: 600; line-height: 1.4;">${fav.baslik}</h4>
+                    </div>
+                </a>
+            `).join('');
+        })
+        .catch(err => {
+            document.getElementById("favoriGrid").innerHTML = "<p style='color: red;'>Favoriler yüklenirken bir hata oluştu.</p>";
+        });
+    }
+
+    // Sayfa yüklendiğinde favorileri getirme fonksiyonunu otomatik tetikle
+    document.addEventListener("DOMContentLoaded", function() {
+        // Mevcut profil yükleme fonksiyonlarınız buradadır...
+        favorileriGetir(); 
+    });
+// UYGULAMANIZIN YENİ SÜRÜM LINKINI BURAYA YAZIN
+    const PROFIL_API_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+
+    function profilBilgileriniGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        const userName = localStorage.getItem("kullaniciAdi") || "İsimsiz Yazar";
+        
+        if(!userEmail) return;
+        document.getElementById("profilIsimAlani").innerText = userName;
+
+        let formData = new URLSearchParams();
+        formData.append("islem", "profil_getir");
+        formData.append("email", userEmail);
+
+        fetch(PROFIL_API_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(profil => {
+            // Hakkımda
+            if(profil.hakkimda) document.getElementById("hakkimdaAlani").innerText = profil.hakkimda;
+            document.getElementById("editHakkimda").value = profil.hakkimda || "";
+            
+            // Sosyal Medya
+            document.getElementById("editInstagram").value = profil.instagram || "";
+            document.getElementById("editYoutube").value = profil.youtube || "";
+            document.getElementById("editFacebook").value = profil.facebook || "";
+            
+            let sosyalHtml = "";
+            if(profil.instagram) {
+                let igLink = profil.instagram.includes("http") ? profil.instagram : "https://instagram.com/" + profil.instagram.replace("@","");
+                sosyalHtml += `<a href="${igLink}" target="_blank" style="background: #E1306C; color: white; padding: 5px 12px; border-radius: 15px; text-decoration: none; font-size: 12px; font-weight: bold;">📸 Instagram</a>`;
+            }
+            if(profil.youtube) {
+                sosyalHtml += `<a href="${profil.youtube}" target="_blank" style="background: #FF0000; color: white; padding: 5px 12px; border-radius: 15px; text-decoration: none; font-size: 12px; font-weight: bold;">▶️ YouTube</a>`;
+            }
+            if(profil.facebook) {
+                let fbLink = profil.facebook.includes("http") ? profil.facebook : "https://facebook.com/" + profil.facebook.replace("@","");
+                sosyalHtml += `<a href="${fbLink}" target="_blank" style="background: #1877F2; color: white; padding: 5px 12px; border-radius: 15px; text-decoration: none; font-size: 12px; font-weight: bold;">📘 Facebook</a>`;
+            }
+            document.getElementById("sosyalMedyaAlani").innerHTML = sosyalHtml;
+
+            // ROZET HESAPLAMA MOTORU
+            let modelSayisi = profil.onayliModelSayisi;
+            let rozet = "";
+            let renk = "";
+            
+            if (modelSayisi >= 16) { rozet = "👑 Marifetli Usta (" + modelSayisi + " Model)"; renk = "background: #fff3cd; color: #856404; border: 1px solid #ffeeba;"; }
+            else if (modelSayisi >= 6) { rozet = "🪡 Altın İğne (" + modelSayisi + " Model)"; renk = "background: #d4edda; color: #155724; border: 1px solid #c3e6cb;"; }
+            else if (modelSayisi >= 1) { rozet = "🌱 Hevesli Zanaatkar (" + modelSayisi + " Model)"; renk = "background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;"; }
+            else { rozet = "👋 Yeni Üye (Henüz Yayında Modeli Yok)"; renk = "background: #f8f9fa; color: #6c757d; border: 1px solid #ddd;"; }
+            
+            let rAlan = document.getElementById("rozetAlani");
+            rAlan.innerText = rozet;
+            rAlan.style = "display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px; " + renk;
+        });
+    }
+
+    function profilDuzenleModalAc() {
+        document.getElementById('profilDuzenleModal').style.display = 'flex';
+    }
+
+    function profilKaydet() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        const btn = document.getElementById("btnProfilKaydet");
+        
+        btn.innerText = "Kaydediliyor...";
+        btn.disabled = true;
+
+        let formData = new URLSearchParams();
+        formData.append("islem", "profil_guncelle");
+        formData.append("email", userEmail);
+        formData.append("hakkimda", document.getElementById("editHakkimda").value);
+        formData.append("instagram", document.getElementById("editInstagram").value);
+        formData.append("youtube", document.getElementById("editYoutube").value);
+        formData.append("facebook", document.getElementById("editFacebook").value);
+
+        fetch(PROFIL_API_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.mesaj);
+            document.getElementById('profilDuzenleModal').style.display = 'none';
+            btn.innerText = "Kaydet";
+            btn.disabled = false;
+            profilBilgileriniGetir(); // Ekranı yenile
+        });
+    }
+
+    // Sayfa açıldığında otomatik olarak profil bilgilerini çek
+    document.addEventListener("DOMContentLoaded", function() {
+        profilBilgileriniGetir();
+    });
+        
+</script>
 </body>
 </html>
