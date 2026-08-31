@@ -112,6 +112,7 @@
         document.addEventListener("DOMContentLoaded", function() {
             firebase.auth().onAuthStateChanged((user) => {
                 if (!user) {
+                    console.warn("⚠️ [MODEL GÖNDER] Oturum yok, uyarı ekranı gösteriliyor.");
                     document.querySelector('.model-gonder-sayfasi').innerHTML = `
                         <div style="text-align:center; padding: 50px;">
                             <h2 style="color:red;">Lütfen Giriş Yapın!</h2>
@@ -119,6 +120,11 @@
                             <a href="giris.html" style="background: #d6336c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px;">Kayıt Ol / Giriş Yap</a>
                         </div>
                     `;
+                } else {
+                    console.log("✨ [MODEL GÖNDER] Oturum var. Iframe'e iletilen Email: ", user.email);
+                    const formsUrl = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?email=" + encodeURIComponent(user.email);
+                    console.log("🔗 [MODEL GÖNDER] Üretilen Iframe URL: ", formsUrl);
+                    document.getElementById('modelFormIframe').src = formsUrl;
                 }
             });
         });
