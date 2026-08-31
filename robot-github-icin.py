@@ -543,11 +543,11 @@ def sayfalari_olustur():
                     # -------------------------------------------
 
                     tum_videolar_arama_icin[dosya_adi] = {
-                        "baslik": str(video_data.get('title', '')),
+                        "baslik": str(video.get('title', '')),
                         "link": dosya_adi,
-                        "resim": video_data.get('thumbnail', ''),
-                        "aciklama": str(video_data.get('description', '')),
-                        "makale": str(video_data.get('ai_metin', '')),
+                        "resim": video.get('thumbnail', ''),
+                        "aciklama": str(video.get('description', '')),
+                        "makale": str(video.get('ai_metin', '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
                         "favori_sayisi": gercekci_favori_sayisi_uret(video['id']) # YENİ EKLENEN SATIR  
