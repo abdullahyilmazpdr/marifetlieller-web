@@ -92,6 +92,13 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
+                console.log("🔥 [HEADER] Firebase Oturumu Başarılı! Gelen Kullanıcı: ", user.email);
+                
+                localStorage.setItem("kullaniciEmail", user.email);
+                localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
+                
+                console.log("💾 [HEADER] LocalStorage'a Yazılan Email: ", localStorage.getItem("kullaniciEmail"));
+                
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -101,6 +108,7 @@
                     </div>
                 `;
             } else {
+                console.warn("⚠️ [HEADER] Firebase oturumu bulunamadı. Kullanıcı giriş yapmamış.");
                 // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
                 localStorage.removeItem("kullaniciEmail");
                 localStorage.removeItem("kullaniciAdi");
