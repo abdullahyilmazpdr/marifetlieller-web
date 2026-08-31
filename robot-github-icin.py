@@ -274,7 +274,7 @@ def populer_videolari_getir(tum_videolar_listesi):
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
             
-            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link})
+            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(videoid)})
         return populerler
         
     except Exception as e:
@@ -510,7 +510,7 @@ def sayfalari_olustur():
                         f.write(html_icerik)
 
                     uretilen_sayfalar.append(dosya_adi)
-                    video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail']})
+                    video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail'],'favori_sayisi': gercekci_favori_sayisi_uret(video['id'])})
 
                     # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                     # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
