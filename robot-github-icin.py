@@ -319,8 +319,9 @@ def populer_videolari_getir(tum_videolar_listesi):
                 secilen_idler = []
 
             populerler = []
+            eklenen_idler = set()
             for v in tum_videolar_listesi:
-                if v['id'] in secilen_idler:
+                if v['id'] in secilen_idler and v['id'] not in eklenen_idler:
                     populerler.append({
                         'id': v['id'],
                         'baslik': v['title'],
@@ -329,6 +330,7 @@ def populer_videolari_getir(tum_videolar_listesi):
                         'link': v['dosya_adi'],
                         'favori_sayisi': gercekci_favori_sayisi_uret(v['id'])
                     })
+                    eklenen_idler.add(v['id'])
                     if len(populerler) == 5:
                         break
 
@@ -509,7 +511,8 @@ def sayfalari_olustur():
                                 json.dump(ai_cache, f, ensure_ascii=False, indent=4)
                         else:
                             video['ai_metin'] = ""
-                    
+
+                    video['favori_sayisi'] = gercekci_favori_sayisi_uret(video['id']) # EKLENDİ
                     html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
                     
                     with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
@@ -586,7 +589,8 @@ def sayfalari_olustur():
                     'id': pop_vid['id'],
                     'title': pop_vid['baslik'],
                     'description': pop_vid['description'],
-                    'thumbnail': pop_vid['resim']
+                    'thumbnail': pop_vid['resim'],
+                    'favori_sayisi': gercekci_favori_sayisi_uret(pop_vid['id'])
                 }
                 
                 if video_data['id'] in ai_cache and len(ai_cache[video_data['id']]) > 50:
@@ -602,7 +606,8 @@ def sayfalari_olustur():
                             json.dump(ai_cache, f, ensure_ascii=False, indent=4)
                     else:
                         video_data['ai_metin'] = ""
-                            
+
+                video['favori_sayisi'] = gercekci_favori_sayisi_uret(video['id']) # EKLENDİ
                 html_icerik = template_video.render(
                     video=video_data, 
                     kategori_adi="Popüler Videolar", 
