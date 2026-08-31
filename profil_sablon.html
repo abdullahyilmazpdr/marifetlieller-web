@@ -462,6 +462,14 @@
     const PROFIL_API_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
     function profilBilgileriniGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        console.log("👤 [PROFİL GETİR] Okunan Email: ", userEmail);
+
+        if(!userEmail) {
+            console.error("❌ [PROFİL GETİR] Email bulunamadı! İşlem durduruldu.");
+            return;
+        }
+        
         const user = firebase.auth().currentUser;
         if(!user) return;
         
@@ -519,6 +527,10 @@
 
     function profilKaydet() {
         const userEmail = firebase.auth().currentUser;
+        const userEmail2 = localStorage.getItem("kullaniciEmail");
+        console.log("💾 [PROFİL KAYDET -firebase.auth().currentUser-] Gönderilecek Email : ", userEmail);
+        console.log("💾 [PROFİL KAYDET -localStorage.getItem-] Gönderilecek Email : ", userEmail2);
+
         const btn = document.getElementById("btnProfilKaydet");
         
         btn.innerText = "Kaydediliyor...";
