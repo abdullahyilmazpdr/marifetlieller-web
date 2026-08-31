@@ -296,6 +296,13 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
+                console.log("🔥 [HEADER] Firebase Oturumu Başarılı! Gelen Kullanıcı: ", user.email);
+                
+                localStorage.setItem("kullaniciEmail", user.email);
+                localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
+                
+                console.log("💾 [HEADER] LocalStorage'a Yazılan Email: ", localStorage.getItem("kullaniciEmail"));
+                
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -305,6 +312,7 @@
                     </div>
                 `;
             } else {
+                console.warn("⚠️ [HEADER] Firebase oturumu bulunamadı. Kullanıcı giriş yapmamış.");
                 // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
                 localStorage.removeItem("kullaniciEmail");
                 localStorage.removeItem("kullaniciAdi");
@@ -776,6 +784,14 @@
     const PROFIL_API_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
     function profilBilgileriniGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
+        console.log("👤 [PROFİL GETİR] Okunan Email: ", userEmail);
+
+        if(!userEmail) {
+            console.error("❌ [PROFİL GETİR] Email bulunamadı! İşlem durduruldu.");
+            return;
+        }
+        
         const user = firebase.auth().currentUser;
         if(!user) return;
         
@@ -833,6 +849,10 @@
 
     function profilKaydet() {
         const userEmail = firebase.auth().currentUser;
+        const userEmail2 = localStorage.getItem("kullaniciEmail");
+        console.log("💾 [PROFİL KAYDET -firebase.auth().currentUser-] Gönderilecek Email : ", userEmail);
+        console.log("💾 [PROFİL KAYDET -localStorage.getItem-] Gönderilecek Email : ", userEmail2);
+
         const btn = document.getElementById("btnProfilKaydet");
         
         btn.innerText = "Kaydediliyor...";

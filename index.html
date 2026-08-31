@@ -699,6 +699,13 @@
             const kullaniciAlan = document.getElementById('kullaniciAlan');
             
             if (user) {
+                console.log("🔥 [HEADER] Firebase Oturumu Başarılı! Gelen Kullanıcı: ", user.email);
+                
+                localStorage.setItem("kullaniciEmail", user.email);
+                localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
+                
+                console.log("💾 [HEADER] LocalStorage'a Yazılan Email: ", localStorage.getItem("kullaniciEmail"));
+                
                 let displayName = user.displayName || user.email.split('@')[0];
                 kullaniciAlan.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
@@ -708,6 +715,7 @@
                     </div>
                 `;
             } else {
+                console.warn("⚠️ [HEADER] Firebase oturumu bulunamadı. Kullanıcı giriş yapmamış.");
                 // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
                 localStorage.removeItem("kullaniciEmail");
                 localStorage.removeItem("kullaniciAdi");
@@ -808,43 +816,43 @@
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
                     
-                    <a href="cok-siparis-aldiracak-citi-piti-muhtesem-bir-model-zHvkziOAGJw.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/zHvkziOAGJw/hqdefault.jpg" alt="Çok Sipariş Aldıracak Çıtı Pıtı Muhteşem Bir Modelin Anlatımlı Yapılışı | 501. Model"></div>
+                    <a href="cok-siparis-aldiran-muhtesem-bir-modelin-anlatimli-XWwMtSO7icE.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/XWwMtSO7icE/hqdefault.jpg" alt="Çok Sipariş Aldıran Muhteşem Bir Modelin Anlatımlı Yapılışı | 608. Model"></div>
                         <div style="padding: 10px 5px;">
-                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Çok Sipariş Aldıracak Çıtı Pıtı Muhteşem Bir Modelin Anlatımlı Yapılışı | 501. Model</h4>
-                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">1531</span> favori</div>
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Çok Sipariş Aldıran Muhteşem Bir Modelin Anlatımlı Yapılışı | 608. Model</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">2150</span> favori</div>
                         </div>
                     </a>
                     
-                    <a href="daha-once-gormediginiz-yepyeni-cok-begeneceginiz-h-23URXq8nnsQ.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/23URXq8nnsQ/hqdefault.jpg" alt="Daha Önce Görmediğiniz Yepyeni Çok Beğeneceğiniz Harika Bir İğne Oyası Modeli Yapımı | 881. Model"></div>
+                    <a href="bu-modeli-gormeden-ben-harika-model-gordum-demeyin-CgcPxyACB6Q.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/CgcPxyACB6Q/hqdefault.jpg" alt="Bu Modeli Görmeden Ben Harika Model Gördüm Demeyin | Harika İğne Oyası Yapımı | 865. Model"></div>
                         <div style="padding: 10px 5px;">
-                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Daha Önce Görmediğiniz Yepyeni Çok Beğeneceğiniz Harika Bir İğne Oyası Modeli Yapımı | 881. Model</h4>
-                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">2426</span> favori</div>
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Bu Modeli Görmeden Ben Harika Model Gördüm Demeyin | Harika İğne Oyası Yapımı | 865. Model</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">673</span> favori</div>
                         </div>
                     </a>
                     
-                    <a href="son-gunlerin-en-meshur-kelebek-modelinin-anlatimli-JkcCzL7Qpgo.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/JkcCzL7Qpgo/hqdefault.jpg" alt="Son Günlerin En Meşhur Kelebek Modelinin Anlatımlı Yapımı"></div>
+                    <a href="butun-ayrintilariyla-igne-oyasi-fular-yapilisi-498-zFLI-H2YS54.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/zFLI-H2YS54/hqdefault.jpg" alt="Bütün Ayrıntılarıyla İğne Oyası Fular Yapılışı | 498. Model"></div>
                         <div style="padding: 10px 5px;">
-                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Son Günlerin En Meşhur Kelebek Modelinin Anlatımlı Yapımı</h4>
-                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">2717</span> favori</div>
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Bütün Ayrıntılarıyla İğne Oyası Fular Yapılışı | 498. Model</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">1323</span> favori</div>
                         </div>
                     </a>
                     
-                    <a href="cok-siparis-aldiracak-bir-igne-oyasi-modelinin-yap-5Yh36ZZaJ_w.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/5Yh36ZZaJ_w/hqdefault.jpg" alt="Çok Sipariş Aldıracak Bir İğne Oyası Modelinin Yapılışı | 695. Model #iğneoyası #needlelace"></div>
+                    <a href="cok-begeneceginiz-citi-piti-bir-igne-oyasi-modelin-T_kOft2o6x8.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/T_kOft2o6x8/hqdefault.jpg" alt="Çok Beğeneceğiniz Çıtı Pıtı Bir İğne Oyası Modelinin Anlatımlı Yapılışı | 737. Model"></div>
                         <div style="padding: 10px 5px;">
-                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Çok Sipariş Aldıracak Bir İğne Oyası Modelinin Yapılışı | 695. Model #iğneoyası #needlelace</h4>
-                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">205</span> favori</div>
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Çok Beğeneceğiniz Çıtı Pıtı Bir İğne Oyası Modelinin Anlatımlı Yapılışı | 737. Model</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">2226</span> favori</div>
                         </div>
                     </a>
                     
-                    <a href="puf-noktalariyla-uc-boyutlu-gelincik-modeli-anlati-TmAYdtxMz7M.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/TmAYdtxMz7M/hqdefault.jpg" alt="Püf Noktalarıyla Üç Boyutlu Gelincik Modeli Anlatımlı Yapılışı | 364. Model"></div>
+                    <a href="igne-oyasi-mevlut-ortusu-namaz-ortusu-yapilisi-18-CxldyZBrp_k.html" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <div class="kart-resim" style="border-radius: 8px;"><img src="https://i.ytimg.com/vi/CxldyZBrp_k/hqdefault.jpg" alt="İğne Oyası Mevlüt Örtüsü (Namaz Örtüsü) Yapılışı | 18. Model"></div>
                         <div style="padding: 10px 5px;">
-                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">Püf Noktalarıyla Üç Boyutlu Gelincik Modeli Anlatımlı Yapılışı | 364. Model</h4>
-                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">2038</span> favori</div>
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">İğne Oyası Mevlüt Örtüsü (Namaz Örtüsü) Yapılışı | 18. Model</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">549</span> favori</div>
                         </div>
                     </a>
                     
