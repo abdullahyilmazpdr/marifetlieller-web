@@ -589,6 +589,9 @@
 <button id="btnFavori_{{ model.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ model.id }}', '{{ model.baslik | replace('\"', '\\\"') | replace('\'', '\\\'') }}', '{{ model.dosya_adi }}', '{{ model.medya }}')">
   <span class="kalp-ikon">🤍</span> Favorilere Ekle
 </button>
+                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                            ❤️ {{ video.favori_sayisi }} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                        </div>
                 
                 <!-- WhatsApp Paylaş -->
                 <a href="https://api.whatsapp.com/send?text={{ model.baslik }} - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: {{ SITE_URL }}{{ model.dosya_adi }}" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
