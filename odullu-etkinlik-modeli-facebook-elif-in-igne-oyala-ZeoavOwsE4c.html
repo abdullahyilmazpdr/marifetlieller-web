@@ -764,9 +764,10 @@
  | 366. Model', '', 'https://i.ytimg.com/vi/ZeoavOwsE4c/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️  <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
+                <!-- DİNAMİK RAKAM ALANI -->
+    <div style="font-size: 14px; color: #d6336c; font-weight: 600;">
+        ❤️ <span id="guncelFavoriSayisi"></span> favori
+    </div>
                 
                 <!-- WhatsApp Paylaş -->
                 <button onclick="whatsappPaylas('Ödüllü Etkinlik Modeli | Facebook &quot;Elif\' in İğne Oyaları..&quot; 
@@ -958,12 +959,15 @@ Kesinlikle evet! Tek renk (düz) yazmalarda bu model çok daha zengin görünür
       .then(res => res.json())
       .then(data => {
           btn.disabled = false;
+          let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı Yakala
           if (data.durum === "eklendi") {
               btn.classList.add("aktif");
               btn.innerHTML = "❤️ Favorilerde";
+              sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
           } else if (data.durum === "cikarildi") {
               btn.classList.remove("aktif");
               btn.innerHTML = "🤍 Favorilere Ekle";
+              sayac.innerText = parseInt(sayac.innerText) - 1;
           } else {
               alert(data.mesaj);
               btn.innerHTML = "🤍 Favorilere Ekle";

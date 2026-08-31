@@ -759,9 +759,10 @@
                 <button id="btnFavori_Z3NUwd4U5Ak" class="favori-btn" onclick="favoriIslemiYap(this, 'Z3NUwd4U5Ak', 'Pratik ve Zevkli İğne Oyası Modeli Anlatımlı Yapılışı | 627. Model', '', 'https://i.ytimg.com/vi/Z3NUwd4U5Ak/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️  <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
+                <!-- DİNAMİK RAKAM ALANI -->
+    <div style="font-size: 14px; color: #d6336c; font-weight: 600;">
+        ❤️ <span id="guncelFavoriSayisi"></span> favori
+    </div>
                 
                 <!-- WhatsApp Paylaş -->
                 <button onclick="whatsappPaylas('Pratik ve Zevkli İğne Oyası Modeli Anlatımlı Yapılışı | 627. Model')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
@@ -948,12 +949,15 @@ Hayır, bu zarif model sadece yazmalara değil; mevlüt örtülerine, namaz baş
       .then(res => res.json())
       .then(data => {
           btn.disabled = false;
+          let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı Yakala
           if (data.durum === "eklendi") {
               btn.classList.add("aktif");
               btn.innerHTML = "❤️ Favorilerde";
+              sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
           } else if (data.durum === "cikarildi") {
               btn.classList.remove("aktif");
               btn.innerHTML = "🤍 Favorilere Ekle";
+              sayac.innerText = parseInt(sayac.innerText) - 1;
           } else {
               alert(data.mesaj);
               btn.innerHTML = "🤍 Favorilere Ekle";

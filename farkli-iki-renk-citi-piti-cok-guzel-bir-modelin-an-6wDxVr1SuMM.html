@@ -759,9 +759,10 @@
                 <button id="btnFavori_6wDxVr1SuMM" class="favori-btn" onclick="favoriIslemiYap(this, '6wDxVr1SuMM', 'Farklı İki Renk Çıtı Pıtı Çok Güzel Bir Modelin Anlatımlı Yapılışı | 272. Model', '', 'https://i.ytimg.com/vi/6wDxVr1SuMM/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️  <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
+                <!-- DİNAMİK RAKAM ALANI -->
+    <div style="font-size: 14px; color: #d6336c; font-weight: 600;">
+        ❤️ <span id="guncelFavoriSayisi"></span> favori
+    </div>
                 
                 <!-- WhatsApp Paylaş -->
                 <button onclick="whatsappPaylas('Farklı İki Renk Çıtı Pıtı Çok Güzel Bir Modelin Anlatımlı Yapılışı | 272. Model')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
@@ -946,12 +947,15 @@ Evet, kesinlikle! Videolu detaylı anlatımı sayesinde temel zürafa ve zürafa
       .then(res => res.json())
       .then(data => {
           btn.disabled = false;
+          let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı Yakala
           if (data.durum === "eklendi") {
               btn.classList.add("aktif");
               btn.innerHTML = "❤️ Favorilerde";
+              sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
           } else if (data.durum === "cikarildi") {
               btn.classList.remove("aktif");
               btn.innerHTML = "🤍 Favorilere Ekle";
+              sayac.innerText = parseInt(sayac.innerText) - 1;
           } else {
               alert(data.mesaj);
               btn.innerHTML = "🤍 Favorilere Ekle";

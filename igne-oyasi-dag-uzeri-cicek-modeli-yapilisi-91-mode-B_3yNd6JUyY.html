@@ -759,9 +759,10 @@
                 <button id="btnFavori_B_3yNd6JUyY" class="favori-btn" onclick="favoriIslemiYap(this, 'B_3yNd6JUyY', 'İğne Oyası Dağ Üzeri Çiçek Modeli Yapılışı | 91. Model', '', 'https://i.ytimg.com/vi/B_3yNd6JUyY/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️  <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
+                <!-- DİNAMİK RAKAM ALANI -->
+    <div style="font-size: 14px; color: #d6336c; font-weight: 600;">
+        ❤️ <span id="guncelFavoriSayisi"></span> favori
+    </div>
                 
                 <!-- WhatsApp Paylaş -->
                 <button onclick="whatsappPaylas('İğne Oyası Dağ Üzeri Çiçek Modeli Yapılışı | 91. Model')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
@@ -950,12 +951,15 @@ Modelinizi uzun süre ilk günkü gibi kullanmak için yazmanızı tersinden üt
       .then(res => res.json())
       .then(data => {
           btn.disabled = false;
+          let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı Yakala
           if (data.durum === "eklendi") {
               btn.classList.add("aktif");
               btn.innerHTML = "❤️ Favorilerde";
+              sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
           } else if (data.durum === "cikarildi") {
               btn.classList.remove("aktif");
               btn.innerHTML = "🤍 Favorilere Ekle";
+              sayac.innerText = parseInt(sayac.innerText) - 1;
           } else {
               alert(data.mesaj);
               btn.innerHTML = "🤍 Favorilere Ekle";
