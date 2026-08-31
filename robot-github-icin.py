@@ -442,8 +442,6 @@ def sayfalari_olustur():
     tum_videolar_arama_icin = {} 
     tum_videolar_ham = []
 
-    populer_videolar = populer_videolari_getir()
-
     listeler = oynatma_listelerini_getir()
     print(f"Sistem Başlatıldı. {len(listeler)} kategori bulundu.\n")
 
@@ -717,6 +715,8 @@ def sayfalari_olustur():
             print(f"! Kullanıcı kategorisi işlenirken hata: {e}")
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
+
+    populer_videolar = populer_videolari_getir()
     
     try:
         index_icerik = template_index.render(
