@@ -462,15 +462,14 @@
     const PROFIL_API_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
     function profilBilgileriniGetir() {
-        const userEmail = localStorage.getItem("kullaniciEmail");
-        const userName = localStorage.getItem("kullaniciAdi") || "İsimsiz Yazar";
+        const user = firebase.auth().currentUser;
+        if(!user) return;
         
-        if(!userEmail) return;
-        document.getElementById("profilIsimAlani").innerText = userName;
+        document.getElementById("profilIsimAlani").innerText = user.displayName || user.email.split('@')[0];
 
         let formData = new URLSearchParams();
         formData.append("islem", "profil_getir");
-        formData.append("email", userEmail);
+        formData.append("email", user.email);
 
         fetch(PROFIL_API_URL, { method: 'POST', body: formData })
         .then(res => res.json())
@@ -519,7 +518,7 @@
     }
 
     function profilKaydet() {
-        const userEmail = localStorage.getItem("kullaniciEmail");
+        const userEmail = firebase.auth().currentUser;
         const btn = document.getElementById("btnProfilKaydet");
         
         btn.innerText = "Kaydediliyor...";
