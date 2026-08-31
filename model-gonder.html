@@ -353,7 +353,8 @@
             <h2 style="text-align: center; color: var(--ana-renk);">El Emeğinizi Paylaşın, Yazarımız Olun!</h2>
             <p style="text-align: center; color: var(--metin-acik);">Yaptığınız harika iğne oyası, mekik ve örgü modellerini, yapılış hikayeleriyle birlikte topluluğumuzla paylaşın. Sitemizde sizin adınızla yayınlayalım.</p>
             
-            <iframe src="https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec" 
+            <!-- src SİLİNDİ, id EKLENDİ -->
+            <iframe id="modelFormIframe" 
                     width="100%" 
                     height="1000px" 
                     frameborder="0" 
@@ -400,6 +401,10 @@
                             <a href="giris.html" style="background: #d6336c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 15px;">Kayıt Ol / Giriş Yap</a>
                         </div>
                     `;
+                } else {
+                    // YENİ EKLENEN: Kullanıcı onaylandığında Iframe'e E-Postayı zorla yolluyoruz!
+                    const formsUrl = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?email=" + encodeURIComponent(user.email);
+                    document.getElementById('modelFormIframe').src = formsUrl;
                 }
             });
         });
