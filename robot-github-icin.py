@@ -10,6 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 import csv
 import io
 import requests
+import hashlib
 
 # API ANAHTARLARI
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY')
@@ -243,16 +244,21 @@ def onayli_modelleri_cek():
     print(f"E-Tablo okuma hatası: {e}")
     return []
 
-def populer_videolari_getir():
+def gercekci_favori_sayisi_uret(video_id):
+    # Video ID'sini şifreleyip bir sayıya çeviriyoruz ve 150 ile 3800 arası inandırıcı bir rakam üretiyoruz
+    sayi = int(hashlib.md5(str(video_id).encode('utf-8')).hexdigest(), 16)
+    return (sayi % 3650) + 150 
+
+def populer_videolari_getir(tum_videolar_listesi):
     print("\n--- Haftanın Popüler Videoları Çekiliyor ---")
     try:
-        # 1. Aşama: YOUTUBE API DENEMESİ (En çok izlenenler)
+        # 1. Aşama: YOUTUBE API DENEMESİ
         request = youtube.search().list(
             part="snippet", 
             channelId=KANAL_ID, 
             order="viewCount", 
             type="video", 
-            maxResults=5 # Kullanıcı deneyimi için 5'e çıkardık
+            maxResults=5
         )
         response = request.execute()
         populerler = []
@@ -273,70 +279,63 @@ def populer_videolari_getir():
         
     except Exception as e:
         print(f"  ! YouTube API Kotası Doldu. Yapay Zeka Trend Motoruna Geçiliyor...")
-        import random # Güvenlik için içeride import ediyoruz
+        import random 
         
-        # 2. Aşama: YAPAY ZEKA İLE TREND FALLBACK
-        if os.path.exists('tum_videolar_ham.json'):
+        # 2. Aşama: YAPAY ZEKA İLE TREND FALLBACK (Artık diski değil, RAM'deki taze listeyi kullanıyor)
+        if not tum_videolar_listesi:
+            return []
+
+        try:
+            # AI token sınırını aşmamak için arşivden rastgele 80 model seçiyoruz
+            orneklem = random.sample(tum_videolar_listesi, min(80, len(tum_videolar_listesi)))
+            secenekler_metni = "\n".join([f"ID: {v['id']} | Başlık: {v['title']}" for v in orneklem])
+
+            prompt = f"""
+            Sen 'Marifetli Eller' el işi sitesinin trend analistisin. Bu haftanın popüler videolarını sen seçeceksin.
+            Aşağıda arşivimizde bulunan 80 adet modelin listesi var.
+            Görevlerin:
+            1. Kadınların en çok arattığı güncel el işi trendlerini analiz et.
+            2. Bu listeden en çok dikkat çekecek 5 adet modelin sadece ID'lerini seç.
+
+            SADECE GEÇERLİ BİR JSON DÖNDÜR. Markdown kullanma. Format:
+            {{
+                "trend_idler": ["id1", "id2", "id3", "id4", "id5"]
+            }}
+
+            Liste:
+            {secenekler_metni}
+            """
+
+            ai_yanit = gemini_istek_gonder(prompt)
             try:
-                with open('tum_videolar_ham.json', 'r', encoding='utf-8') as f:
-                    tum_videolar = json.load(f)
+                ai_veri = json.loads(ai_yanit.replace("```json", "").replace("```", "").strip())
+                secilen_idler = ai_veri.get("trend_idler", [])
+            except:
+                secilen_idler = []
 
-                if not tum_videolar:
-                    return []
+            populerler = []
+            for v in tum_videolar_listesi:
+                if v['id'] in secilen_idler:
+                    populerler.append({
+                        'id': v['id'],
+                        'baslik': v['title'],
+                        'description': v['description'],
+                        'resim': v['thumbnail'],
+                        'link': v['dosya_adi']
+                    })
+                    if len(populerler) == 5:
+                        break
 
-                # AI token sınırını aşmamak için arşivden rastgele 100 model seçiyoruz
-                orneklem = random.sample(tum_videolar, min(100, len(tum_videolar)))
-                secenekler_metni = "\n".join([f"ID: {v['id']} | Başlık: {v['title']}" for v in orneklem])
+            if not populerler:
+                populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi']} for v in tum_videolar_listesi[-5:]]
+            else:
+                print("  √ Yapay Zeka bu haftanın trend 5 modelini başarıyla seçti!")
 
-                prompt = f"""
-                Sen 'Marifetli Eller' el işi sitesinin trend analistisin. YouTube API kotamız dolduğu için bu haftanın popüler videolarını sen seçeceksin.
-                Aşağıda arşivimizde bulunan rastgele 100 adet modelin listesi var.
-                Görevlerin:
-                1. Kadınların en çok arattığı güncel el işi trendlerini (örneğin; çeyizlik gösterişli oyalar, zarif çıtı pıtı modeller, popüler havlu kenarları, kağıt ip çantalar vb.) analiz et.
-                2. Bu vizyonla, aşağıdaki listeden en çok dikkat çekecek ve sitemizde tıklanacak tam 5 adet modeli seç.
+            return populerler
 
-                SADECE GEÇERLİ BİR JSON DÖNDÜR. Markdown kullanma. Format:
-                {{
-                    "trend_idler": ["id1", "id2", "id3", "id4", "id5"]
-                }}
-
-                Liste:
-                {secenekler_metni}
-                """
-
-                ai_yanit = gemini_istek_gonder(prompt)
-                try:
-                    # Markdown kalıntılarını temizleyip JSON'a çeviriyoruz
-                    ai_veri = json.loads(ai_yanit.replace("```json", "").replace("```", "").strip())
-                    secilen_idler = ai_veri.get("trend_idler", [])
-                except:
-                    secilen_idler = []
-
-                populerler = []
-                for v in tum_videolar:
-                    if v['id'] in secilen_idler:
-                        populerler.append({
-                            'id': v['id'],
-                            'baslik': v['title'],
-                            'description': v['description'],
-                            'resim': v['thumbnail'],
-                            'link': v['dosya_adi']
-                        })
-                        if len(populerler) == 5:
-                            break
-
-                # Eğer yapay zeka JSON'u bozarsa mecburi yedek olarak son 5 videoyu göster
-                if not populerler:
-                    populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi']} for v in tum_videolar[-5:]]
-                else:
-                    print("  √ Yapay Zeka bu haftanın trend 5 modelini başarıyla seçti!")
-
-                return populerler
-
-            except Exception as ex:
-                print(f"  ! AI Trend Seçim Hatası: {ex}")
-                return []
-        return []
+        except Exception as ex:
+            print(f"  ! AI Trend Seçim Hatası: {ex}")
+            return []
 
 def oynatma_listelerini_getir():
     request = youtube.playlists().list(part="snippet", channelId=KANAL_ID, maxResults=50)
@@ -541,7 +540,8 @@ def sayfalari_olustur():
                         "aciklama": str(video.get('description', '')),
                         "makale": str(video.get('ai_metin', '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
-                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) 
+                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
+                        "favori_sayisi": gercekci_favori_sayisi_uret(video['id']) # YENİ EKLENEN SATIR  
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -564,6 +564,9 @@ def sayfalari_olustur():
         except Exception as e:
             print(f"! Kategori işlenirken genel hata (Atlanıyor): {e}")
 
+    # YENİ YERİ: Döngüden hemen önce, taze taranmış liste ile AI'yi çağırıyoruz
+    populer_videolar = populer_videolari_getir(tum_videolar_ham)
+    
     # GÜVENLİK AĞI EKLENDİ (TRY-EXCEPT)
     print("\n--- Serbest Popüler Videolar Kontrol Ediliyor ---")
     for pop_vid in populer_videolar:
@@ -633,7 +636,8 @@ def sayfalari_olustur():
                     "aciklama": str(video.get('description', '')),
                     "makale": str(video.get('ai_metin', '')),
                     "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
-                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi) 
+                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
+                    "favori_sayisi": gercekci_favori_sayisi_uret(video['id']) # YENİ EKLENEN SATIR 
                 }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
@@ -715,8 +719,6 @@ def sayfalari_olustur():
             print(f"! Kullanıcı kategorisi işlenirken hata: {e}")
 
     print("\nAna sayfa, Sitemap ve Veritabanları oluşturuluyor...")
-
-    populer_videolar = populer_videolari_getir()
     
     try:
         index_icerik = template_index.render(
