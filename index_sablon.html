@@ -519,7 +519,10 @@
                     {% for vid in populer_videolar %}
                     <a href="{{ vid.link }}" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                         <div class="kart-resim" style="border-radius: 8px;"><img src="{{ vid.resim }}" alt="{{ vid.baslik }}"></div>
-                        <div style="padding: 10px 5px;"><h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">{{ vid.baslik }}</h4></div>
+                        <div style="padding: 10px 5px;">
+                            <h4 style="margin:0; font-size: 13px; color: var(--metin-koyu);">{{ vid.baslik }}</h4>
+                            <div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">❤️ <span class="fav-sayac">{{ vid.favori_sayisi }}</span> favori</div>
+                        </div>
                     </a>
                     {% endfor %}
                 </div>
@@ -575,6 +578,7 @@
         <div class="sayfa-baslik" id="arsiv">
             <h1>Model Arşivi Galerisi</h1>
             <p>İğne oyası ve oya çiçeği desenlerimizi kategoriler halinde keşfedin.</p><br>
+        </div>
 
         <div class="galeri-grid">
             {% for kategori_adi, veri in site_verisi.items() %}
@@ -585,13 +589,6 @@
                 <div class="kart-icerik">
                     <h3 class="kart-baslik">{{ kategori_adi }}</h3>
                     <span class="kart-tarih">{{ veri.video_sayisi }} Video</span>
-                    <div class="kart-icerik">
-                        <h3 class="kart-baslik">{{ video.baslik or video.title }}</h3>
-                        <!-- YENİ EKLENEN FAVORİ SAYISI KISMI -->
-                        <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️ {{ video.favori_sayisi }} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
-                    </div>
                 </div>
             </a>
             {% endfor %}
