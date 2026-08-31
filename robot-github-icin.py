@@ -236,6 +236,7 @@ def onayli_modelleri_cek():
                 "medya": satir[6],
                 "durum": satir[7],
                 "dosya_adi": uretilen_dosya_adi, # Sabit dosya adı artık mühürlendi!
+                "favori_sayisi": gercekci_favori_sayisi_uret(satir[0])
             }
             onayli_liste.append(model_verisi)
 
@@ -275,6 +276,10 @@ def populer_videolari_getir(tum_videolar_listesi):
             link = f"{baslik_seo}-{videoid}.html"
             
             populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(videoid)})
+        # EĞER YOUTUBE BİZE SESSİZCE BOŞ LİSTE DÖNDÜRÜRSE YAPAY ZEKAYI ZORLA TETİKLE:
+        if not populerler:
+            raise Exception("YouTube API boş liste döndürdü, AI motoruna geçiliyor.")
+            
         return populerler
         
     except Exception as e:
