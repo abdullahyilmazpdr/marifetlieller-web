@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Adını bilmediğiniz iğne oyası veya mekik oyası modellerinin fotoğrafını yükleyin, Marifetli Eller akıllı arama sistemi yapılış videosunu saniyeler içinde bulsun.">
+    <title>Görsel ile Model Bul - Marifetli Eller</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    {% include 'izleme_kodlari.html' ignore missing %}
+
+    <style>
+        /* Standart CSS (Header/Footer ile aynı) */
+        :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --metin-acik: #666666; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        main { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .asistan-kutusu { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.08); text-align: center; border: 1px solid var(--kenarlik); }
+        .asistan-baslik { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 32px; margin-top: 0; margin-bottom: 10px; }
+        .yukleme-alani { border: 2px dashed #d6336c80; border-radius: 15px; padding: 40px 20px; background: var(--hover-renk); cursor: pointer; transition: 0.3s; margin-top: 30px; position: relative; }
+        .yukleme-alani:hover { background: #ffe6eb; border-color: var(--ana-renk); }
+        .yukleme-alani input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor: pointer; }
+        .onizleme-kapsayici { display: none; margin-top: 25px; }
+        .onizleme-resim { max-width: 250px; max-height: 250px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; }
+        .btn-analiz { display: none; background: var(--ana-renk); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: 600; border-radius: 30px; margin-top: 25px; cursor: pointer; transition: 0.3s; font-family: inherit; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.4); }
+        .btn-analiz:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(214, 51, 108, 0.5); }
+        .yukleniyor { display: none; margin-top: 30px; color: var(--ana-renk); font-weight: 500; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--hover-renk); border-top: 4px solid var(--ana-renk); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .sonuc-alani { display: none; margin-top: 40px; text-align: left; }
+        .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .video-kart { background-color: var(--kutu-arka-plan); border-radius: 12px; overflow: hidden; border: 1px solid var(--kenarlik); transition: transform 0.3s ease; display: flex; flex-direction: column; text-decoration: none; }
+        .video-kart:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1); border-color: #ffdce3; }
+        .kart-resim { position: relative; width: 100%; padding-top: 56.25%; background-color: #eee; overflow: hidden; }
+        .kart-resim img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .kart-icerik { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+        .kart-baslik { font-size: 14px; font-weight: 600; color: var(--metin-koyu); line-height: 1.4; margin: 0; }
+    </style>
+</head>
+<body>
+
+    {% include 'header_sablon.html' ignore missing %}
+
+    <main>
+        <article class="asistan-kutusu">
+            <h1 class="asistan-baslik">Görsel ile Yapılışını Bul 🔍</h1>
+            <p style="color: var(--metin-acik); max-width: 700px; margin: 0 auto;">Adını bilmediğiniz veya bir yerde görüp beğendiğiniz oyanın fotoğrafını yükleyin. Yapay zeka arşivimizi tarayıp yapılış videosunu hemen bulsun!</p>
+            
+            <div class="yukleme-alani" id="yuklemeAlani">
+                <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
+                <strong style="color: var(--ana-renk); display: block; font-size: 18px;">Fotoğraf Yüklemek İçin Tıklayın</strong>
+                <span style="font-size: 13px; color: #888;">(Veya fotoğrafı buraya sürükleyin)</span>
+                <input type="file" id="resimInput" accept="image/*">
+            </div>
+
+            <div class="onizleme-kapsayici" id="onizlemeKapsayici">
+                <img id="onizlemeResim" class="onizleme-resim" src="" alt="Yüklenen görsel">
+                <br>
+                <button class="btn-analiz" id="btnAnaliz" onclick="analiziBaslat()">Arşivde Ara ✨</button>
+            </div>
+
+            <div class="yukleniyor" id="yukleniyorGostergesi">
+                <div class="spinner"></div>
+                <div>Görsel analiz ediliyor, arşivimizde eşleşen yapılış videoları aranıyor...</div>
+            </div>
+
+            <div class="sonuc-alani" id="sonucAlani">
+                <h2 style="font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 20px; margin-top: 20px; margin-bottom: 20px; text-align: center;" id="sonucBaslik"></h2>
+                <div class="galeri-grid" id="oneriGrid"></div>
+            </div>
+        </article>
+    </main>
+
+    {% include 'footer_sablon.html' ignore missing %}
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+        let islenmisResimBase64 = "";
+        let veritabani = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('arama_verisi.json').then(res => res.json()).then(data => { veritabani = data; });
+        });
+
+        document.getElementById('resimInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            document.getElementById('onizlemeResim').src = url;
+            document.getElementById('onizlemeKapsayici').style.display = 'block';
+            document.getElementById('yuklemeAlani').style.display = 'none';
+            document.getElementById('btnAnaliz').style.display = 'inline-block';
+            document.getElementById('sonucAlani').style.display = 'none';
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width; let height = img.height;
+                    const maxW = 500; const maxH = 500;
+                    if (width > height) { if (width > maxW) { height *= maxW / width; width = maxW; } } 
+                    else { if (height > maxH) { width *= maxH / height; height = maxH; } }
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    islenmisResimBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function analiziBaslat() {
+            if (!islenmisResimBase64) return;
+            document.getElementById('btnAnaliz').style.display = 'none';
+            document.getElementById('yukleniyorGostergesi').style.display = 'block';
+
+            const formData = new URLSearchParams();
+            formData.append('islem', 'gorsel_arama'); // YENİ İŞLEM PARAMETRESİ
+            formData.append('resim_base64', islenmisResimBase64);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                modelleriEkranaBas(data.terimler);
+            })
+            .catch(error => {
+                alert("Bağlantı hatası oluştu.");
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                document.getElementById('btnAnaliz').style.display = 'inline-block';
+            });
+        }
+
+        function modelleriEkranaBas(terimler) {
+            let sonuclar = [];
+            let eklenenler = new Set();
+
+            if (terimler && terimler.length > 0) {
+                terimler.forEach(terim => {
+                    let aranan = terim.toLowerCase().trim();
+                    let eslesenler = veritabani.filter(v => {
+                        let b = v.baslik ? v.baslik.toLowerCase() : "";
+                        let a = v.aciklama ? v.aciklama.toLowerCase() : "";
+                        let m = v.makale ? v.makale.toLowerCase() : "";
+                        let k = v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ").toLowerCase() : "";
+                        return b.includes(aranan) || a.includes(aranan) || m.includes(aranan) || k.includes(aranan);
+                    });
+                    
+                    eslesenler.forEach(m => {
+                        if(!eklenenler.has(m.link)) { sonuclar.push(m); eklenenler.add(m.link); }
+                    });
+                });
+            }
+
+            const grid = document.getElementById('oneriGrid');
+            const baslik = document.getElementById('sonucBaslik');
+
+            if (sonuclar.length > 0) {
+                baslik.innerText = `🎉 Arşivimizde Eşleşen ${sonuclar.length} Video Bulundu!`;
+                grid.innerHTML = sonuclar.slice(0, 9).map(video => `
+                    <a href="${video.link}" class="video-kart">
+                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                        <div class="kart-icerik">
+                            <h3 class="kart-baslik">${video.baslik}</h3>
+                            <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                ❤️ ${video.favori_sayisi || "950"} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için en yakın alternatifler şunlar:";
+                grid.innerHTML = veritabani.slice(0, 3).map(video => `
+                     <a href="${video.link}" class="video-kart">
+                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                        <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>
+                    </a>
+                `).join('');
+            }
+
+            document.getElementById('sonucAlani').style.display = 'block';
+            document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
