@@ -149,9 +149,11 @@
         function modelleriEkranaBas(terimler) {
             let sonuclar = [];
             let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
-            
+            console.log(sonuclar)
             // Hem aranan terimleri hem de yasaklıları Türkçe temizleyiciden geçiriyoruz
             let temizTerimler = terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim()));
+            consoele.log("------ayırma------")
+            console.log(temizTerimler)
             if (temizTerimler.length === 0) temizTerimler = terimler; // Eğer hepsi yasaklıysa mecburen geri al
 
             veritabani.forEach(v => {
