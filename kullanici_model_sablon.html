@@ -707,7 +707,8 @@
 
       fetch(SCRIPT_URL, {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString() // formData'yı metne çeviriyoruz
       })
       .then(res => res.json())
       .then(data => {
