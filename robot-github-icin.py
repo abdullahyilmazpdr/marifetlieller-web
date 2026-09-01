@@ -592,6 +592,7 @@ def sayfalari_olustur():
                     'title': pop_vid['baslik'],
                     'description': pop_vid['description'],
                     'thumbnail': pop_vid['resim'],
+                    'dosya_adi': dosya_adi, # YENİ EKLENEN SATIR
                     'favori_sayisi': gercekci_favori_sayisi_uret(pop_vid['id'])
                 }
                 
