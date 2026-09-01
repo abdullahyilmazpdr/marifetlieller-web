@@ -137,24 +137,38 @@
             });
         }
 
+        // YENİ: Türkçe karakterleri standartlaştıran akıllı temizleyici
+        function turkceTemizle(metin) {
+            if (!metin) return "";
+            return metin.toLowerCase()
+                .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
+                .replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                .replace(/i̇/g, 'i');
+        }
+
         function modelleriEkranaBas(terimler) {
             let sonuclar = [];
-            let yasakliKelimeler = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
-            let temizTerimler = terimler.filter(t => !yasakliKelimeler.includes(t.toLowerCase().trim()));
-            if (temizTerimler.length === 0) temizTerimler = terimler;
+            let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
+            
+            // Hem aranan terimleri hem de yasaklıları Türkçe temizleyiciden geçiriyoruz
+            let temizTerimler = terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim()));
+            if (temizTerimler.length === 0) temizTerimler = terimler; // Eğer hepsi yasaklıysa mecburen geri al
 
             veritabani.forEach(v => {
                 let skor = 0;
-                let eslesenKelimeSayisi = 0; // YENİ: Kaç terim tuttu?
-                let b = v.baslik ? v.baslik.toLowerCase() : "";
-                let a = v.aciklama ? v.aciklama.toLowerCase() : "";
-                let k = v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ").toLowerCase() : "";
+                let eslesenKelimeSayisi = 0;
+                
+                // Veritabanındaki metinleri de Türkçe karakterlerden arındırıyoruz
+                let b = turkceTemizle(v.baslik);
+                let a = turkceTemizle(v.aciklama);
+                let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
                 
                 let aramaMetni = b + " " + a + " " + k;
 
                 temizTerimler.forEach(terim => {
-                    let aranan = terim.toLowerCase().trim();
-                    if (aramaMetni.includes(aranan)) {
+                    let aranan = turkceTemizle(terim).trim();
+                    // Sadece 2 harften büyük, anlamlı kelimeleri ara
+                    if (aranan.length > 2 && aramaMetni.includes(aranan)) {
                         eslesenKelimeSayisi++;
                         if (b.includes(aranan) || k.includes(aranan)) skor += 3;
                         else skor += 1;
@@ -162,7 +176,6 @@
                 });
 
                 if (skor > 0) {
-                    // YENİ: Puanı eşleşen kelime sayısıyla çarp (Nokta atışı yapanı uçurur)
                     v.arama_skoru = skor * eslesenKelimeSayisi; 
                     sonuclar.push(v);
                 }
@@ -170,10 +183,10 @@
 
             sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             
-            // YENİ: Zirvedeki skorun %70'inden aşağısını çöpe at (Alakasızları temizler)
+            // FİLTRE ESNETİLDİ: Artık %70 değil, zirvenin %40'ına kadar olan "yakın eşleşmeleri" de gösterecek
             if (sonuclar.length > 0) {
                 let zirveSkor = sonuclar[0].arama_skoru;
-                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor * 0.7); 
+                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor * 0.4); 
             }
 
             const grid = document.getElementById('oneriGrid');
@@ -186,12 +199,20 @@
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik">
                             <h3 class="kart-baslik">${video.baslik}</h3>
+                            <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                ❤️ ${video.favori_sayisi || "950"} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                            </div>
                         </div>
                     </a>
                 `).join('');
             } else {
-                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık.";
-                grid.innerHTML = "";
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için en popüler alternatifler şunlar:";
+                grid.innerHTML = veritabani.slice(0, 3).map(video => `
+                     <a href="${video.link}" class="video-kart">
+                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                        <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>
+                    </a>
+                `).join('');
             }
 
             document.getElementById('sonucAlani').style.display = 'block';
