@@ -486,7 +486,9 @@ def sayfalari_olustur():
                 try:
                     baslik_seo = url_uyumlu_yap(video['title'])
                     if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
-                    dosya_adi = f"{baslik_seo}-{video['id']}.html" 
+                    dosya_adi = f"{baslik_seo}-{video['id']}.html"
+
+                    video['dosya_adi'] = dosya_adi #
                     
                     tum_videolar_ham.append({
                         'id': video['id'],
