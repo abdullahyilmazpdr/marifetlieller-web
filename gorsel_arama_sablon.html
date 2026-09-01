@@ -139,31 +139,60 @@
 
         function modelleriEkranaBas(terimler) {
             let sonuclar = [];
-            let eklenenler = new Set();
+            
+            // 1. ADIM: "İğne", "Oyası", "Modeli" gibi çöp kelimeleri zorla filtrele (Stop Words)
+            let yasakliKelimeler = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
+            let temizTerimler = terimler.filter(t => !yasakliKelimeler.includes(t.toLowerCase().trim()));
+            
+            // Eğer AI inatla sadece genel kelime verdiyse, mecburen orijinalleri kullan
+            if (temizTerimler.length === 0) temizTerimler = terimler;
 
-            if (terimler && terimler.length > 0) {
-                terimler.forEach(terim => {
+            // 2. ADIM: Akıllı Puanlama (Scoring) Sistemi
+            veritabani.forEach(v => {
+                let skor = 0;
+                let b = v.baslik ? v.baslik.toLowerCase() : "";
+                let a = v.aciklama ? v.aciklama.toLowerCase() : "";
+                let k = v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ").toLowerCase() : "";
+                
+                let aramaMetni = b + " " + a + " " + k;
+
+                temizTerimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
-                    let eslesenler = veritabani.filter(v => {
-                        let b = v.baslik ? v.baslik.toLowerCase() : "";
-                        let a = v.aciklama ? v.aciklama.toLowerCase() : "";
-                        let m = v.makale ? v.makale.toLowerCase() : "";
-                        let k = v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ").toLowerCase() : "";
-                        return b.includes(aranan) || a.includes(aranan) || m.includes(aranan) || k.includes(aranan);
-                    });
-                    
-                    eslesenler.forEach(m => {
-                        if(!eklenenler.has(m.link)) { sonuclar.push(m); eklenenler.add(m.link); }
-                    });
+                    if (aramaMetni.includes(aranan)) {
+                        // Eğer başlıkta veya AI'nin atadığı özel anahtar kelimede geçiyorsa yüksek puan (3 Puan)
+                        if (b.includes(aranan) || k.includes(aranan)) {
+                            skor += 3;
+                        } 
+                        // Sadece açıklamada geçiyorsa düşük puan (1 Puan)
+                        else {
+                            skor += 1;
+                        }
+                    }
                 });
+
+                if (skor > 0) {
+                    v.arama_skoru = skor; // Puanı modele kaydet
+                    sonuclar.push(v);
+                }
+            });
+
+            // 3. ADIM: En Yüksek Puanlıları Üste Al
+            sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
+            
+            // 4. ADIM: Kalite Filtresi (Sadece zirvedeki en iyi eşleşmeleri tut)
+            if (sonuclar.length > 0) {
+                let zirveSkor = sonuclar[0].arama_skoru;
+                // En yüksek skordan maksimum 1 veya 2 puan düşük olan "en alakalıları" filtrele
+                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor - 1); 
             }
 
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                baslik.innerText = `🎉 Arşivimizde Eşleşen ${sonuclar.length} Video Bulundu!`;
-                grid.innerHTML = sonuclar.slice(0, 9).map(video => `
+                // Ekrana 800 tane değil, sadece en iyi eşleşen ilk 6'yı basıyoruz
+                baslik.innerText = `🎉 Arşivimizde En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
+                grid.innerHTML = sonuclar.slice(0, 6).map(video => `
                     <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik">
@@ -175,7 +204,8 @@
                     </a>
                 `).join('');
             } else {
-                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için en yakın alternatifler şunlar:";
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için popüler alternatifler şunlar:";
+                // Eğer hiçbir şey bulunamazsa rastgele en popülerleri göster
                 grid.innerHTML = veritabani.slice(0, 3).map(video => `
                      <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
