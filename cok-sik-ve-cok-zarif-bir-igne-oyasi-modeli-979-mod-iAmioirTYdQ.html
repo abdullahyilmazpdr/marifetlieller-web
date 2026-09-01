@@ -891,6 +891,29 @@ E Mail: love_yilmaz@hotmail.com
     <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
+            firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // Sayfa yüklendiğinde favori butonunu bul ve ID'sini al
+                let favoriBtn = document.querySelector('.favori-btn');
+                if(!favoriBtn) return;
+                
+                // id="btnFavori_dQw4w9WgXcQ" formatından video ID'sini çıkarıyoruz
+                let modelId = favoriBtn.id.replace('btnFavori_', '');
+                
+                // Arka planda Apps Script'e soruyoruz: "Bu e-posta, bu modeli favorilemiş mi?"
+                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(user.email) + "&model_id=" + encodeURIComponent(modelId))
+                .then(res => res.json())
+                .then(data => {
+                    if(data.durum === "ekli") {
+                        favoriBtn.classList.add("aktif");
+                        favoriBtn.innerHTML = "❤️ Favorilerde";
+                    }
+                })
+                .catch(err => console.log("Favori durumu okunamadı: ", err));
+            }
+        });
+            
             // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
             let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
             if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
@@ -971,7 +994,8 @@ E Mail: love_yilmaz@hotmail.com
 
       fetch(SCRIPT_URL, {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString() // formData'yı metne çeviriyoruz
       })
       .then(res => res.json())
       .then(data => {
