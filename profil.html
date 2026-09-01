@@ -604,6 +604,11 @@
                     document.getElementById('kullaniciAdi').innerText = displayName;
                     document.getElementById('kullaniciEmail').innerText = user.email;
 
+                    // YENİ: LocalStorage yerine tüm fonksiyonları direkt buraya bağlıyoruz!
+                    modelleriGetir(user.email);
+                    favorileriGetir(user.email);
+                    profilBilgileriniGetir(user.email, displayName);
+
                     // ==========================================
                     // 👑 YÖNETİCİ KONTROLÜ BURADA YAPILIYOR
                     // ==========================================
@@ -783,9 +788,7 @@
 // UYGULAMANIZIN YENİ SÜRÜM LINKINI BURAYA YAZIN
     const PROFIL_API_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
-    function profilBilgileriniGetir() {
-        const userEmail = localStorage.getItem("kullaniciEmail");
-        console.log("👤 [PROFİL GETİR] Okunan Email: ", userEmail);
+    function profilBilgileriniGetir (userEmail, userName) {
 
         if(!userEmail) {
             console.error("❌ [PROFİL GETİR] Email bulunamadı! İşlem durduruldu.");

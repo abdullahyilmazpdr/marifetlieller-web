@@ -929,14 +929,13 @@ Yazmayı delmeyen, dokusuna zarar vermeyen ince <strong>sosyete iğnesi</strong>
 <script>
   function favoriIslemiYap(btn, modelId, baslik, link, resim) {
       // LocalStorage'dan kullanıcının giriş yapıp yapmadığını kontrol ediyoruz
-      const userEmail = localStorage.getItem("kullaniciEmail");
-      console.log("❤️ [FAVORİ İŞLEMİ] Butona basıldı. Okunan Email: ", userEmail);
-      
-      if (!userEmail) {
+      const user = firebase.auth().currentUser;
+      if (!user) {
           alert("Favorilere eklemek için lütfen önce giriş yapın.");
           window.location.href = "giris.html";
           return;
       }
+      const userEmail = user.email;
 
       // Butonu meşgul durumuna al
       btn.innerHTML = "⏳ İşleniyor...";

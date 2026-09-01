@@ -1660,45 +1660,6 @@
     });
 </script>
 
-<script>
-            // Apps Script'ten onaylı son 5 modeli çekme
-            document.addEventListener("DOMContentLoaded", function () {
-                const url = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=son_modeller";
-                
-                fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const liste = document.getElementById('sonEklenenlerListesi');
-                    if(data.length === 0) {
-                        liste.innerHTML = '<p style="font-size: 13px; color: #888;">Henüz eklenen model bulunmuyor.</p>';
-                        return;
-                    }
-                    
-                    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
-                    data.forEach(model => {
-                        // SEO URL Hesaplama
-                        let seo = model.baslik.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
-                        let url = seo.substring(0, 50).replace(/-+$/, '') + "-" + String(model.id).slice(-5) + ".html";
-                        
-                        html += `
-                            <a href="${url}" style="display: flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.2s; padding: 5px; border-radius: 8px;">
-                                <div style="background: var(--hover-renk); color: var(--ana-renk); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">✨</div>
-                                <div>
-                                    <h4 style="margin: 0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">${model.baslik}</h4>
-                                    <span style="font-size: 11px; color: #888;">${model.yazar} • ${model.kategori}</span>
-                                </div>
-                            </a>
-                        `;
-                    });
-                    html += '</div>';
-                    liste.innerHTML = html;
-                })
-                .catch(err => {
-                    document.getElementById('sonEklenenlerListesi').innerHTML = '<p style="font-size: 13px; color: red;">Modeller yüklenemedi.</p>';
-                });
-            });
-        </script>
-
 </body>
 
 </html>
