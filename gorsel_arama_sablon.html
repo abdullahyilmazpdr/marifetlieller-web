@@ -139,17 +139,13 @@
 
         function modelleriEkranaBas(terimler) {
             let sonuclar = [];
-            
-            // 1. ADIM: "İğne", "Oyası", "Modeli" gibi çöp kelimeleri zorla filtrele (Stop Words)
             let yasakliKelimeler = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
             let temizTerimler = terimler.filter(t => !yasakliKelimeler.includes(t.toLowerCase().trim()));
-            
-            // Eğer AI inatla sadece genel kelime verdiyse, mecburen orijinalleri kullan
             if (temizTerimler.length === 0) temizTerimler = terimler;
 
-            // 2. ADIM: Akıllı Puanlama (Scoring) Sistemi
             veritabani.forEach(v => {
                 let skor = 0;
+                let eslesenKelimeSayisi = 0; // YENİ: Kaç terim tuttu?
                 let b = v.baslik ? v.baslik.toLowerCase() : "";
                 let a = v.aciklama ? v.aciklama.toLowerCase() : "";
                 let k = v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ").toLowerCase() : "";
@@ -159,59 +155,43 @@
                 temizTerimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
                     if (aramaMetni.includes(aranan)) {
-                        // Eğer başlıkta veya AI'nin atadığı özel anahtar kelimede geçiyorsa yüksek puan (3 Puan)
-                        if (b.includes(aranan) || k.includes(aranan)) {
-                            skor += 3;
-                        } 
-                        // Sadece açıklamada geçiyorsa düşük puan (1 Puan)
-                        else {
-                            skor += 1;
-                        }
+                        eslesenKelimeSayisi++;
+                        if (b.includes(aranan) || k.includes(aranan)) skor += 3;
+                        else skor += 1;
                     }
                 });
 
                 if (skor > 0) {
-                    v.arama_skoru = skor; // Puanı modele kaydet
+                    // YENİ: Puanı eşleşen kelime sayısıyla çarp (Nokta atışı yapanı uçurur)
+                    v.arama_skoru = skor * eslesenKelimeSayisi; 
                     sonuclar.push(v);
                 }
             });
 
-            // 3. ADIM: En Yüksek Puanlıları Üste Al
             sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             
-            // 4. ADIM: Kalite Filtresi (Sadece zirvedeki en iyi eşleşmeleri tut)
+            // YENİ: Zirvedeki skorun %70'inden aşağısını çöpe at (Alakasızları temizler)
             if (sonuclar.length > 0) {
                 let zirveSkor = sonuclar[0].arama_skoru;
-                // En yüksek skordan maksimum 1 veya 2 puan düşük olan "en alakalıları" filtrele
-                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor - 1); 
+                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor * 0.7); 
             }
 
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                // Ekrana 800 tane değil, sadece en iyi eşleşen ilk 6'yı basıyoruz
                 baslik.innerText = `🎉 Arşivimizde En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
                 grid.innerHTML = sonuclar.slice(0, 6).map(video => `
                     <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik">
                             <h3 class="kart-baslik">${video.baslik}</h3>
-                            <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                                ❤️ ${video.favori_sayisi || "950"} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                            </div>
                         </div>
                     </a>
                 `).join('');
             } else {
-                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için popüler alternatifler şunlar:";
-                // Eğer hiçbir şey bulunamazsa rastgele en popülerleri göster
-                grid.innerHTML = veritabani.slice(0, 3).map(video => `
-                     <a href="${video.link}" class="video-kart">
-                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
-                        <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>
-                    </a>
-                `).join('');
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık.";
+                grid.innerHTML = "";
             }
 
             document.getElementById('sonucAlani').style.display = 'block';
