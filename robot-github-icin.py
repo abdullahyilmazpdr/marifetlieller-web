@@ -768,6 +768,13 @@ def sayfalari_olustur():
     with open('akilli-asistan.html', 'w', encoding='utf-8') as f: 
         f.write(asistan_icerik)
     uretilen_sayfalar.append('akilli-asistan.html')
+
+    # Görsel Arama Sayfasını Oluştur
+    template_gorsel_arama = env.get_template('gorsel_arama_sablon.html')
+    gorsel_arama_icerik = template_gorsel_arama.render(tum_kategoriler=tum_kategoriler)
+    with open('gorsel-arama.html', 'w', encoding='utf-8') as f: 
+        f.write(gorsel_arama_icerik)
+    uretilen_sayfalar.append('gorsel-arama.html')
     
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
     sitemap_olustur(uretilen_sayfalar)
