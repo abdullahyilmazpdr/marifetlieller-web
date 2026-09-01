@@ -94,14 +94,6 @@
         <div class="model-gonder-sayfasi">
             <h2 style="text-align: center; color: var(--ana-renk);">El Emeğinizi Paylaşın, Yazarımız Olun!</h2>
             <p style="text-align: center; color: var(--metin-acik);">Yaptığınız harika iğne oyası, mekik ve örgü modellerini, yapılış hikayeleriyle birlikte topluluğumuzla paylaşın. Sitemizde sizin adınızla yayınlayalım.</p>
-            
-            <iframe src="https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec" 
-                    width="100%" 
-                    height="1000px" 
-                    frameborder="0" 
-                    scrolling="no" 
-                    style="max-width: 650px; margin: 0 auto; display: block; border-radius: 12px;">
-            </iframe>
         </div>
     </main>
 
@@ -111,9 +103,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             firebase.auth().onAuthStateChanged((user) => {
+                const kapsayici = document.querySelector('.model-gonder-sayfasi');
+                
                 if (!user) {
-                    console.warn("⚠️ [MODEL GÖNDER] Oturum yok, uyarı ekranı gösteriliyor.");
-                    document.querySelector('.model-gonder-sayfasi').innerHTML = `
+                    kapsayici.innerHTML = `
                         <div style="text-align:center; padding: 50px;">
                             <h2 style="color:red;">Lütfen Giriş Yapın!</h2>
                             <p>Kendi modellerinizi ve makalelerinizi gönderebilmek için topluluğumuza üye olmalısınız.</p>
@@ -121,10 +114,14 @@
                         </div>
                     `;
                 } else {
-                    console.log("✨ [MODEL GÖNDER] Oturum var. Iframe'e iletilen Email: ", user.email);
+                    // Firebase emaili onayladıktan sonra Iframe'i URL içine email gömerek yaratıyoruz!
                     const formsUrl = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?email=" + encodeURIComponent(user.email);
-                    console.log("🔗 [MODEL GÖNDER] Üretilen Iframe URL: ", formsUrl);
-                    document.getElementById('modelFormIframe').src = formsUrl;
+                    
+                    kapsayici.innerHTML = `
+                        <h2 style="text-align: center; color: var(--ana-renk);">El Emeğinizi Paylaşın, Yazarımız Olun!</h2>
+                        <p style="text-align: center; color: var(--metin-acik);">Yaptığınız harika modelleri hikayeleriyle birlikte topluluğumuzla paylaşın.</p>
+                        <iframe src="${formsUrl}" width="100%" height="1000px" frameborder="0" scrolling="no" style="max-width: 650px; margin: 0 auto; display: block; border-radius: 12px;"></iframe>
+                    `;
                 }
             });
         });
