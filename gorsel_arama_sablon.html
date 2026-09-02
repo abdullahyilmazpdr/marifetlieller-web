@@ -132,7 +132,7 @@
                 if (data.gercek_hata) {
                     alert("Yapay Zeka Motoru Hatası:\n" + data.gercek_hata);
                 }
-                modelleriEkranaBas(data.terimler);
+                modelleriEkranaBas(data.terimler, data.kategori);
             })
             .catch(error => {
                 alert("Bağlantı hatası oluştu.");
@@ -141,7 +141,7 @@
             });
         }
 
-        // YENİ: Türkçe karakterleri standartlaştıran akıllı temizleyici
+        // Türkçe karakterleri standartlaştıran akıllı temizleyici
         function turkceTemizle(metin) {
             if (!metin) return "";
             return metin.toLowerCase()
@@ -150,30 +150,51 @@
                 .replace(/i̇/g, 'i');
         }
 
-        function modelleriEkranaBas(terimler) {
+        function modelleriEkranaBas(terimler, aiKategori) {
             let sonuclar = [];
             let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
-            console.log(terimler);
-            // Hem aranan terimleri hem de yasaklıları Türkçe temizleyiciden geçiriyoruz
+            
+            console.log("🤖 AI Tarafından Seçilen Ana Kategori: ", aiKategori);
+            console.log("🤖 AI Ham Terimler: ", terimler);
+            
             let temizTerimler = terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim()));
-            console.log("------ayırma------");
-            console.log(temizTerimler);
-            if (temizTerimler.length === 0) temizTerimler = terimler; // Eğer hepsi yasaklıysa mecburen geri al
+            if (temizTerimler.length === 0) temizTerimler = terimler;
 
-            veritabani.forEach(v => {
+            // ==========================================
+            // YENİ 1. ADIM: KATEGORİ HUNİSİ (Sıkı Filtre)
+            // ==========================================
+            let hedeflenenKategori = turkceTemizle(aiKategori || "");
+            let aranacakKelime = "";
+            
+            if (hedeflenenKategori.includes("igne") || hedeflenenKategori.includes("iğne")) aranacakKelime = "igne";
+            else if (hedeflenenKategori.includes("mekik")) aranacakKelime = "mekik";
+            else if (hedeflenenKategori.includes("tig") || hedeflenenKategori.includes("tığ")) aranacakKelime = "tig";
+
+            let filtrelenmisVeritabani = veritabani; // Varsayılan olarak hepsi
+            
+            if (aranacakKelime !== "") {
+                filtrelenmisVeritabani = veritabani.filter(v => {
+                    let k = turkceTemizle(v.baskin_kategori || v.kategori_adi || "");
+                    let b = turkceTemizle(v.baslik || "");
+                    return k.includes(aranacakKelime) || b.includes(aranacakKelime);
+                });
+                console.log(`🧹 Kategori Hunisi Çalıştı! '${aranacakKelime}' arandı. 800 videodan ${filtrelenmisVeritabani.length} video filtrelendi.`);
+            }
+
+            // ==========================================
+            // 2. ADIM: KALAN VİDEOLARDA PUANLAMA (Scoring)
+            // ==========================================
+            filtrelenmisVeritabani.forEach(v => {
                 let skor = 0;
                 let eslesenKelimeSayisi = 0;
                 
-                // Veritabanındaki metinleri de Türkçe karakterlerden arındırıyoruz
                 let b = turkceTemizle(v.baslik);
                 let a = turkceTemizle(v.aciklama);
                 let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
-                
                 let aramaMetni = b + " " + a + " " + k;
 
                 temizTerimler.forEach(terim => {
                     let aranan = turkceTemizle(terim).trim();
-                    // Sadece 2 harften büyük, anlamlı kelimeleri ara
                     if (aranan.length > 2 && aramaMetni.includes(aranan)) {
                         eslesenKelimeSayisi++;
                         if (b.includes(aranan) || k.includes(aranan)) skor += 3;
@@ -189,17 +210,20 @@
 
             sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             
-            // FİLTRE ESNETİLDİ: Artık %70 değil, zirvenin %40'ına kadar olan "yakın eşleşmeleri" de gösterecek
+            // %40 Barajı (Sadece mantıklı eşleşmeleri göster)
             if (sonuclar.length > 0) {
                 let zirveSkor = sonuclar[0].arama_skoru;
                 sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor * 0.4); 
             }
 
+            // ==========================================
+            // 3. ADIM: EKRANA BASMA
+            // ==========================================
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                baslik.innerText = `🎉 Arşivimizde En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
+                baslik.innerHTML = `🎉 <b>${aiKategori || "Bu Kategori"}</b> İçin En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
                 grid.innerHTML = sonuclar.slice(0, 6).map(video => `
                     <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
@@ -212,8 +236,9 @@
                     </a>
                 `).join('');
             } else {
-                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için en popüler alternatifler şunlar:";
-                grid.innerHTML = veritabani.slice(0, 3).map(video => `
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için bu kategorideki en popülerler şunlar:";
+                // Bulamazsa sadece o kategorinin en popüler 3'ünü göster
+                grid.innerHTML = filtrelenmisVeritabani.slice(0, 3).map(video => `
                      <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>
