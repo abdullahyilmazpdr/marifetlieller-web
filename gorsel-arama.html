@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Adını bilmediğiniz iğne oyası veya mekik oyası modellerinin fotoğrafını yükleyin, Marifetli Eller akıllı arama sistemi yapılış videosunu saniyeler içinde bulsun.">
+    <title>Görsel ile Model Bul - Marifetli Eller</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    <!-- Google Analytics Kodları Başlangıcı -->
+<!-- İleride GA4 kodunuzu buraya yapıştırın -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YYLZC7WGG8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YYLZC7WGG8');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TJ1BEFV7W9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-TJ1BEFV7W9');
+</script>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6640600529852358"
+     crossorigin="anonymous"></script>
+
+<!-- Admatic BACKFILL ads START -->
+<script type="text/javascript" async src="https://static.cdn.admatic.com.tr/dist/gpt.min.js?id=NID-171446397753"></script>
+<!-- Admatic BACKFILL ads END -->
+
+<!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- İleride AdSense <script> kodunuzu buraya yapıştırın -->
+
+<!-- Admatic veya diğer reklam ağları meta kodları -->
+<!-- Kodlar buraya gelecek -->
+
+    <style>
+        /* Standart CSS (Header/Footer ile aynı) */
+        :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --metin-acik: #666666; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        main { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .asistan-kutusu { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.08); text-align: center; border: 1px solid var(--kenarlik); }
+        .asistan-baslik { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 32px; margin-top: 0; margin-bottom: 10px; }
+        .yukleme-alani { border: 2px dashed #d6336c80; border-radius: 15px; padding: 40px 20px; background: var(--hover-renk); cursor: pointer; transition: 0.3s; margin-top: 30px; position: relative; }
+        .yukleme-alani:hover { background: #ffe6eb; border-color: var(--ana-renk); }
+        .yukleme-alani input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor: pointer; }
+        .onizleme-kapsayici { display: none; margin-top: 25px; }
+        .onizleme-resim { max-width: 250px; max-height: 250px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; }
+        .btn-analiz { display: none; background: var(--ana-renk); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: 600; border-radius: 30px; margin-top: 25px; cursor: pointer; transition: 0.3s; font-family: inherit; box-shadow: 0 5px 15px rgba(214, 51, 108, 0.4); }
+        .btn-analiz:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(214, 51, 108, 0.5); }
+        .yukleniyor { display: none; margin-top: 30px; color: var(--ana-renk); font-weight: 500; }
+        .spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid var(--hover-renk); border-top: 4px solid var(--ana-renk); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .sonuc-alani { display: none; margin-top: 40px; text-align: left; }
+        .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .video-kart { background-color: var(--kutu-arka-plan); border-radius: 12px; overflow: hidden; border: 1px solid var(--kenarlik); transition: transform 0.3s ease; display: flex; flex-direction: column; text-decoration: none; }
+        .video-kart:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1); border-color: #ffdce3; }
+        .kart-resim { position: relative; width: 100%; padding-top: 56.25%; background-color: #eee; overflow: hidden; }
+        .kart-resim img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .kart-icerik { padding: 15px; flex: 1; display: flex; flex-direction: column; }
+        .kart-baslik { font-size: 14px; font-weight: 600; color: var(--metin-koyu); line-height: 1.4; margin: 0; }
+    </style>
+</head>
+<body>
+
+    <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
+    <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
+        
+        <!-- LOGO (Orijinal İğne Görseli + Allura Font) -->
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                
+                <!-- Orijinal İğne/Kalp Görseliniz -->
+                <!-- Dosya adındaki boşluk sorun yaratmasın diye logo-igne.png olarak değiştirmeyi unutmayın -->
+                <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
+
+                <!-- Marifetli Eller Yazısı (Allura Fontu) -->
+                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                    Marifetli Eller
+                </span>
+
+            </a>
+        </div>
+        
+        <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <div class="arama-alani" style="position: relative; width: 220px;">
+                <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
+                <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <a href="gorsel-arama.html" style="background: linear-gradient(45deg, #1877F2, #4facfe); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">🔍 Görselle Bul</a>
+            <a href="model-gonder.html" style="background: var(--hover-renk); color: var(--ana-renk); padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">✨ Model Gönder</a>
+            <a href="akilli-asistan.html" style="background: linear-gradient(45deg, #d6336c, #ff758c); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);">🪄 Yapay Zeka Danışmanı</a>
+            <div id="kullaniciAlan">
+                <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALT MENÜ SIRASI -->
+    <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+        
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
+        <nav id="navLinks" class="nav-links">
+            <a href="index.html">Ana Sayfa</a>
+
+            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
+            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
+
+            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
+                <div class="dropdown-content">
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
+                </div>
+            </div>
+
+            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
+            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
+            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
+
+            <div class="dropdown">
+                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
+                <div class="dropdown-content">
+                    
+                    
+                    <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
+                    
+                    <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
+                    
+                    <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
+                    
+                    <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
+                    
+                    <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
+                    
+                    <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
+                    
+                    <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
+                    
+                    <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
+                    
+                    <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
+                    
+                    <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
+                    
+                    <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
+                    
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
+                    
+                    <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
+                    
+                    <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
+                    
+                    <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
+                    
+                    <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
+                    
+                    <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
+                    
+                    <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
+                    
+                    <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
+                    
+                    <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
+                    
+                    <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
+                    
+                    <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
+                    
+                    <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
+                    
+                    <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
+                    
+                    
+                </div>
+            </div>
+        </nav>
+        
+        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
+        <div class="hamburger" onclick="menuGoster()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyDxgpXtgQQKtFPKYppu7HByBVxyib6vS1k",
+                authDomain: "marifetlieller-42.firebaseapp.com",
+                projectId: "marifetlieller-42",
+                storageBucket: "marifetlieller-42.firebasestorage.app",
+                messagingSenderId: "632366040975",
+                appId: "1:632366040975:web:15e8a77207e3c3ac326dfa"
+            });
+        }
+
+        firebase.auth().onAuthStateChanged((user) => {
+            const kullaniciAlan = document.getElementById('kullaniciAlan');
+            
+            if (user) {
+                console.log("🔥 [HEADER] Firebase Oturumu Başarılı! Gelen Kullanıcı: ", user.email);
+                
+                localStorage.setItem("kullaniciEmail", user.email);
+                localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
+                
+                console.log("💾 [HEADER] LocalStorage'a Yazılan Email: ", localStorage.getItem("kullaniciEmail"));
+                
+                let displayName = user.displayName || user.email.split('@')[0];
+                kullaniciAlan.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
+                        <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
+                        <a href="profil.html" style="background: var(--ana-renk); color: white; border: none; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: 500; transition: 0.2s;">👤 Profilim</a>
+                        <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
+                    </div>
+                `;
+            } else {
+                console.warn("⚠️ [HEADER] Firebase oturumu bulunamadı. Kullanıcı giriş yapmamış.");
+                // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
+                localStorage.removeItem("kullaniciEmail");
+                localStorage.removeItem("kullaniciAdi");
+                kullaniciAlan.innerHTML = `
+                    <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
+                `;
+            }
+        });
+    });
+
+    function cikisYap() {
+        firebase.auth().signOut().then(() => {
+            window.location.reload();
+        });
+    }
+</script>
+
+<script>
+    function menuGoster() {
+        document.getElementById('navLinks').classList.toggle('aktif');
+    }
+
+    function mobilDropdownAc(element) {
+        if (window.innerWidth <= 860) {
+            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
+            element.parentElement.classList.toggle('aktif');
+        }
+    }
+
+    let videoVeritabani = [];
+    fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
+
+    function aramaYap() {
+        const input = document.getElementById('aramaInput').value.toLowerCase();
+        const sonucKutusu = document.getElementById('aramaSonuclari');
+
+        if (input.length < 2) {
+            sonucKutusu.style.display = 'none';
+            return;
+        }
+
+        const filtrelenmis = videoVeritabani.filter(video => {
+            const aranan = input.toLowerCase().trim();
+            const basliktaVar = video.baslik && video.baslik.toLowerCase().includes(aranan);
+            const aciklamadaVar = video.aciklama && video.aciklama.toLowerCase().includes(aranan);
+            const makaledeVar = video.makale && video.makale.toLowerCase().includes(aranan);
+            
+            return basliktaVar || aciklamadaVar || makaledeVar;
+        });
+
+        if (filtrelenmis.length > 0) {
+            sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
+                <a href="${video.link}" class="arama-sonuc-oge" style="display:flex; align-items:center; gap:12px; padding:10px; border-bottom:1px solid #eee; text-decoration:none; color:#333;">
+                    <img src="${video.resim}" alt="thumbnail" style="width:60px; height:40px; border-radius:6px; object-fit:cover;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size:13px; font-weight: 500; line-height: 1.2;">${video.baslik}</span>
+                        <span style="font-size:11px; color:#d6336c; font-weight: 600;">❤️ ${video.favori_sayisi || "980"} favori</span>
+                    </div>
+                </a>
+            `).join('');
+            sonucKutusu.style.display = 'block';
+        } else {
+            sonucKutusu.innerHTML = '<div style="padding:15px; font-size:13px; text-align:center;">Sonuç bulunamadı.</div>';
+            sonucKutusu.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.arama-alani')) {
+            const sonuc = document.getElementById('aramaSonuclari');
+            if (sonuc) sonuc.style.display = 'none';
+        }
+    });
+</script>
+
+    <main>
+        <article class="asistan-kutusu">
+            <h1 class="asistan-baslik">Görsel ile Yapılışını Bul 🔍</h1>
+            <p style="color: var(--metin-acik); max-width: 700px; margin: 0 auto;">Adını bilmediğiniz veya bir yerde görüp beğendiğiniz oyanın fotoğrafını yükleyin. Yapay zeka arşivimizi tarayıp yapılış videosunu hemen bulsun!</p>
+            
+            <div class="yukleme-alani" id="yuklemeAlani">
+                <div style="font-size: 40px; margin-bottom: 10px;">📸</div>
+                <strong style="color: var(--ana-renk); display: block; font-size: 18px;">Fotoğraf Yüklemek İçin Tıklayın</strong>
+                <span style="font-size: 13px; color: #888;">(Veya fotoğrafı buraya sürükleyin)</span>
+                <input type="file" id="resimInput" accept="image/*">
+            </div>
+
+            <div class="onizleme-kapsayici" id="onizlemeKapsayici">
+                <img id="onizlemeResim" class="onizleme-resim" src="" alt="Yüklenen görsel">
+                <br>
+                <button class="btn-analiz" id="btnAnaliz" onclick="analiziBaslat()">Arşivde Ara ✨</button>
+            </div>
+
+            <div class="yukleniyor" id="yukleniyorGostergesi">
+                <div class="spinner"></div>
+                <div>Görsel analiz ediliyor, arşivimizde eşleşen yapılış videoları aranıyor...</div>
+            </div>
+
+            <div class="sonuc-alani" id="sonucAlani">
+                <h2 style="font-family: 'Lora', serif; color: var(--metin-koyu); font-size: 20px; margin-top: 20px; margin-bottom: 20px; text-align: center;" id="sonucBaslik"></h2>
+                <div class="galeri-grid" id="oneriGrid"></div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Admatic AUTO ads START -->
+<ins data-publisher="adm-pub-171446397753" data-ad-network="6594390d4d11b285b617196c"   class="adm-ads-area"></ins>
+<script type="text/javascript" src="https://static.cdn.admatic.com.tr/showad/showad.min.js"></script>
+<!-- Admatic AUTO ads END -->
+<!-- STANDART ALT YAPI (FOOTER) -->
+    <footer>
+        <div class="footer-container">
+            <div class="sosyal-medya">
+                <!-- Buradaki linkleri kendi sosyal medya hesaplarınızla değiştirebilirsiniz -->
+                <a href="https://www.youtube.com/@Marifetli-Eller" target="_blank">📺 YouTube</a>
+                <a href="https://www.instagram.com/marifetlieller42/" target="_blank">📸 Instagram</a>
+                <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
+            </div>
+            <div class="footer-alt">
+                <!-- EKLENEN YENİ LİNKLER -->
+            <div style="margin-bottom: 15px; font-weight: 500;">
+                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+            </div>
+                &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+        let islenmisResimBase64 = "";
+        let veritabani = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('arama_verisi.json').then(res => res.json()).then(data => { veritabani = data; });
+        });
+
+        document.getElementById('resimInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+            document.getElementById('onizlemeResim').src = url;
+            document.getElementById('onizlemeKapsayici').style.display = 'block';
+            document.getElementById('yuklemeAlani').style.display = 'none';
+            document.getElementById('btnAnaliz').style.display = 'inline-block';
+            document.getElementById('sonucAlani').style.display = 'none';
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width; let height = img.height;
+                    const maxW = 500; const maxH = 500;
+                    if (width > height) { if (width > maxW) { height *= maxW / width; width = maxW; } } 
+                    else { if (height > maxH) { width *= maxH / height; height = maxH; } }
+                    canvas.width = width; canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    islenmisResimBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function analiziBaslat() {
+            if (!islenmisResimBase64) return;
+            document.getElementById('btnAnaliz').style.display = 'none';
+            document.getElementById('yukleniyorGostergesi').style.display = 'block';
+
+            const formData = new URLSearchParams();
+            formData.append('islem', 'gorsel_arama'); // YENİ İŞLEM PARAMETRESİ
+            formData.append('resim_base64', islenmisResimBase64);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                // YENİ: Arka plandan gerçek hata mesajı geldiyse ekrana uyarı ver
+                if (data.gercek_hata) {
+                    alert("Yapay Zeka Motoru Hatası:\n" + data.gercek_hata);
+                }
+                modelleriEkranaBas(data.terimler, data.kategori);
+            })
+            .catch(error => {
+                alert("Bağlantı hatası oluştu.");
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                document.getElementById('btnAnaliz').style.display = 'inline-block';
+            });
+        }
+
+        // Türkçe karakterleri standartlaştıran akıllı temizleyici
+        function turkceTemizle(metin) {
+            if (!metin) return "";
+            return metin.toLowerCase()
+                .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
+                .replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                .replace(/i̇/g, 'i');
+        }
+
+        function modelleriEkranaBas(terimler, aiKategori) {
+            let sonuclar = [];
+            let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "modeli", "yapılışı", "yapilisi", "nasıl", "nasil", "kolay", "güzel"];
+            
+            console.log("🤖 AI Tarafından Seçilen Ana Kategori: ", aiKategori);
+            console.log("🤖 AI Ham Terimler: ", terimler);
+            
+            let temizTerimler = terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim()));
+            if (temizTerimler.length === 0) temizTerimler = terimler;
+
+            // ==========================================
+            // YENİ 1. ADIM: KATEGORİ HUNİSİ (Sıkı Filtre)
+            // ==========================================
+            let hedeflenenKategori = turkceTemizle(aiKategori || "");
+            let aranacakKelime = "";
+            
+            if (hedeflenenKategori.includes("igne") || hedeflenenKategori.includes("iğne")) aranacakKelime = "igne";
+            else if (hedeflenenKategori.includes("mekik")) aranacakKelime = "mekik";
+            else if (hedeflenenKategori.includes("tig") || hedeflenenKategori.includes("tığ")) aranacakKelime = "tig";
+
+            let filtrelenmisVeritabani = veritabani; // Varsayılan olarak hepsi
+            
+            if (aranacakKelime !== "") {
+                filtrelenmisVeritabani = veritabani.filter(v => {
+                    let k = turkceTemizle(v.baskin_kategori || v.kategori_adi || "");
+                    let b = turkceTemizle(v.baslik || "");
+                    return k.includes(aranacakKelime) || b.includes(aranacakKelime);
+                });
+                console.log(`🧹 Kategori Hunisi Çalıştı! '${aranacakKelime}' arandı. 800 videodan ${filtrelenmisVeritabani.length} video filtrelendi.`);
+            }
+
+            // ==========================================
+            // 2. ADIM: KALAN VİDEOLARDA PUANLAMA (Scoring)
+            // ==========================================
+            filtrelenmisVeritabani.forEach(v => {
+                let skor = 0;
+                let eslesenKelimeSayisi = 0;
+                
+                let b = turkceTemizle(v.baslik);
+                let a = turkceTemizle(v.aciklama);
+                let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
+                let aramaMetni = b + " " + a + " " + k;
+
+                temizTerimler.forEach(terim => {
+                    let aranan = turkceTemizle(terim).trim();
+                    if (aranan.length > 2 && aramaMetni.includes(aranan)) {
+                        eslesenKelimeSayisi++;
+                        if (b.includes(aranan) || k.includes(aranan)) skor += 3;
+                        else skor += 1;
+                    }
+                });
+
+                if (skor > 0) {
+                    v.arama_skoru = skor * eslesenKelimeSayisi; 
+                    sonuclar.push(v);
+                }
+            });
+
+            sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
+            
+            // %40 Barajı (Sadece mantıklı eşleşmeleri göster)
+            if (sonuclar.length > 0) {
+                let zirveSkor = sonuclar[0].arama_skoru;
+                sonuclar = sonuclar.filter(v => v.arama_skoru >= zirveSkor * 0.4); 
+            }
+
+            // ==========================================
+            // 3. ADIM: EKRANA BASMA
+            // ==========================================
+            const grid = document.getElementById('oneriGrid');
+            const baslik = document.getElementById('sonucBaslik');
+
+            if (sonuclar.length > 0) {
+                baslik.innerHTML = `🎉 <b>${aiKategori || "Bu Kategori"}</b> İçin En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
+                grid.innerHTML = sonuclar.slice(0, 6).map(video => `
+                    <a href="${video.link}" class="video-kart">
+                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                        <div class="kart-icerik">
+                            <h3 class="kart-baslik">${video.baslik}</h3>
+                            <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                                ❤️ ${video.favori_sayisi || "950"} <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için bu kategorideki en popülerler şunlar:";
+                // Bulamazsa sadece o kategorinin en popüler 3'ünü göster
+                grid.innerHTML = filtrelenmisVeritabani.slice(0, 3).map(video => `
+                     <a href="${video.link}" class="video-kart">
+                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                        <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>
+                    </a>
+                `).join('');
+            }
+
+            document.getElementById('sonucAlani').style.display = 'block';
+            document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>

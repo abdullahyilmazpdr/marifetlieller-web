@@ -583,6 +583,7 @@
                 <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
                 <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
             </div>
+            <a href="gorsel-arama.html" style="background: linear-gradient(45deg, #1877F2, #4facfe); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">🔍 Görselle Bul</a>
             <a href="model-gonder.html" style="background: var(--hover-renk); color: var(--ana-renk); padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">✨ Model Gönder</a>
             <a href="akilli-asistan.html" style="background: linear-gradient(45deg, #d6336c, #ff758c); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);">🪄 Yapay Zeka Danışmanı</a>
             <div id="kullaniciAlan">
@@ -768,6 +769,40 @@
     
 </div>
 
+            <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+
+                <!-- Jinja değişkenleri modele göre ayarlandı -->
+<button id="btnFavori_MOD-1788257942912" class="favori-btn" onclick="favoriIslemiYap(this, 'MOD-1788257942912', 'İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası', 'ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html', 'https://drive.google.com/file/d/1iIckeYaqASmpz6jwFlI2cXUGeibWon89/view?usp=drivesdk')">
+  <span class="kalp-ikon">🤍</span> Favorilere Ekle
+</button>
+                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                            ❤️ 1186 <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                        </div>
+                
+                <!-- WhatsApp Paylaş -->
+                <a href="https://api.whatsapp.com/send?text=İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    💬 WhatsApp
+                </a>
+                
+                <!-- Facebook Paylaş -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📘 Facebook
+                </a>
+
+                <!-- Pinterest Paylaş -->
+                <a href="https://pinterest.com/pin/create/button/?url=ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html&description=İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                    📌 Pinterest
+                </a>
+
+                <!-- Instagram (Bağlantı Kopyalama) -->
+                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                    📸 Instagram'da Paylaş
+                </button>
+            </div>
+        </div>
 
             <div
                 style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px;">
@@ -804,41 +839,6 @@
             </div>
         </div>
     </main>
-
-    <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
-            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-
-                <!-- Jinja değişkenleri modele göre ayarlandı -->
-<button id="btnFavori_MOD-1788257942912" class="favori-btn" onclick="favoriIslemiYap(this, 'MOD-1788257942912', 'İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası', 'ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html', 'https://drive.google.com/file/d/1iIckeYaqASmpz6jwFlI2cXUGeibWon89/view?usp=drivesdk')">
-  <span class="kalp-ikon">🤍</span> Favorilere Ekle
-</button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️ 1186 <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
-                
-                <!-- WhatsApp Paylaş -->
-                <a href="https://api.whatsapp.com/send?text=İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    💬 WhatsApp
-                </a>
-                
-                <!-- Facebook Paylaş -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u=ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    📘 Facebook
-                </a>
-
-                <!-- Pinterest Paylaş -->
-                <a href="https://pinterest.com/pin/create/button/?url=ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html&description=İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    📌 Pinterest
-                </a>
-
-                <!-- Instagram (Bağlantı Kopyalama) -->
-                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
-                    📸 Instagram'da Paylaş
-                </button>
-            </div>
-        </div>
 
     <!-- YENİ: YAZAR SORUMLULUK REDDİ BEYANI -->
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6;">
