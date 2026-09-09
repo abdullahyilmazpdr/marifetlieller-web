@@ -766,8 +766,8 @@
                 if (data.gercek_hata) {
                     alert("Yapay Zeka Motoru Hatası:\n" + data.gercek_hata);
                 }
-                // YENİ: 4 veriyi birden huniye gönderiyoruz!
-                modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.resimdeki_yazi); 
+                // YENİ: Model Numarasını da (model_no) fonksiyona gönderiyoruz!
+                modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.model_no); 
             })
             .catch(error => {
                 alert("Bağlantı hatası oluştu.");
@@ -785,12 +785,12 @@
                 .replace(/i̇/g, 'i');
         }
 
-        function modelleriEkranaBas(terimler, anaKategori, altKategori, resimdekiYazi) {
+        function modelleriEkranaBas(terimler, anaKategori, altKategori, modelNo) {
             let sonuclar = [];
             let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "örgü", "orgu", "modeli", "yapılışı", "nasıl", "kolay"];
             
             console.log(`🤖 Ana Kategori: ${anaKategori} | Alt Kategori: ${altKategori}`);
-            console.log(`👁️ OCR (Resimdeki Yazı): ${resimdekiYazi}`);
+            console.log(`🎯 Okunan Model Numarası: ${modelNo}`);
             
             let temizTerimler = terimler ? terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim())) : [];
             if (temizTerimler.length === 0 && terimler) temizTerimler = terimler;
@@ -815,10 +815,10 @@
             }
 
             // ==========================================
-            // 2. AŞAMA: BİREBİR EŞLEŞME (OCR) VE PUANLAMA
+            // 2. AŞAMA: PUANLAMA VE MODEL NUMARASI AVI
             // ==========================================
-            let ocrMetni = turkceTemizle(resimdekiYazi || "");
             let altKatMetni = turkceTemizle(altKategori || "");
+            let arananModelNo = modelNo ? modelNo.toString().trim() : "";
 
             filtrelenmisVeritabani.forEach(v => {
                 let skor = 0;
@@ -829,15 +829,16 @@
                 let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
                 let aramaMetni = b + " " + a + " " + k;
 
-                // A) BİREBİR EŞLEŞME KONTROLÜ (Görselde kanal logosu veya başlık varsa)
-                if (ocrMetni.length > 5 && aramaMetni.includes(ocrMetni)) {
-                    skor += 1000; // Kesin eşleşme, anında 1. sıraya fırlar!
-                    eslesenKelimeSayisi += 5; 
+                // A) MODEL NUMARASI (TAM İSABET) KONTROLÜ
+                // Eğer AI bir numara bulduysa (Örn: 683) ve bu numara başlıkta bağımsız bir sayı olarak geçiyorsa
+                if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
+                    skor += 5000; // Kesin eşleşme, anında 1. sıraya fırlar!
+                    eslesenKelimeSayisi += 10; 
                 }
 
                 // B) ALT KATEGORİ BONUSU (Örn: Havlu Kenarı)
                 if (altKatMetni.length > 3 && aramaMetni.includes(altKatMetni)) {
-                    skor += 15; // Alt kategori tutarsa ekstra büyük avantaj
+                    skor += 15; // Alt kategori tutarsa ekstra avantaj
                 }
 
                 // C) 6 KELİMELİK ANATOMİ TARAMASI
@@ -861,10 +862,10 @@
             // ==========================================
             sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             
-            // Eğer birebir eşleşme (1000+ puan) varsa %40 barajını esnet, yoksa katı filtre uygula
+            // Eğer model numarası bulunduysa (5000+ puan) barajı esnet, yoksa katı filtre uygula
             if (sonuclar.length > 0) {
                 let zirveSkor = sonuclar[0].arama_skoru;
-                let baraj = zirveSkor >= 1000 ? 5 : zirveSkor * 0.4;
+                let baraj = zirveSkor >= 5000 ? 5 : zirveSkor * 0.4;
                 sonuclar = sonuclar.filter(v => v.arama_skoru >= baraj); 
             }
 
@@ -872,11 +873,11 @@
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                // Eğer en üstteki video 1000 puandan fazlaysa birebir bulunduğunu müjdele
-                let tamIsabet = sonuclar[0].arama_skoru >= 1000;
+                // Eğer en üstteki video 5000 puandan fazlaysa birebir bulunduğunu müjdele
+                let tamIsabet = sonuclar[0].arama_skoru >= 5000;
                 
                 baslik.innerHTML = tamIsabet 
-                    ? `🎯 <b>Tam İsabet!</b> Bu modelin birebir aynısını arşivimizde bulduk:`
+                    ? `🎯 <b>Tam İsabet!</b> Resimdeki numarayı (<span style="color:#d6336c;">${modelNo}</span>) yakaladık ve videoyu bulduk:`
                     : `🎉 <b>${anaKategori || "Bu Kategori"}</b> İçin En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
                 
                 grid.innerHTML = sonuclar.slice(0, 6).map(video => `
