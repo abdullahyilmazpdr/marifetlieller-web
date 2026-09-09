@@ -14,6 +14,194 @@
         /* Standart CSS (Header/Footer ile aynı) */
         :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --metin-acik: #666666; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); margin: 0; display: flex; flex-direction: column; min-height: 100vh; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d6336c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        header {
+            background-color: var(--kutu-arka-plan);
+            border-bottom: 1px solid var(--kenarlik);
+            padding: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo a {
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ana-renk);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--ana-renk);
+        }
+
+        /* Arama ve Hamburger CSS */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--ana-renk);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* Arama Çubuğu CSS'i */
+        .arama-alani {
+            position: relative;
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .arama-kutu {
+            width: 100%;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--kenarlik);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .arama-sonuclari {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .arama-sonuc-oge {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            transition: background 0.2s;
+        }
+
+        .arama-sonuc-oge:hover {
+            background: var(--hover-renk);
+            color: var(--ana-renk);
+        }
+
+        .arama-sonuc-oge img {
+            width: 50px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .arama-sonuc-oge span {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* AÇILIR MENÜ (DROPDOWN) CSS */
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown>a {
+            padding-right: 15px;
+            cursor: pointer;
+        }
+
+        .dropdown>a::after {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--kutu-arka-plan);
+            min-width: 250px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            max-height: 500px;
+            z-index: 1000;
+            border: 1px solid var(--kenarlik);
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--metin-koyu);
+            border-bottom: 1px solid var(--kenarlik);
+            white-space: normal;
+            line-height: 1.4;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--hover-renk);
+            color: var(--ana-renk);
+            padding-left: 22px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
         main { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
         .asistan-kutusu { background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(214, 51, 108, 0.08); text-align: center; border: 1px solid var(--kenarlik); }
         .asistan-baslik { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 32px; margin-top: 0; margin-bottom: 10px; }
@@ -35,6 +223,129 @@
         .kart-resim img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
         .kart-icerik { padding: 15px; flex: 1; display: flex; flex-direction: column; }
         .kart-baslik { font-size: 14px; font-weight: 600; color: var(--metin-koyu); line-height: 1.4; margin: 0; }
+        /* SEO Makale Kutu Stili */
+        .seo-makalesi { background-color: var(--kutu-arka-plan); padding: 40px 30px; border-radius: 15px; border: 1px solid var(--kenarlik); margin-top: 50px; margin-bottom: 20px; line-height: 1.8; color: var(--metin-acik); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); text-align: left; }
+        .seo-makalesi h2 { font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-top: 0; margin-bottom: 15px; }
+
+        .geri-don {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: var(--metin-koyu);
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 16px;
+            background-color: var(--kutu-arka-plan);
+            border-radius: 30px;
+            border: 1px solid var(--kenarlik);
+            transition: all 0.3s ease;
+        }
+
+        .geri-don:hover {
+            color: var(--ana-renk);
+            background-color: var(--hover-renk);
+            border-color: #ffdce3;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .sosyal-medya {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .sosyal-medya a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .sosyal-medya a:hover {
+            background-color: var(--ana-renk);
+        }
+
+        .footer-alt {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Responsive ve Hamburger Menü */
+        @media (max-width: 860px) {
+            .galeri-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                align-items: flex-start;
+                gap: 15px;
+                padding-top: 15px;
+                border-top: 1px solid var(--kenarlik);
+            }
+
+            .nav-links.aktif {
+                display: flex;
+            }
+
+            .arama-alani {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .arama-sonuclari {
+                width: 100%;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                white-space: normal;
+            }
+
+            .dropdown-content {
+                position: static;
+                display: none;
+                box-shadow: none;
+                border: none;
+                border-left: 2px solid var(--kenarlik);
+                border-radius: 0;
+                max-height: none;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .dropdown.aktif .dropdown-content {
+                display: block;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -132,8 +443,8 @@
                 if (data.gercek_hata) {
                     alert("Yapay Zeka Motoru Hatası:\n" + data.gercek_hata);
                 }
-                // YENİ: 4 veriyi birden huniye gönderiyoruz!
-                modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.resimdeki_yazi);
+                // YENİ: Model Numarasını da (model_no) fonksiyona gönderiyoruz!
+                modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.model_no); 
             })
             .catch(error => {
                 alert("Bağlantı hatası oluştu.");
@@ -151,12 +462,12 @@
                 .replace(/i̇/g, 'i');
         }
 
-        function modelleriEkranaBas(terimler, anaKategori, altKategori, resimdekiYazi) {
+        function modelleriEkranaBas(terimler, anaKategori, altKategori, modelNo) {
             let sonuclar = [];
             let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "örgü", "orgu", "modeli", "yapılışı", "nasıl", "kolay"];
             
             console.log(`🤖 Ana Kategori: ${anaKategori} | Alt Kategori: ${altKategori}`);
-            console.log(`👁️ OCR (Resimdeki Yazı): ${resimdekiYazi}`);
+            console.log(`🎯 Okunan Model Numarası: ${modelNo}`);
             
             let temizTerimler = terimler ? terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim())) : [];
             if (temizTerimler.length === 0 && terimler) temizTerimler = terimler;
@@ -181,10 +492,10 @@
             }
 
             // ==========================================
-            // 2. AŞAMA: BİREBİR EŞLEŞME (OCR) VE PUANLAMA
+            // 2. AŞAMA: PUANLAMA VE MODEL NUMARASI AVI
             // ==========================================
-            let ocrMetni = turkceTemizle(resimdekiYazi || "");
             let altKatMetni = turkceTemizle(altKategori || "");
+            let arananModelNo = modelNo ? modelNo.toString().trim() : "";
 
             filtrelenmisVeritabani.forEach(v => {
                 let skor = 0;
@@ -195,15 +506,16 @@
                 let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
                 let aramaMetni = b + " " + a + " " + k;
 
-                // A) BİREBİR EŞLEŞME KONTROLÜ (Görselde kanal logosu veya başlık varsa)
-                if (ocrMetni.length > 5 && aramaMetni.includes(ocrMetni)) {
-                    skor += 1000; // Kesin eşleşme, anında 1. sıraya fırlar!
-                    eslesenKelimeSayisi += 5; 
+                // A) MODEL NUMARASI (TAM İSABET) KONTROLÜ
+                // Eğer AI bir numara bulduysa (Örn: 683) ve bu numara başlıkta bağımsız bir sayı olarak geçiyorsa
+                if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
+                    skor += 5000; // Kesin eşleşme, anında 1. sıraya fırlar!
+                    eslesenKelimeSayisi += 10; 
                 }
 
                 // B) ALT KATEGORİ BONUSU (Örn: Havlu Kenarı)
                 if (altKatMetni.length > 3 && aramaMetni.includes(altKatMetni)) {
-                    skor += 15; // Alt kategori tutarsa ekstra büyük avantaj
+                    skor += 15; // Alt kategori tutarsa ekstra avantaj
                 }
 
                 // C) 6 KELİMELİK ANATOMİ TARAMASI
@@ -227,10 +539,10 @@
             // ==========================================
             sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             
-            // Eğer birebir eşleşme (1000+ puan) varsa %40 barajını esnet, yoksa katı filtre uygula
+            // Eğer model numarası bulunduysa (5000+ puan) barajı esnet, yoksa katı filtre uygula
             if (sonuclar.length > 0) {
                 let zirveSkor = sonuclar[0].arama_skoru;
-                let baraj = zirveSkor >= 1000 ? 5 : zirveSkor * 0.4;
+                let baraj = zirveSkor >= 5000 ? 5 : zirveSkor * 0.4;
                 sonuclar = sonuclar.filter(v => v.arama_skoru >= baraj); 
             }
 
@@ -238,11 +550,11 @@
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                // Eğer en üstteki video 1000 puandan fazlaysa birebir bulunduğunu müjdele
-                let tamIsabet = sonuclar[0].arama_skoru >= 1000;
+                // Eğer en üstteki video 5000 puandan fazlaysa birebir bulunduğunu müjdele
+                let tamIsabet = sonuclar[0].arama_skoru >= 5000;
                 
                 baslik.innerHTML = tamIsabet 
-                    ? `🎯 <b>Tam İsabet!</b> Bu modelin birebir aynısını arşivimizde bulduk:`
+                    ? `🎯 <b>Tam İsabet!</b> Resimdeki numarayı (<span style="color:#d6336c;">${modelNo}</span>) yakaladık ve videoyu bulduk:`
                     : `🎉 <b>${anaKategori || "Bu Kategori"}</b> İçin En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
                 
                 grid.innerHTML = sonuclar.slice(0, 6).map(video => `
