@@ -245,10 +245,34 @@ def onayli_modelleri_cek():
     print(f"E-Tablo okuma hatası: {e}")
     return []
 
-def gercekci_favori_sayisi_uret(video_id):
-    # Video ID'sini şifreleyip bir sayıya çeviriyoruz ve 150 ile 3800 arası inandırıcı bir rakam üretiyoruz
-    sayi = int(hashlib.md5(str(video_id).encode('utf-8')).hexdigest(), 16)
-    return (sayi % 3650) + 150 
+# 1. YouTube İzlenme ve Beğeni CSV'sini Hafızaya Al
+youtube_metrikleri = {}
+try:
+    with open('youtube_izlemeler.csv', mode='r', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        next(reader) # Başlıkları atla
+        for row in reader:
+            if len(row) >= 3:
+                dosya_adi = row[0]
+                begeni = int(row[2]) if str(row[2]).isdigit() else 0
+                youtube_metrikleri[dosya_adi] = begeni
+except Exception as e:
+    print(f"Uyarı: youtube_izlemeler.csv bulunamadı, varsayılan değerler kullanılacak. ({e})")
+
+# 2. Sahte Formül Yerine GERÇEK Beğeni Sayısı Getiren Fonksiyon
+def gercekci_favori_sayisi_uret(dosya_adi, video_id):
+    # Öncelik 1: Tam HTML dosya adıyla eşleşen var mı?
+    if dosya_adi in youtube_metrikleri:
+        return youtube_metrikleri[dosya_adi]
+    
+    # Öncelik 2: HTML sayfası üretilmeyen/oynatma listesinde olmayan videolar için 
+    # Linkin içinde Video ID'si geçiyor mu diye kontrol et
+    for link, begeni in youtube_metrikleri.items():
+        if video_id in link:
+            return begeni
+            
+    # Hiçbiri bulunamazsa varsayılan mütevazı başlangıç
+    return 571
 
 def populer_videolari_getir(tum_videolar_listesi):
     print("\n--- Haftanın Popüler Videoları Çekiliyor ---")
