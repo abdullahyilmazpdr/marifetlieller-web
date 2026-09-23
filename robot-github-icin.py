@@ -564,7 +564,7 @@ def sayfalari_olustur():
                         f.write(html_icerik)
 
                     uretilen_sayfalar.append(dosya_adi)
-video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail'],'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, video['id'])})
+                    video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail'],'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, video['id'])})
 
                     # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                     # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
