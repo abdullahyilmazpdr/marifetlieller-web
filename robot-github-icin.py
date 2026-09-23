@@ -245,19 +245,38 @@ def onayli_modelleri_cek():
     print(f"E-Tablo okuma hatası: {e}")
     return []
 
-# 1. YouTube İzlenme ve Beğeni CSV'sini Hafızaya Al
+# 1. YouTube İzlenme ve Beğeni Verilerini Google E-Tablodan Hafızaya Al
 youtube_metrikleri = {}
 try:
-    with open('youtube_izlemeler.csv', mode='r', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        next(reader) # Başlıkları atla
-        for row in reader:
-            if len(row) >= 3:
-                dosya_adi = row[0]
-                begeni = int(row[2]) if str(row[2]).isdigit() else 0
-                youtube_metrikleri[dosya_adi] = begeni
+    # LÜTFEN DİKKAT: Kopyaladığınız CSV linkini aşağıdaki tırnakların arasına yapıştırın
+    izlenmeler_csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?gid=1824261136&single=true&output=csv" 
+    
+    response = requests.get(izlenmeler_csv_url)
+    response.raise_for_status()
+
+    # utf-8-sig kullanarak Excel/Google Sheets BOM (gizli) karakterlerini temizliyoruz
+    f = io.StringIO(response.content.decode("utf-8-sig")) 
+    
+    # E-Tablonun ayırıcısı genelde virgüldür, ama Avrupa formatıysa noktalı virgül olabilir
+    icerik_ilk_satir = f.getvalue().split('\n')[0]
+    ayirici = ';' if ';' in icerik_ilk_satir else ','
+    f.seek(0)
+    
+    reader = csv.reader(f, delimiter=ayirici)
+    next(reader) # Başlıkları atla (Sayfa ID / URL, Ömür Boyu İzlenme, Beğeni Sayısı, Beğeni Oranı)
+    
+    for row in reader:
+        if len(row) >= 3:
+            dosya_adi = row[0].strip()
+            try:
+                # 3. Sütun (İndeks 2) Beğeni Sayısı
+                begeni = int(str(row[2]).strip())
+            except ValueError:
+                begeni = 0
+            youtube_metrikleri[dosya_adi] = begeni
+            
 except Exception as e:
-    print(f"Uyarı: youtube_izlemeler.csv bulunamadı, varsayılan değerler kullanılacak. ({e})")
+    print(f"Uyarı: YouTube istatistikleri E-Tablodan çekilemedi, varsayılan değerler kullanılacak. ({e})")
 
 # 2. Sahte Formül Yerine GERÇEK Beğeni Sayısı Getiren Fonksiyon
 def gercekci_favori_sayisi_uret(dosya_adi, video_id):
@@ -359,8 +378,8 @@ def populer_videolari_getir(tum_videolar_listesi):
                         break
 
             if not populerler:
-                populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi'], 'favori_sayisi': gercekci_favori_sayisi_uret(v['id'])} for v in tum_videolar_listesi[-5:]]
-            else:
+                populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi'], 'favori_sayisi': gercekci_favori_sayisi_uret(v['dosya_adi'], v['id'])} for v in tum_videolar_listesi[-5:]]
+                else:
                 print("  √ Yapay Zeka bu haftanın trend 5 modelini başarıyla seçti!")
 
             return populerler
@@ -545,7 +564,7 @@ def sayfalari_olustur():
                         f.write(html_icerik)
 
                     uretilen_sayfalar.append(dosya_adi)
-                    video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail'],'favori_sayisi': gercekci_favori_sayisi_uret(video['id'])})
+video_verileri_kategori_icin.append({'title': video['title'], 'dosya_adi': dosya_adi, 'thumbnail': video['thumbnail'],'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, video['id'])})
 
                     # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                     # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
@@ -616,8 +635,8 @@ def sayfalari_olustur():
                     'title': pop_vid['baslik'],
                     'description': pop_vid['description'],
                     'thumbnail': pop_vid['resim'],
-                    'dosya_adi': dosya_adi, # YENİ EKLENEN SATIR
-                    'favori_sayisi': gercekci_favori_sayisi_uret(pop_vid['id'])
+                    'dosya_adi': dosya_adi,
+                    'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, pop_vid['id'])
                 }
                 
                 if video_data['id'] in ai_cache and len(ai_cache[video_data['id']]) > 50:
