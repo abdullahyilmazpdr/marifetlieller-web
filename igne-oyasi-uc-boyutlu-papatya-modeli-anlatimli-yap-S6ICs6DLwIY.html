@@ -773,7 +773,7 @@
                 </button>
                 <!-- DİNAMİK RAKAM ALANI -->
     <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️ 2089 <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                            ❤️ 571 <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
                         </div>
                 
                 <!-- WhatsApp Paylaş -->
@@ -874,23 +874,24 @@
 
             firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                // Sayfa yüklendiğinde favori butonunu bul ve ID'sini al
+                // YENİ: Sayfa yüklendiğinde favori durumunu ve TOPLAM rakamı kontrol et
                 let favoriBtn = document.querySelector('.favori-btn');
-                if(!favoriBtn) return;
+                let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "S6ICs6DLwIY";
                 
-                // id="btnFavori_dQw4w9WgXcQ" formatından video ID'sini çıkarıyoruz
-                let modelId = favoriBtn.id.replace('btnFavori_', '');
-                
-                // Arka planda Apps Script'e soruyoruz: "Bu e-posta, bu modeli favorilemiş mi?"
-                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(user.email) + "&model_id=" + encodeURIComponent(modelId))
+                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(user ? user.email : "") + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    if(data.durum === "ekli") {
+                    // 1. Düğmeyi Kızart (Giriş yapılmış ve daha önce eklenmişse)
+                    if(user && data.durum === "ekli" && favoriBtn) {
                         favoriBtn.classList.add("aktif");
                         favoriBtn.innerHTML = "❤️ Favorilerde";
                     }
+                    // 2. Canlı Toplam Favori (Beğeni + Web) Sayısını Ekrana Bas!
+                    if(data.toplam !== undefined) {
+                        document.getElementById("guncelFavoriSayisi").innerText = data.toplam;
+                    }
                 })
-                .catch(err => console.log("Favori durumu okunamadı: ", err));
+                .catch(err => console.log("Canlı veriler okunamadı: ", err));
             }
         });
             
