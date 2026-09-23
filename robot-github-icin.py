@@ -299,7 +299,7 @@ def populer_videolari_getir(tum_videolar_listesi):
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
             
-            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, video['id']))
+            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(link, videoid)})
         # EĞER YOUTUBE BİZE SESSİZCE BOŞ LİSTE DÖNDÜRÜRSE YAPAY ZEKAYI ZORLA TETİKLE:
         if not populerler:
             raise Exception("YouTube API boş liste döndürdü, AI motoruna geçiliyor.")
@@ -352,7 +352,7 @@ def populer_videolari_getir(tum_videolar_listesi):
                         'description': v['description'],
                         'resim': v['thumbnail'],
                         'link': v['dosya_adi'],
-                        'favori_sayisi': gercekci_favori_sayisi_uret(v['id'])
+                        'favori_sayisi': gercekci_favori_sayisi_uret(v['dosya_adi'], v['id'])
                     })
                     eklenen_idler.add(v['id'])
                     if len(populerler) == 5:
@@ -648,34 +648,34 @@ def sayfalari_olustur():
                 uretilen_sayfalar.append(dosya_adi)
                 # Sadece başlık değil, açıklama ve makaleyi de arama hafızasına alıyoruz
                 # --- YAPAY ZEKA KAPAK FOTOĞRAFI ANALİZİ ---
-                if video['id'] in vision_cache:
+                if video_data['id'] in vision_cache:
                     print(f"    √ Görsel analiz hafızadan alındı.")
-                    gorsel_verisi = vision_cache[video['id']]
+                    gorsel_verisi = vision_cache[video_data['id']]
                 else:
                     # Eğer belirlediğimiz 100 resimlik sınıra henüz ulaşmadıysak API'ye gönder
                     if yapilan_yeni_analiz < maks_yeni_analiz:
                         print(f"    + Kapak fotoğrafı AI ile analiz ediliyor... (Limit: {yapilan_yeni_analiz + 1}/{maks_yeni_analiz})")
-                        gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
+                        gorsel_verisi = model_gorsel_analizi_yap(video_data['thumbnail'], video_data['title'])
                         if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
-                            vision_cache[video['id']] = gorsel_verisi
+                            vision_cache[video_data['id']] = gorsel_verisi
                             with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
                                 json.dump(vision_cache, f, ensure_ascii=False, indent=4)
                         yapilan_yeni_analiz += 1
                     else:
                         # Sınıra ulaşıldıysa bu videoyu şimdilik atla, sonraki robota bırak
                         print(f"    ⏳ Limit doldu. Bu görsel sonraki çalışmaya bırakıldı.")
-                        gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": kategori_adi}
+                        gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": "Popüler Videolar"}
                 # -------------------------------------------
 
                 tum_videolar_arama_icin[dosya_adi] = {
-                    "baslik": str(video.get('title', '')),
+                    "baslik": str(video_data.get('title', '')),
                     "link": dosya_adi,
-                    "resim": video.get('thumbnail', ''),
-                    "aciklama": str(video.get('description', '')),
-                    "makale": str(video.get('ai_metin', '')),
+                    "resim": video_data.get('thumbnail', ''),
+                    "aciklama": str(video_data.get('description', '')),
+                    "makale": str(video_data.get('ai_metin', '')),
                     "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
-                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
-                    "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video_data['id']) # YENİ EKLENEN SATIR 
+                    "baskin_kategori": gorsel_verisi.get("baskin_kategori", "Popüler Videolar"),
+                    "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video_data['id'])
                 }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
