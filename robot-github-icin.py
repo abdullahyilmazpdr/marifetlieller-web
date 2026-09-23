@@ -379,7 +379,7 @@ def populer_videolari_getir(tum_videolar_listesi):
 
             if not populerler:
                 populerler = [{'id': v['id'], 'baslik': v['title'], 'description': v['description'], 'resim': v['thumbnail'], 'link': v['dosya_adi'], 'favori_sayisi': gercekci_favori_sayisi_uret(v['dosya_adi'], v['id'])} for v in tum_videolar_listesi[-5:]]
-                else:
+            else:
                 print("  √ Yapay Zeka bu haftanın trend 5 modelini başarıyla seçti!")
 
             return populerler
