@@ -236,7 +236,7 @@ def onayli_modelleri_cek():
                 "medya": satir[6],
                 "durum": satir[7],
                 "dosya_adi": uretilen_dosya_adi, # Sabit dosya adı artık mühürlendi!
-                "favori_sayisi": gercekci_favori_sayisi_uret(satir[0])
+                "favori_sayisi": gercekci_favori_sayisi_uret(uretilen_dosya_adi, satir[0])
             }
             onayli_liste.append(model_verisi)
 
@@ -299,7 +299,7 @@ def populer_videolari_getir(tum_videolar_listesi):
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
             
-            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(videoid)})
+            populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, video['id']))
         # EĞER YOUTUBE BİZE SESSİZCE BOŞ LİSTE DÖNDÜRÜRSE YAPAY ZEKAYI ZORLA TETİKLE:
         if not populerler:
             raise Exception("YouTube API boş liste döndürdü, AI motoruna geçiliyor.")
@@ -538,7 +538,7 @@ def sayfalari_olustur():
                         else:
                             video['ai_metin'] = ""
 
-                    video['favori_sayisi'] = gercekci_favori_sayisi_uret(video['id']) # EKLENDİ
+                    video['favori_sayisi'] = gercekci_favori_sayisi_uret(dosya_adi, video['id']) # EKLENDİ
                     html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
                     
                     with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
@@ -576,7 +576,7 @@ def sayfalari_olustur():
                         "makale": str(video.get('ai_metin', '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
-                        "favori_sayisi": gercekci_favori_sayisi_uret(video['id']) # YENİ EKLENEN SATIR  
+                        "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video['id']) # YENİ EKLENEN SATIR  
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -634,7 +634,7 @@ def sayfalari_olustur():
                     else:
                         video_data['ai_metin'] = ""
 
-                video['favori_sayisi'] = gercekci_favori_sayisi_uret(video['id']) # EKLENDİ
+                video_data['favori_sayisi'] = gercekci_favori_sayisi_uret(dosya_adi, video_data['id']) # EKLENDİ
                 html_icerik = template_video.render(
                     video=video_data, 
                     kategori_adi="Popüler Videolar", 
@@ -675,7 +675,7 @@ def sayfalari_olustur():
                     "makale": str(video.get('ai_metin', '')),
                     "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
                     "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
-                    "favori_sayisi": gercekci_favori_sayisi_uret(video['id']) # YENİ EKLENEN SATIR 
+                    "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video_data['id']) # YENİ EKLENEN SATIR 
                 }
         except Exception as e:
             print(f"  ! Popüler video işlenirken hata oluştu (Atlanıyor): {e}")
