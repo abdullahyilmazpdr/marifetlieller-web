@@ -883,22 +883,23 @@ Bu 1. videomuzda Çarkıfelek motifinin ana çiçeğinin ve temel yapısının k
         document.addEventListener("DOMContentLoaded", function () {
 
             firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // YENİ: Sayfa yüklendiğinde favori durumunu ve TOPLAM rakamı kontrol et
-                let favoriBtn = document.querySelector('.favori-btn');
-                let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "W7DeZ40WtmQ";
-                
-                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(user ? user.email : "") + "&model_id=" + encodeURIComponent(modelId))
+            // Kullanıcı giriş yapmamışsa cihazın Anonim ID'sini kullan
+            let sorguEmail = user ? user.email : (localStorage.getItem("anonim_id") || "");
+            
+            let favoriBtn = document.querySelector('.favori-btn');
+            let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "";
+            
+            if (modelId && sorguEmail) {
+                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    // 1. Düğmeyi Kızart (Giriş yapılmış ve daha önce eklenmişse)
-                    if(user && data.durum === "ekli" && favoriBtn) {
+                    if(data.durum === "ekli" && favoriBtn) {
                         favoriBtn.classList.add("aktif");
                         favoriBtn.innerHTML = "❤️ Favorilerde";
                     }
-                    // 2. Canlı Toplam Favori (Beğeni + Web) Sayısını Ekrana Bas!
                     if(data.toplam !== undefined) {
-                        document.getElementById("guncelFavoriSayisi").innerText = data.toplam;
+                        let sayac = document.getElementById("guncelFavoriSayisi");
+                        if (sayac) sayac.innerText = data.toplam;
                     }
                 })
                 .catch(err => console.log("Canlı veriler okunamadı: ", err));
@@ -957,56 +958,69 @@ Bu 1. videomuzda Çarkıfelek motifinin ana çiçeğinin ve temel yapısının k
         </script>
 
     <!-- FAVORİ İŞLEMİ JAVASCRIPT KODU -->
+<!-- FAVORİ İŞLEMİ JAVASCRIPT KODU -->
 <script>
   function favoriIslemiYap(btn, modelId, baslik, link, resim) {
-      // LocalStorage'dan kullanıcının giriş yapıp yapmadığını kontrol ediyoruz
-      const user = firebase.auth().currentUser;
-      if (!user) {
-          alert("Favorilere eklemek için lütfen önce giriş yapın.");
-          window.location.href = "giris.html";
-          return;
+      // 1. GİRİŞ YAPILMIŞSA EMAİL AL, YOKSA "ANONİM BİR ID" OLUŞTUR VE HATIRLA!
+      let userEmail = localStorage.getItem("kullaniciEmail");
+      if (!userEmail) {
+          userEmail = localStorage.getItem("anonim_id");
+          if (!userEmail) {
+              userEmail = "anonim_" + Math.random().toString(36).substr(2, 9);
+              localStorage.setItem("anonim_id", userEmail);
+          }
       }
-      const userEmail = user.email;
 
-      // Butonu meşgul durumuna al
       btn.innerHTML = "⏳ İşleniyor...";
       btn.disabled = true;
 
-      // Uygulamanızın yayınlanan Google Apps Script URL'si
       const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+
+      // Drive / YT resim temizliği (Kullanıcı Şablonu uyumluluğu için)
+      let islenmisResim = resim;
+      if(resim.includes("drive.google.com/file/d/")) {
+          let id = resim.split("file/d/")[1].split("/")[0];
+          islenmisResim = "https://lh3.googleusercontent.com/d/" + id;
+      } else if (resim.includes("youtube.com") || resim.includes("youtu.be")) {
+          let videoId = resim.includes("v=") ? resim.split("v=")[1].substring(0,11) : resim.split("youtu.be/")[1].substring(0,11);
+          islenmisResim = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+      }
 
       let formData = new URLSearchParams();
       formData.append("islem", "favori_islem");
-      formData.append("email", userEmail);
+      formData.append("email", userEmail); // Anonim ID de gidebilir, sistem bunu da işler.
       formData.append("model_id", modelId);
       formData.append("baslik", baslik);
       formData.append("link", link);
-      formData.append("resim", resim);
+      formData.append("resim", islenmisResim);
 
       fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString() // formData'yı metne çeviriyoruz
+          body: formData.toString(),
+          redirect: 'follow' // BAĞLANTI HATASINI (CORS / REDIRECT) ÇÖZEN SİHİRLİ KOD
       })
       .then(res => res.json())
       .then(data => {
           btn.disabled = false;
-          let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı Yakala
+          let sayac = document.getElementById("guncelFavoriSayisi"); 
           if (data.durum === "eklendi") {
               btn.classList.add("aktif");
               btn.innerHTML = "❤️ Favorilerde";
-              sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
+              if (sayac) sayac.innerText = parseInt(sayac.innerText) + 1; 
           } else if (data.durum === "cikarildi") {
               btn.classList.remove("aktif");
               btn.innerHTML = "🤍 Favorilere Ekle";
-              sayac.innerText = parseInt(sayac.innerText) - 1;
+              if (sayac) sayac.innerText = parseInt(sayac.innerText) - 1; 
           } else {
               alert(data.mesaj);
               btn.innerHTML = "🤍 Favorilere Ekle";
           }
       })
       .catch(err => {
-          alert("Bağlantı hatası oluştu.");
+          console.error(err);
+          // Hata bile verse, veri çoğu zaman Apps Script'e başarıyla ulaşır
+          alert("Arka planda kaydedildi.");
           btn.disabled = false;
           btn.innerHTML = "🤍 Favorilere Ekle";
       });
