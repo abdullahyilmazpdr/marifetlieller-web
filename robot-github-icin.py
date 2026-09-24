@@ -198,7 +198,7 @@ def kategori_seo_uret(kategori_adi):
     return gemini_istek_gonder(prompt)
 
 def onayli_modelleri_cek():
-  csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?output=csv"
+  csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQkpPlQW7YV4ZgYv4swHZdQxV5NdGhmkxmsTXS2cR2XgV5W7lt9przPz3nuhB4yvg3Wf1-j0jZqdjEu/pub?gid=0&single=true&output=csv"
 
   try:
     response = requests.get(csv_url)
