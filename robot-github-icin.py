@@ -741,7 +741,8 @@ def sayfalari_olustur():
             kategori_modelleri[kat].append({
                 'title': model['baslik'],
                 'dosya_adi': model['dosya_adi'],
-                'thumbnail': medya_linki 
+                'thumbnail': medya_linki,
+                'favori_sayisi': model['favori_sayisi']
             })
 
     print("\nKullanıcı Kategori Sayfaları Oluşturuluyor...")
