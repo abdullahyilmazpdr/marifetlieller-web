@@ -533,22 +533,23 @@
         document.addEventListener("DOMContentLoaded", function () {
 
             firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // YENİ: Sayfa yüklendiğinde favori durumunu ve TOPLAM rakamı kontrol et
-                let favoriBtn = document.querySelector('.favori-btn');
-                let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "{{ video.id }}";
-                
-                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(user ? user.email : "") + "&model_id=" + encodeURIComponent(modelId))
+            // Kullanıcı giriş yapmamışsa cihazın Anonim ID'sini kullan
+            let sorguEmail = user ? user.email : (localStorage.getItem("anonim_id") || "");
+            
+            let favoriBtn = document.querySelector('.favori-btn');
+            let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "";
+            
+            if (modelId && sorguEmail) {
+                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    // 1. Düğmeyi Kızart (Giriş yapılmış ve daha önce eklenmişse)
-                    if(user && data.durum === "ekli" && favoriBtn) {
+                    if(data.durum === "ekli" && favoriBtn) {
                         favoriBtn.classList.add("aktif");
                         favoriBtn.innerHTML = "❤️ Favorilerde";
                     }
-                    // 2. Canlı Toplam Favori (Beğeni + Web) Sayısını Ekrana Bas!
                     if(data.toplam !== undefined) {
-                        document.getElementById("guncelFavoriSayisi").innerText = data.toplam;
+                        let sayac = document.getElementById("guncelFavoriSayisi");
+                        if (sayac) sayac.innerText = data.toplam;
                     }
                 })
                 .catch(err => console.log("Canlı veriler okunamadı: ", err));
