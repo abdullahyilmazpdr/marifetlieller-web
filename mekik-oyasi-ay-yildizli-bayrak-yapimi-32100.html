@@ -7,40 +7,31 @@
     <title>Mekik Oyası Ay Yıldızlı Bayrak Yapımı - Marifetli Eller</title>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
+    
     <!-- Google Analytics Kodları Başlangıcı -->
-<!-- İleride GA4 kodunuzu buraya yapıştırın -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-YYLZC7WGG8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYLZC7WGG8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-YYLZC7WGG8');
+    </script>
 
-  gtag('config', 'G-YYLZC7WGG8');
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJ1BEFV7W9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TJ1BEFV7W9');
+    </script>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TJ1BEFV7W9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6640600529852358" crossorigin="anonymous"></script>
 
-  gtag('config', 'G-TJ1BEFV7W9');
-</script>
+    <!-- Admatic BACKFILL ads START -->
+    <script type="text/javascript" async src="https://static.cdn.admatic.com.tr/dist/gpt.min.js?id=NID-171446397753"></script>
+    <!-- Admatic BACKFILL ads END -->
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6640600529852358"
-     crossorigin="anonymous"></script>
-
-<!-- Admatic BACKFILL ads START -->
-<script type="text/javascript" async src="https://static.cdn.admatic.com.tr/dist/gpt.min.js?id=NID-171446397753"></script>
-<!-- Admatic BACKFILL ads END -->
-
-<!-- Google AdSense Doğrulama Kodları Başlangıcı -->
-<!-- İleride AdSense <script> kodunuzu buraya yapıştırın -->
-
-<!-- Admatic veya diğer reklam ağları meta kodları -->
-<!-- Kodlar buraya gelecek -->
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -314,119 +305,32 @@
             color: var(--ana-renk);
         }
 
-        .sayfa-baslik {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .sayfa-baslik h1 {
-            font-family: 'Lora', serif;
-            color: var(--ana-renk);
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .sayfa-baslik p {
-            color: var(--metin-acik);
-            font-size: 16px;
-            margin: 0;
-        }
-
-        /* GALERİ VE KARTLAR */
-        .galeri-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .video-kart {
+        /* YENİ: VİDEO IFRAME RESPONSIVE */
+        .video-iframe-container {
+            width: 100%;
+            margin-bottom: 25px;
             background-color: var(--kutu-arka-plan);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             border-radius: 12px;
-            overflow: hidden;
+            padding: 15px;
             border: 1px solid var(--kenarlik);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
         }
 
-        .video-kart:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(214, 51, 108, 0.1);
-            border-color: #ffdce3;
-        }
-
-        .kart-resim {
+        .video-iframe {
             position: relative;
             width: 100%;
-            padding-top: 56.25%;
-            background-color: #eee;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
             overflow: hidden;
+            border-radius: 8px;
         }
-
-        .kart-resim img {
+        
+        .video-iframe iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-
-        .oynat-ikon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background-color: rgba(214, 51, 108, 0.9);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .oynat-ikon::after {
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 10px 0 10px 16px;
-            border-color: transparent transparent transparent #fff;
-            margin-left: 4px;
-        }
-
-        .video-kart:hover .oynat-ikon {
-            opacity: 1;
-        }
-
-        .kart-icerik {
-            padding: 15px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .kart-baslik {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--metin-koyu);
-            line-height: 1.4;
-            margin: 0 0 10px 0;
-        }
-
-        .video-kart:hover .kart-baslik {
-            color: var(--ana-renk);
-        }
-
-        .kart-tarih {
-            margin-top: auto;
-            font-size: 12px;
-            color: #999;
+            border: 0;
         }
 
         /* FOOTER CSS */
@@ -472,20 +376,8 @@
             color: #bdc3c7;
         }
 
-        .video-kutu {
-            background-color: var(--kutu-arka-plan);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--kenarlik);
-        }
-
         /* RESPONSIVE & MOBİL (Medya Sorguları) */
         @media (max-width: 860px) {
-            .galeri-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            }
-
             .hamburger {
                 display: flex;
             }
@@ -537,374 +429,344 @@
         }
     </style>
 
-    <!-- FAVORİ BUTONU VE STİLİ (Kullanıcı Modelleri İçin) -->
-<style>
-  .favori-btn {
-    background-color: #fff;
-    color: #d6336c;
-    border: 2px solid #d6336c;
-    padding: 8px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 10px 0;
-  }
-  .favori-btn:hover {
-    background-color: #d6336c;
-    color: #fff;
-  }
-  .favori-btn.aktif {
-    background-color: #d6336c;
-    color: #fff;
-  }
-</style>
+    <!-- FAVORİ BUTONU VE STİLİ -->
+    <style>
+      .favori-btn {
+        background-color: #fff;
+        color: #d6336c;
+        border: 2px solid #d6336c;
+        padding: 8px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 10px 0;
+      }
+      .favori-btn:hover {
+        background-color: #d6336c;
+        color: #fff;
+      }
+      .favori-btn.aktif {
+        background-color: #d6336c;
+        color: #fff;
+      }
+    </style>
 </head>
 
 <body>
     <header style="background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100;">
-    <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
-        
-        <!-- LOGO (Orijinal İğne Görseli + Allura Font) -->
-        <div class="logo">
-            <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <div class="header-container" style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px;">
+            
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
+                    <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
+                        Marifetli Eller
+                    </span>
+                </a>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <div class="arama-alani" style="position: relative; width: 220px;">
+                    <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
+                    <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
+                </div>
+                <a href="gorsel-arama.html" style="background: linear-gradient(45deg, #1877F2, #4facfe); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">🔍 Görselle Bul</a>
+                <a href="model-gonder.html" style="background: var(--hover-renk); color: var(--ana-renk); padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">✨ Model Gönder</a>
+                <a href="akilli-asistan.html" style="background: linear-gradient(45deg, #d6336c, #ff758c); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);">🪄 Yapay Zeka Danışmanı</a>
+                <div id="kullaniciAlan">
+                    <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+            <nav id="navLinks" class="nav-links">
+                <a href="index.html">Ana Sayfa</a>
+                <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
+                <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
+                <div class="dropdown">
+                    <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
+                    <div class="dropdown-content">
+                        <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
+                        <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
+                    </div>
+                </div>
+                <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
+                <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
+                <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
+                <div class="dropdown">
+                    <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
+                    <div class="dropdown-content">
+                    </div>
+                </div>
+            </nav>
+            <div class="hamburger" onclick="menuGoster()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyDxgpXtgQQKtFPKYppu7HByBVxyib6vS1k",
+                    authDomain: "marifetlieller-42.firebaseapp.com",
+                    projectId: "marifetlieller-42",
+                    storageBucket: "marifetlieller-42.firebasestorage.app",
+                    messagingSenderId: "632366040975",
+                    appId: "1:632366040975:web:15e8a77207e3c3ac326dfa"
+                });
+            }
+
+            firebase.auth().onAuthStateChanged((user) => {
+                const kullaniciAlan = document.getElementById('kullaniciAlan');
                 
-                <!-- Orijinal İğne/Kalp Görseliniz -->
-                <!-- Dosya adındaki boşluk sorun yaratmasın diye logo-igne.png olarak değiştirmeyi unutmayın -->
-                <img src="assets/img/logo-igne.png" alt="Marifetli Eller Logo" style="height: 55px; width: auto; object-fit: contain;">
-
-                <!-- Marifetli Eller Yazısı (Allura Fontu) -->
-                <span style="font-family: 'Allura', cursive; font-size: 38px; color: #2c3e50; -webkit-text-stroke: 1px #2c3e50; padding-top: 8px; letter-spacing: 1px;">
-                    Marifetli Eller
-                </span>
-
-            </a>
-        </div>
-        
-        <!-- ÜST SAĞ KISIM (Giriş, Arama, Model Gönder) -->
-        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <div class="arama-alani" style="position: relative; width: 220px;">
-                <input type="text" id="aramaInput" oninput="aramaYap()" placeholder="Model ara..." class="arama-kutu" style="width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit;">
-                <div id="aramaSonuclari" class="arama-sonuclari" style="position: absolute; top: 40px; left: 0; width: 100%; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto;"></div>
-            </div>
-            <a href="gorsel-arama.html" style="background: linear-gradient(45deg, #1877F2, #4facfe); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(24, 119, 242, 0.3);">🔍 Görselle Bul</a>
-            <a href="model-gonder.html" style="background: var(--hover-renk); color: var(--ana-renk); padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">✨ Model Gönder</a>
-            <a href="akilli-asistan.html" style="background: linear-gradient(45deg, #d6336c, #ff758c); color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);">🪄 Yapay Zeka Danışmanı</a>
-            <div id="kullaniciAlan">
-                <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ALT MENÜ SIRASI -->
-    <div style="max-width: 1200px; margin: 10px auto 0; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
-        
-        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ, CSS KONTROLÜNE BIRAKILDI -->
-        <nav id="navLinks" class="nav-links">
-            <a href="index.html">Ana Sayfa</a>
-
-            <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası</a>
-            <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası</a>
-
-            <!-- AKORDİYON DÜZELTMESİ: onclick etiketi a'nın içine alındı -->
-            <div class="dropdown">
-                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Ders Videoları ▾</a>
-                <div class="dropdown-content">
-                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Dersleri</a>
-                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Dersleri</a>
-                </div>
-            </div>
-
-            <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazma Modelleri</a>
-            <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri</a>
-            <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">Havlu Kenarı</a>
-
-            <div class="dropdown">
-                <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
-                <div class="dropdown-content">
+                if (user) {
+                    localStorage.setItem("kullaniciEmail", user.email);
+                    localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
                     
-                </div>
-            </div>
-        </nav>
-        
-        <!-- MÜDAHALE EDİLEN YER: style="..." KISMI SİLİNDİ -->
-        <div class="hamburger" onclick="menuGoster()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </div>
-</header>
+                    let displayName = user.displayName || user.email.split('@')[0];
+                    kullaniciAlan.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
+                            <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
+                            <a href="profil.html" style="background: var(--ana-renk); color: white; border: none; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: 500; transition: 0.2s;">👤 Profilim</a>
+                            <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
+                        </div>
+                    `;
+                } else {
+                    localStorage.removeItem("kullaniciEmail");
+                    localStorage.removeItem("kullaniciAdi");
+                    kullaniciAlan.innerHTML = `
+                        <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
+                    `;
+                }
+            });
+        });
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (!firebase.apps.length) {
-            firebase.initializeApp({
-                apiKey: "AIzaSyDxgpXtgQQKtFPKYppu7HByBVxyib6vS1k",
-                authDomain: "marifetlieller-42.firebaseapp.com",
-                projectId: "marifetlieller-42",
-                storageBucket: "marifetlieller-42.firebasestorage.app",
-                messagingSenderId: "632366040975",
-                appId: "1:632366040975:web:15e8a77207e3c3ac326dfa"
+        function cikisYap() {
+            firebase.auth().signOut().then(() => {
+                window.location.reload();
             });
         }
 
-        firebase.auth().onAuthStateChanged((user) => {
-            const kullaniciAlan = document.getElementById('kullaniciAlan');
-            
-            if (user) {
-                console.log("🔥 [HEADER] Firebase Oturumu Başarılı! Gelen Kullanıcı: ", user.email);
+        function menuGoster() {
+            document.getElementById('navLinks').classList.toggle('aktif');
+        }
+
+        function mobilDropdownAc(element) {
+            if (window.innerWidth <= 860) {
+                element.parentElement.classList.toggle('aktif');
+            }
+        }
+
+        let videoVeritabani = [];
+        fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
+
+        function aramaYap() {
+            const input = document.getElementById('aramaInput').value.toLowerCase();
+            const sonucKutusu = document.getElementById('aramaSonuclari');
+
+            if (input.length < 2) {
+                sonucKutusu.style.display = 'none';
+                return;
+            }
+
+            const filtrelenmis = videoVeritabani.filter(video => {
+                const aranan = input.toLowerCase().trim();
+                const basliktaVar = video.baslik && video.baslik.toLowerCase().includes(aranan);
+                const aciklamadaVar = video.aciklama && video.aciklama.toLowerCase().includes(aranan);
+                const makaledeVar = video.makale && video.makale.toLowerCase().includes(aranan);
                 
-                localStorage.setItem("kullaniciEmail", user.email);
-                localStorage.setItem("kullaniciAdi", user.displayName || user.email.split('@')[0]);
-                
-                console.log("💾 [HEADER] LocalStorage'a Yazılan Email: ", localStorage.getItem("kullaniciEmail"));
-                
-                let displayName = user.displayName || user.email.split('@')[0];
-                kullaniciAlan.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px; background: var(--hover-renk); padding: 4px 6px 4px 15px; border-radius: 25px; border: 1px solid var(--kenarlik);">
-                        <span style="font-size: 13px; font-weight: 600; color: var(--ana-renk);">${displayName}</span>
-                        <a href="profil.html" style="background: var(--ana-renk); color: white; border: none; padding: 5px 12px; border-radius: 20px; text-decoration: none; font-size: 12px; font-weight: 500; transition: 0.2s;">👤 Profilim</a>
-                        <button onclick="cikisYap()" style="background: white; border: 1px solid var(--kenarlik); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--metin-koyu); transition: 0.2s;">Çıkış Yap</button>
-                    </div>
-                `;
+                return basliktaVar || aciklamadaVar || makaledeVar;
+            });
+
+            if (filtrelenmis.length > 0) {
+                sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
+                    <a href="${video.link}" class="arama-sonuc-oge" style="display:flex; align-items:center; gap:12px; padding:10px; border-bottom:1px solid #eee; text-decoration:none; color:#333;">
+                        <img src="${video.resim}" alt="thumbnail" style="width:60px; height:40px; border-radius:6px; object-fit:cover;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size:13px; font-weight: 500; line-height: 1.2;">${video.baslik}</span>
+                            <span style="font-size:11px; color:#d6336c; font-weight: 600;">❤️ ${video.favori_sayisi || "980"} favori</span>
+                        </div>
+                    </a>
+                `).join('');
+                sonucKutusu.style.display = 'block';
             } else {
-                console.warn("⚠️ [HEADER] Firebase oturumu bulunamadı. Kullanıcı giriş yapmamış.");
-                // YENİ EKLENEN: Çıkış yapıldığında hafızayı temizle
-                localStorage.removeItem("kullaniciEmail");
-                localStorage.removeItem("kullaniciAdi");
-                kullaniciAlan.innerHTML = `
-                    <a href="giris.html" style="background: var(--ana-renk); color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;">Giriş Yap</a>
-                `;
+                sonucKutusu.innerHTML = '<div style="padding:15px; font-size:13px; text-align:center;">Sonuç bulunamadı.</div>';
+                sonucKutusu.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.arama-alani')) {
+                const sonuc = document.getElementById('aramaSonuclari');
+                if (sonuc) sonuc.style.display = 'none';
             }
         });
-    });
-
-    function cikisYap() {
-        firebase.auth().signOut().then(() => {
-            window.location.reload();
-        });
-    }
-</script>
-
-<script>
-    function menuGoster() {
-        document.getElementById('navLinks').classList.toggle('aktif');
-    }
-
-    function mobilDropdownAc(element) {
-        if (window.innerWidth <= 860) {
-            // Tıklanan "a" etiketinin ebeveyni olan .dropdown div'ine class ekliyoruz
-            element.parentElement.classList.toggle('aktif');
-        }
-    }
-
-    let videoVeritabani = [];
-    fetch('arama_verisi.json').then(response => response.json()).then(data => { videoVeritabani = data; });
-
-    function aramaYap() {
-        const input = document.getElementById('aramaInput').value.toLowerCase();
-        const sonucKutusu = document.getElementById('aramaSonuclari');
-
-        if (input.length < 2) {
-            sonucKutusu.style.display = 'none';
-            return;
-        }
-
-        const filtrelenmis = videoVeritabani.filter(video => {
-            const aranan = input.toLowerCase().trim();
-            const basliktaVar = video.baslik && video.baslik.toLowerCase().includes(aranan);
-            const aciklamadaVar = video.aciklama && video.aciklama.toLowerCase().includes(aranan);
-            const makaledeVar = video.makale && video.makale.toLowerCase().includes(aranan);
-            
-            return basliktaVar || aciklamadaVar || makaledeVar;
-        });
-
-        if (filtrelenmis.length > 0) {
-            sonucKutusu.innerHTML = filtrelenmis.slice(0, 10).map(video => `
-                <a href="${video.link}" class="arama-sonuc-oge" style="display:flex; align-items:center; gap:12px; padding:10px; border-bottom:1px solid #eee; text-decoration:none; color:#333;">
-                    <img src="${video.resim}" alt="thumbnail" style="width:60px; height:40px; border-radius:6px; object-fit:cover;">
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size:13px; font-weight: 500; line-height: 1.2;">${video.baslik}</span>
-                        <span style="font-size:11px; color:#d6336c; font-weight: 600;">❤️ ${video.favori_sayisi || "980"} favori</span>
-                    </div>
-                </a>
-            `).join('');
-            sonucKutusu.style.display = 'block';
-        } else {
-            sonucKutusu.innerHTML = '<div style="padding:15px; font-size:13px; text-align:center;">Sonuç bulunamadı.</div>';
-            sonucKutusu.style.display = 'block';
-        }
-    }
-
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.arama-alani')) {
-            const sonuc = document.getElementById('aramaSonuclari');
-            if (sonuc) sonuc.style.display = 'none';
-        }
-    });
-</script>
+    </script>
 
     <main>
         <a href="index.html" class="geri-don">← Ana Sayfaya Dön</a>
 
         <div class="icerik-kutusu">
-            <span
-                style="background: var(--hover-renk); color: var(--ana-renk); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">Mekik Oyası</span>
+            <span style="background: var(--hover-renk); color: var(--ana-renk); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">Mekik Oyası</span>
 
             <h1>Mekik Oyası Ay Yıldızlı Bayrak Yapımı</h1>
             <div style="font-size: 13px; color: #888; margin-bottom: 25px;">Yazar: <b>Ayşegül YILMAZ</b> | Tarih: 29.10.2026</div>
 
-            
-<div style="width: 100%; margin-bottom: 25px; text-align: center; background-color: #fcfcfc; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 12px; padding: 10px;">
-
-    <div class="video-kutu">
-    <div class="video-iframe">
-                <iframe src="https://www.youtube.com/embed/xXNTTWyMW0g" allowfullscreen=""></iframe>
+            <!-- VİDEO BÖLÜMÜ - RESPONSIVE AYARLANDI -->
+            <div class="video-iframe-container">
+                <div class="video-iframe">
+                    <iframe src="https://www.youtube.com/embed/xXNTTWyMW0g" allowfullscreen></iframe>
+                </div>
             </div>
-</div>
-    
-    
-    
-    <!-- Google Drive linkinden ID'yi çıkarıp doğrudan (lh3) sunucuya bağlayan akıllı filtre -->
-    
-        
-        
-    
-    
-    <!-- FOTOĞRAFLARIN SÜNMESİNİ VE TAŞMASINI ENGELLEYEN ASIL KISIM (object-fit: contain) -->
-    <img src="https://lh3.googleusercontent.com/d/1CbhdzVR6XUYYhqZ4X_oBK8q-O1zVF2kM" alt="Mekik Oyası Ay Yıldızlı Bayrak Yapımı"
-        style="width: 100%; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
-        
-    
-</div>
+
+            <!-- MAKALE İÇERİĞİ -->
+            <div class="makale-icerik" style="font-size: 15px; line-height: 1.8; color: var(--metin-koyu); margin-bottom: 30px; text-align: left;">
+                <p>Mekik oyası, düğümlerin zarafetle işlendiği ve ortaya son derece tok ve şık motiflerin çıktığı geleneksel el sanatlarımızdan biridir. <em>Marifetli Eller İğne Oyası</em> kanalında paylaşılan "En Kolay Teknikle Ay Yıldızlı Bayrak Yapımı" videosu, bu incelikli sanatın milli duygularla harmanlandığı harika bir örneği adım adım sunuyor. Havlu kenarlarında, yemeni uçlarında veya özel günlerde yaka iğnesi olarak kullanabileceğiniz bu ay yıldız motifi, doğru mekik teknikleriyle kolayca hazırlanabiliyor.</p>
+
+                <h3 style="color: var(--ana-renk); font-size: 18px; margin-top: 25px;">Kullanılan Malzemeler:</h3>
+                <ul style="padding-left: 20px; margin-bottom: 20px;">
+                    <li>Kırmızı ve beyaz renkli oya ipi</li>
+                    <li>İki adet mekik (biri beyaz, diğeri kırmızı ip için sarılmış)</li>
+                    <li>İnce uçlu bir tığ (ilmekleri kolayca geçirmek ve motifleri kilitlemek için)</li>
+                    <li>Makas ve çakmak (ip uçlarını temizleyip sabitlemek için)</li>
+                </ul>
+
+                <h2 style="color: var(--ana-renk); font-size: 20px; margin-top: 30px; border-bottom: 2px solid var(--kenarlik); padding-bottom: 10px;">Adım Adım Mekik Oyası Ay Yıldız Motifi Yapılışı</h2>
+
+                <h4 style="color: #444; font-size: 16px; margin-top: 20px;">1. Yıldızın Merkezinin Oluşturulması [00:37]</h4>
+                <p>Motife yıldızın orta göbeğini yaparak başlanıyor. Beyaz ip sarılı mekik ile alt ip oluşturularak, küçük ve zarif pırpırlar (yaklaşık 5 adet) yapılıyor. Bu pırpırların etrafı sıkıca büzülerek yıldızın tam merkezi ortaya çıkarılıyor. İpler kesilerek çakmakla dikkatlice sabitleniyor.</p>
+
+                <h4 style="color: #444; font-size: 16px; margin-top: 20px;">2. Yıldızın Yapraklarının İşlenmesi [02:54]</h4>
+                <p>Beyaz ve kırmızı iplerin bulunduğu mekikler birbirine düğümlenerek birleştiriliyor. Beyaz ip alt ip olarak görev yaparken, kırmızı ip sarılı mekik ile yıldızın yaprakları düğümleniyor. Merkezdeki her bir beyaz pırpırın içinden tığ yardımıyla geçilip, kırmızı iple 10'ar mekik düğümü atılarak yıldızın köşe kıvrımları tek tek şekillendiriliyor.</p>
+
+                <h4 style="color: #444; font-size: 16px; margin-top: 20px;">3. Hilal (Ay) Şeklinin Verilmesi [07:53]</h4>
+                <p>Yıldız kısmı tamamlandıktan sonra ipler koparılmadan doğrudan hilal yapımına geçiliyor. Hilalin pürüzsüz ve doğru bir kavisle durabilmesi için motif ters çevriliyor. Kırmızı alt ip üzerine beyaz mekik ile yaklaşık 85 ilmek (düğüm) atılarak hilalin ana iskeleti oluşturuluyor. (İlmek sayısı elinizin sıkılığına göre 90'a kadar çıkabilir.)</p>
+
+                <h4 style="color: #444; font-size: 16px; margin-top: 20px;">4. Dış Kenar Pırpırları ve Birleştirme [10:05]</h4>
+                <p>Hilalin iskeleti tamamlandıktan sonra, dış yüzeyini süslemek için kırmızı iple pırpırlar yapılmaya başlanıyor. Motifin kavisini takip edecek şekilde yaklaşık 27-28 adet pırpır işleniyor. Tüm pırpırlar tamamlandığında, hilalin ucu tığ yardımıyla yıldızın uygun köşesine kilitlenerek iki parça birleştiriliyor. Kalan ipler kesilip yakılarak tok ve pürüzsüz bir ay yıldız motifi elde ediliyor.</p>
+            </div>
+
+            <!-- GÖRSEL - MAKALE ALTINA ALINDI -->
+            <div style="text-align: center; margin: 30px 0;">
+                <img src="https://lh3.googleusercontent.com/d/1CbhdzVR6XUYYhqZ4X_oBK8q-O1zVF2kM" alt="Mekik Oyası Ay Yıldızlı Bayrak Yapımı"
+                    style="width: 100%; max-width: 800px; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            </div>
 
             <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
-            <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--kenarlik); text-align: center;">
+                <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <!-- Jinja değişkenleri modele göre ayarlandı -->
-<button id="btnFavori_MOD-1793290232100" class="favori-btn" onclick="favoriIslemiYap(this, 'MOD-1793290232100', 'Mekik Oyası Ay Yıldızlı Bayrak Yapımı', 'mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html', 'https://drive.google.com/file/d/1CbhdzVR6XUYYhqZ4X_oBK8q-O1zVF2kM/view?usp=drivesdk')">
-  <span class="kalp-ikon">🤍</span> Favorilere Ekle
-</button>
-                <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                            ❤️ <span id="guncelFavoriSayisi">571</span> <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
-                        </div>
-                
-                <!-- WhatsApp Paylaş -->
-                <a href="https://api.whatsapp.com/send?text=Mekik Oyası Ay Yıldızlı Bayrak Yapımı - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    💬 WhatsApp
-                </a>
-                
-                <!-- Facebook Paylaş -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u=mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    📘 Facebook
-                </a>
+                    <button id="btnFavori_MOD-1793290232100" class="favori-btn" onclick="favoriIslemiYap(this, 'MOD-1793290232100', 'Mekik Oyası Ay Yıldızlı Bayrak Yapımı', 'mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html', 'https://drive.google.com/file/d/1CbhdzVR6XUYYhqZ4X_oBK8q-O1zVF2kM/view?usp=drivesdk')">
+                      <span class="kalp-ikon">🤍</span> Favorilere Ekle
+                    </button>
+                    <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                        ❤️ <span id="guncelFavoriSayisi">571</span> <span style="color: #888; font-weight: 400; font-size: 12px;">favori</span>
+                    </div>
+                    
+                    <a href="https://api.whatsapp.com/send?text=Mekik Oyası Ay Yıldızlı Bayrak Yapımı - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                        💬 WhatsApp
+                    </a>
+                    
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                        📘 Facebook
+                    </a>
 
-                <!-- Pinterest Paylaş -->
-                <a href="https://pinterest.com/pin/create/button/?url=mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html&description=Mekik Oyası Ay Yıldızlı Bayrak Yapımı" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
-                    📌 Pinterest
-                </a>
+                    <a href="https://pinterest.com/pin/create/button/?url=mekik-oyasi-ay-yildizli-bayrak-yapimi-32100.html&description=Mekik Oyası Ay Yıldızlı Bayrak Yapımı" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                        📌 Pinterest
+                    </a>
 
-                <!-- Instagram (Bağlantı Kopyalama) -->
-                <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
-                    📸 Instagram'da Paylaş
-                </button>
+                    <button onclick="instagramIcinKopyala()" style="background-color: #E1306C; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                        📸 Instagram'da Paylaş
+                    </button>
+                </div>
             </div>
-        </div>
 
-            <div
-                style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px;">
+            <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu); white-space: pre-line; border-top: 1px solid var(--kenarlik); padding-top: 20px; margin-top: 20px;">
                 Merhaba Sevgili Hanımlar.
 
-En kolay teknikle mekik oyası Ay Yıldızlı Türk Bayrağı yapılışını videolaştırdım. Faydalı olması dileğiyle iyi seyirler.
+                En kolay teknikle mekik oyası Ay Yıldızlı Türk Bayrağı yapılışını videolaştırdım. Faydalı olması dileğiyle iyi seyirler.
             </div>
         </div>
     </main>
 
-    <!-- YENİ: YAZAR SORUMLULUK REDDİ BEYANI -->
-        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6;">
-            <strong>⚠️ Sorumluluk Reddi:</strong> Bu sayfada yer alan model, metin, görsel veya videolar tamamen yazarımız <strong>Ayşegül YILMAZ</strong> tarafından oluşturulmuş ve platformumuza eklenmiştir. İçeriğin özgünlüğü, telif hakları ve sorumluluğu tamamen yazarın kendisine aittir. Marifetli Eller platformu, kullanıcılar tarafından yüklenen içeriklerden doğabilecek hukuki veya telif ihlali durumlarından sorumlu tutulamaz. Herhangi bir hak ihlali olduğunu düşünüyorsanız lütfen İletişim sayfamızdan bize bildirin.
-        </div>
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #d6336c; font-size: 11px; color: #555; margin-top: 40px; line-height: 1.6; max-width: 1200px; margin: 20px auto;">
+        <strong>⚠️ Sorumluluk Reddi:</strong> Bu sayfada yer alan model, metin, görsel veya videolar tamamen yazarımız <strong>Ayşegül YILMAZ</strong> tarafından oluşturulmuş ve platformumuza eklenmiştir. İçeriğin özgünlüğü, telif hakları ve sorumluluğu tamamen yazarın kendisine aittir. Marifetli Eller platformu, kullanıcılar tarafından yüklenen içeriklerden doğabilecek hukuki veya telif ihlali durumlarından sorumlu tutulamaz. Herhangi bir hak ihlali olduğunu düşünüyorsanız lütfen İletişim sayfamızdan bize bildirin.
+    </div>
 
-    <!-- SAYFA SAYAÇ GÖRÜNÜMÜ -->
-    <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px; margin-bottom: 20px;">
-        <span style="font-size: 16px;">👁️</span> <b id="sayfa-sayac" style="color: var(--ana-renk);">...</b> kez
-        incelendi
+    <div style="font-size: 13px; color: #888; display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 20px;">
+        <span style="font-size: 16px;">👁️</span> <b id="sayfa-sayac" style="color: var(--ana-renk);">...</b> kez incelendi
     </div>
 
     <!-- Admatic AUTO ads START -->
-<ins data-publisher="adm-pub-171446397753" data-ad-network="6594390d4d11b285b617196c"   class="adm-ads-area"></ins>
-<script type="text/javascript" src="https://static.cdn.admatic.com.tr/showad/showad.min.js"></script>
-<!-- Admatic AUTO ads END -->
-<!-- STANDART ALT YAPI (FOOTER) -->
+    <ins data-publisher="adm-pub-171446397753" data-ad-network="6594390d4d11b285b617196c" class="adm-ads-area"></ins>
+    <script type="text/javascript" src="https://static.cdn.admatic.com.tr/showad/showad.min.js"></script>
+    <!-- Admatic AUTO ads END -->
+
     <footer>
         <div class="footer-container">
             <div class="sosyal-medya">
-                <!-- Buradaki linkleri kendi sosyal medya hesaplarınızla değiştirebilirsiniz -->
                 <a href="https://www.youtube.com/@Marifetli-Eller" target="_blank">📺 YouTube</a>
                 <a href="https://www.instagram.com/marifetlieller42/" target="_blank">📸 Instagram</a>
                 <a href="https://www.facebook.com/marifetliel" target="_blank">📘 Facebook</a>
             </div>
             <div class="footer-alt">
-                <!-- EKLENEN YENİ LİNKLER -->
-            <div style="margin-bottom: 15px; font-weight: 500;">
-                <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
-                <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
-                <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
-            </div>
+                <div style="margin-bottom: 15px; font-weight: 500;">
+                    <a href="hakkimizda.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Hakkımızda</a> | 
+                    <a href="iletisim.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">İletişim</a> | 
+                    <a href="gizlilik-politikasi.html" style="color: #bdc3c7; text-decoration: none; margin: 0 10px;">Gizlilik Politikası</a>
+                </div>
                 &copy; 2026 Marifetli Eller İğne Oyası. Tüm Hakları Saklıdır.
             </div>
         </div>
     </footer>
 
-    <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             firebase.auth().onAuthStateChanged((user) => {
-            // Kullanıcı giriş yapmamışsa cihazın Anonim ID'sini kullan
-            let sorguEmail = user ? user.email : (localStorage.getItem("anonim_id") || "");
+                let sorguEmail = user ? user.email : (localStorage.getItem("anonim_id") || "");
+                let favoriBtn = document.querySelector('.favori-btn');
+                let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "";
+                
+                if (modelId && sorguEmail) {
+                    fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.durum === "ekli" && favoriBtn) {
+                            favoriBtn.classList.add("aktif");
+                            favoriBtn.innerHTML = "❤️ Favorilerde";
+                        }
+                        if(data.toplam !== undefined) {
+                            let sayac = document.getElementById("guncelFavoriSayisi");
+                            if (sayac) sayac.innerText = data.toplam;
+                        }
+                    })
+                    .catch(err => console.log("Canlı veriler okunamadı: ", err));
+                }
+            });           
             
-            let favoriBtn = document.querySelector('.favori-btn');
-            let modelId = favoriBtn ? favoriBtn.id.replace('btnFavori_', '') : "";
-            
-            if (modelId && sorguEmail) {
-                fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
-                .then(res => res.json())
-                .then(data => {
-                    if(data.durum === "ekli" && favoriBtn) {
-                        favoriBtn.classList.add("aktif");
-                        favoriBtn.innerHTML = "❤️ Favorilerde";
-                    }
-                    if(data.toplam !== undefined) {
-                        let sayac = document.getElementById("guncelFavoriSayisi");
-                        if (sayac) sayac.innerText = data.toplam;
-                    }
-                })
-                .catch(err => console.log("Canlı veriler okunamadı: ", err));
-            }
-        });           
-            
-            // Sayfanın linkinden benzersiz bir ID oluşturuyoruz (örn: "kategoriigneoyasihtml")
             let sayfaID = window.location.pathname.split('/').pop().replace(/[^a-zA-Z0-9]/g, "");
             if (!sayfaID || sayfaID === "indexhtml") sayfaID = "anasayfa";
 
-            // NOT: Buraya kendi Apps Script Web Uygulaması URL'nizi (exec ile biten) yapıştırın
             const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec";
 
-            // Arka planda Apps Script'e GET isteği atıp sayacı okuyoruz
             fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
                 .then(response => response.text())
                 .then(data => {
                     if (data && !isNaN(data) && data !== "0") {
                         document.getElementById("sayfa-sayac").innerText = data;
                     } else {
-                        document.getElementById("sayfa-sayac").innerText = "1"; // Hata olursa varsayılan
+                        document.getElementById("sayfa-sayac").innerText = "1";
                     }
                 })
                 .catch(error => {
@@ -914,86 +776,76 @@ En kolay teknikle mekik oyası Ay Yıldızlı Türk Bayrağı yapılışını vi
         });
 
         function instagramIcinKopyala() {
-                // Sayfanın tam URL'sini alır
-                var sayfaLinki = window.location.href;
-                
-                // Panoya kopyalar
-                navigator.clipboard.writeText(sayfaLinki).then(function() {
-                    alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
-                }).catch(function(err) {
-                    alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
-                });
+            var sayfaLinki = window.location.href;
+            navigator.clipboard.writeText(sayfaLinki).then(function() {
+                alert("✨ Sayfa linki kopyalandı!\n\nŞimdi Instagram'ı açıp bu linki 'Hikaye'nizde (Çıkartmalar > Bağlantı) veya profilinizde kolayca paylaşabilirsiniz.");
+            }).catch(function(err) {
+                alert("Link kopyalanamadı. Tarayıcınızın adres çubuğundan linki manuel olarak kopyalayabilirsiniz.");
+            });
+        }
+
+        function favoriIslemiYap(btn, modelId, baslik, link, resim) {
+            let userEmail = localStorage.getItem("kullaniciEmail");
+            if (!userEmail) {
+                userEmail = localStorage.getItem("anonim_id");
+                if (!userEmail) {
+                    userEmail = "anonim_" + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem("anonim_id", userEmail);
+                }
             }
+
+            btn.innerHTML = "⏳ İşleniyor...";
+            btn.disabled = true;
+
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
+
+            let islenmisResim = resim;
+            if(resim.includes("drive.google.com/file/d/")) {
+                let id = resim.split("file/d/")[1].split("/")[0];
+                islenmisResim = "https://lh3.googleusercontent.com/d/" + id;
+            } else if (resim.includes("youtube.com") || resim.includes("youtu.be")) {
+                let videoId = resim.includes("v=") ? resim.split("v=")[1].substring(0,11) : resim.split("youtu.be/")[1].substring(0,11);
+                islenmisResim = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+            }
+
+            let formData = new URLSearchParams();
+            formData.append("islem", "favori_islem");
+            formData.append("email", userEmail);
+            formData.append("model_id", modelId);
+            formData.append("baslik", baslik);
+            formData.append("link", link);
+            formData.append("resim", islenmisResim);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString(),
+                redirect: 'follow'
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                let sayac = document.getElementById("guncelFavoriSayisi"); 
+                if (data.durum === "eklendi") {
+                    btn.classList.add("aktif");
+                    btn.innerHTML = "❤️ Favorilerde";
+                    if (sayac) sayac.innerText = parseInt(sayac.innerText) + 1; 
+                } else if (data.durum === "cikarildi") {
+                    btn.classList.remove("aktif");
+                    btn.innerHTML = "🤍 Favorilere Ekle";
+                    if (sayac) sayac.innerText = parseInt(sayac.innerText) - 1; 
+                } else {
+                    alert(data.mesaj);
+                    btn.innerHTML = "🤍 Favorilere Ekle";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Arka planda kaydedildi.");
+                btn.disabled = false;
+                btn.innerHTML = "🤍 Favorilere Ekle";
+            });
+        }
     </script>
-    <!-- FAVORİ İŞLEMİ JAVASCRIPT KODU -->
-<!-- FAVORİ İŞLEMİ JAVASCRIPT KODU -->
-<script>
-  function favoriIslemiYap(btn, modelId, baslik, link, resim) {
-      // 1. GİRİŞ YAPILMIŞSA EMAİL AL, YOKSA "ANONİM BİR ID" OLUŞTUR VE HATIRLA!
-      let userEmail = localStorage.getItem("kullaniciEmail");
-      if (!userEmail) {
-          userEmail = localStorage.getItem("anonim_id");
-          if (!userEmail) {
-              userEmail = "anonim_" + Math.random().toString(36).substr(2, 9);
-              localStorage.setItem("anonim_id", userEmail);
-          }
-      }
-
-      btn.innerHTML = "⏳ İşleniyor...";
-      btn.disabled = true;
-
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
-
-      // Drive / YT resim temizliği (Kullanıcı Şablonu uyumluluğu için)
-      let islenmisResim = resim;
-      if(resim.includes("drive.google.com/file/d/")) {
-          let id = resim.split("file/d/")[1].split("/")[0];
-          islenmisResim = "https://lh3.googleusercontent.com/d/" + id;
-      } else if (resim.includes("youtube.com") || resim.includes("youtu.be")) {
-          let videoId = resim.includes("v=") ? resim.split("v=")[1].substring(0,11) : resim.split("youtu.be/")[1].substring(0,11);
-          islenmisResim = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
-      }
-
-      let formData = new URLSearchParams();
-      formData.append("islem", "favori_islem");
-      formData.append("email", userEmail); // Anonim ID de gidebilir, sistem bunu da işler.
-      formData.append("model_id", modelId);
-      formData.append("baslik", baslik);
-      formData.append("link", link);
-      formData.append("resim", islenmisResim);
-
-      fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString(),
-          redirect: 'follow' // BAĞLANTI HATASINI (CORS / REDIRECT) ÇÖZEN SİHİRLİ KOD
-      })
-      .then(res => res.json())
-      .then(data => {
-          btn.disabled = false;
-          let sayac = document.getElementById("guncelFavoriSayisi"); 
-          if (data.durum === "eklendi") {
-              btn.classList.add("aktif");
-              btn.innerHTML = "❤️ Favorilerde";
-              if (sayac) sayac.innerText = parseInt(sayac.innerText) + 1; 
-          } else if (data.durum === "cikarildi") {
-              btn.classList.remove("aktif");
-              btn.innerHTML = "🤍 Favorilere Ekle";
-              if (sayac) sayac.innerText = parseInt(sayac.innerText) - 1; 
-          } else {
-              alert(data.mesaj);
-              btn.innerHTML = "🤍 Favorilere Ekle";
-          }
-      })
-      .catch(err => {
-          console.error(err);
-          // Hata bile verse, veri çoğu zaman Apps Script'e başarıyla ulaşır
-          alert("Arka planda kaydedildi.");
-          btn.disabled = false;
-          btn.innerHTML = "🤍 Favorilere Ekle";
-      });
-  }
-</script>
 </body>
-
 </html>
