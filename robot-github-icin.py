@@ -27,12 +27,9 @@ GEMINI_API_KEYS = gemini_keys_metni.split(',') if gemini_keys_metni else []
 
 # Yöneticinin İstediği Öncelikli Modeller Listesi
 MODELLER = [
-    'gemini-flash-latest',
-    'gemini-3.6-flash',
-    'gemini-3.5-flash',
-    'gemini-3.6-flash-lite',
-    'gemini-3.5-flash-lite',
-    'gemini-2.5-flash' # Sistemin çökmemesi için Google'ın garanti mevcut olan sürümü
+    'gemini-2.5-flash',
+    'gemini-1.5-flash',
+    'gemini-2.0-flash'
 ]
 
 aktif_api_indeksi = 0
