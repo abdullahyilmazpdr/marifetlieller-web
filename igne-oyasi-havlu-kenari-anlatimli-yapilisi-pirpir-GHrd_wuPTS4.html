@@ -895,20 +895,19 @@ E Mail: love_yilmaz@hotmail.com</div>
                 fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                  btn.disabled = false;
-                  let sayac = document.getElementById("guncelFavoriSayisi"); // Sayacı yakalıyoruz
-        
-                  if (data.durum === "eklendi") {
-                      btn.classList.add("aktif");
-                      btn.innerHTML = "❤️ Favorilerde";
-                      if(sayac) sayac.innerText = parseInt(sayac.innerText) + 1; // Rakamı +1 Artır
-                  } else if (data.durum === "cikarildi") {
-                      btn.classList.remove("aktif");
-                      btn.innerHTML = "🤍 Favorilere Ekle";
-                      if(sayac) sayac.innerText = parseInt(sayac.innerText) - 1; // Rakamı -1 Azalt
-                  } else {
-                      alert(data.mesaj);
-                      btn.innerHTML = "🤍 Favorilere Ekle";
+                  if (favoriBtn) {
+                      favoriBtn.disabled = false;
+                      if (data.durum === "ekli") {
+                          favoriBtn.classList.add("aktif");
+                          favoriBtn.innerHTML = "❤️ Favorilerde";
+                      } else {
+                          favoriBtn.classList.remove("aktif");
+                          favoriBtn.innerHTML = "🤍 Favorilere Ekle";
+                      }
+                  }
+                  if (data.toplam !== undefined) {
+                      let sayac = document.getElementById("guncelFavoriSayisi");
+                      if (sayac) sayac.innerText = data.toplam;
                   }
               })
                 .catch(err => console.log("Canlı veriler okunamadı: ", err));
@@ -971,7 +970,7 @@ E Mail: love_yilmaz@hotmail.com</div>
 <script>
   function favoriIslemiYap(btn, modelId, baslik, link, resim) {
       // 1. GİRİŞ YAPILMIŞSA EMAİL AL, YOKSA "ANONİM BİR ID" OLUŞTUR VE HATIRLA!
-      let userEmail = localStorage.getItem("kullaniciEmail");
+      let userEmail = (firebase.auth().currentUser && firebase.auth().currentUser.email) || localStorage.getItem("kullaniciEmail");
       if (!userEmail) {
           userEmail = localStorage.getItem("anonim_id");
           if (!userEmail) {

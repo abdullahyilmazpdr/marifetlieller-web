@@ -921,7 +921,7 @@ Ardından çantanın her tarafını tığ ile örerek istediğiniz aksesuarlarla
 <script>
   function favoriIslemiYap(btn, modelId, baslik, link, resim) {
       // 1. GİRİŞ YAPILMIŞSA EMAİL AL, YOKSA "ANONİM BİR ID" OLUŞTUR VE HATIRLA!
-      let userEmail = localStorage.getItem("kullaniciEmail");
+      let userEmail = (firebase.auth().currentUser && firebase.auth().currentUser.email) || localStorage.getItem("kullaniciEmail");
       if (!userEmail) {
           userEmail = localStorage.getItem("anonim_id");
           if (!userEmail) {
