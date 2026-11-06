@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://marifetliel.com/ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html">
     <title>İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası - Marifetli Eller</title>
+    <link rel="canonical" href="https://marifetliel.com/ilmek-ilmek-islenen-zarafet-turk-kulturunde-mekik-42912.html">
+    <meta property="og:title" content="İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası - Marifetli Eller">
+    <meta property="og:url" content="https://marifetliel.com/kullanici_model_sablon.html">
+    <meta property="og:image" content="https://drive.google.com/file/d/1iIckeYaqASmpz6jwFlI2cXUGeibWon89/view?usp=drivesdk">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
@@ -556,21 +559,6 @@
     color: #fff;
   }
 </style>
-
-    <!-- Video SEO Şeması (Schema.org) -->
-    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": "İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası",
-    "description": "İlmek İlmek İşlenen Zarafet: Türk Kültüründe Mekik Oyası detaylı yapılışı, püf noktaları ve video anlatımı Marifetli Eller'de.",
-    "thumbnailUrl": [
-        "https://i.ytimg.com/vi/fTD5Ql8_Se4/hqdefault.jpg"
-    ],
-    "uploadDate": "2024-01-01T08:00:00+03:00",
-    "embedUrl": "https://www.youtube.com/embed/fTD5Ql8_Se4"
-}
-    </script>
 </head>
 
 <body>
@@ -906,9 +894,14 @@
                 fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    if(data.durum === "ekli" && favoriBtn) {
-                        favoriBtn.classList.add("aktif");
-                        favoriBtn.innerHTML = "❤️ Favorilerde";
+                    if(favoriBtn) {
+                        if (data.durum === "ekli") {
+                            favoriBtn.classList.add("aktif");
+                            favoriBtn.innerHTML = "❤️ Favorilerde";
+                        } else {
+                            favoriBtn.classList.remove("aktif");
+                            favoriBtn.innerHTML = "🤍 Favorilere Ekle";
+                        }
                     }
                     if(data.toplam !== undefined) {
                         let sayac = document.getElementById("guncelFavoriSayisi");

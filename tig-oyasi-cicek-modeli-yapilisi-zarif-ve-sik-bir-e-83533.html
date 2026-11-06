@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://marifetliel.com/tig-oyasi-cicek-modeli-yapilisi-zarif-ve-sik-bir-e-83533.html">
     <title>Tığ Oyası Çiçek Modeli Yapılışı: Zarif ve Şık Bir El İşi Rehberi - Marifetli Eller</title>
+    <link rel="canonical" href="https://marifetliel.com/tig-oyasi-cicek-modeli-yapilisi-zarif-ve-sik-bir-e-83533.html">
+    <meta property="og:title" content="Tığ Oyası Çiçek Modeli Yapılışı: Zarif ve Şık Bir El İşi Rehberi - Marifetli Eller">
+    <meta property="og:url" content="https://marifetliel.com/kullanici_model_sablon.html">
+    <meta property="og:image" content="https://www.youtube.com/watch?v=iKgt6NlFqLU">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
@@ -556,21 +559,6 @@
     color: #fff;
   }
 </style>
-
-    <!-- Video SEO Şeması (Schema.org) -->
-    <script type="application/ld+json">
-    {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": "Tığ Oyası Çiçek Modeli Yapılışı: Zarif ve Şık Bir El İşi Rehberi",
-    "description": "Tığ Oyası Çiçek Modeli Yapılışı: Zarif ve Şık Bir El İşi Rehberi detaylı yapılışı, püf noktaları ve video anlatımı Marifetli Eller'de.",
-    "thumbnailUrl": [
-        "https://i.ytimg.com/vi/iKgt6NlFqLU/hqdefault.jpg"
-    ],
-    "uploadDate": "2024-01-01T08:00:00+03:00",
-    "embedUrl": "https://www.youtube.com/embed/iKgt6NlFqLU"
-}
-    </script>
 </head>
 
 <body>
@@ -911,9 +899,14 @@ https://www.youtube.com/watch?v=l1UQ3WqyGCM&list=PLk6ymTIFEgdrq3Q4Uhx-wEm-gtaymS
                 fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    if(data.durum === "ekli" && favoriBtn) {
-                        favoriBtn.classList.add("aktif");
-                        favoriBtn.innerHTML = "❤️ Favorilerde";
+                    if(favoriBtn) {
+                        if (data.durum === "ekli") {
+                            favoriBtn.classList.add("aktif");
+                            favoriBtn.innerHTML = "❤️ Favorilerde";
+                        } else {
+                            favoriBtn.classList.remove("aktif");
+                            favoriBtn.innerHTML = "🤍 Favorilere Ekle";
+                        }
                     }
                     if(data.toplam !== undefined) {
                         let sayac = document.getElementById("guncelFavoriSayisi");

@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://marifetliel.com/kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html">
     <title>Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım - Marifetli Eller</title>
+    <link rel="canonical" href="https://marifetliel.com/kagit-ip-canta-nasil-yapilir-detayli-anlatim-15950.html">
+    <meta property="og:title" content="Kağıt İp Çanta Nasıl Yapılır? Detaylı Anlatım - Marifetli Eller">
+    <meta property="og:url" content="https://marifetliel.com/kullanici_model_sablon.html">
+    <meta property="og:image" content="https://drive.google.com/file/d/1tLicAN_k08OPkyklITS9VIKh6-_XhcFM/view?usp=drivesdk">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
@@ -878,9 +881,14 @@ Ve istediğiniz büyüklükte yapabilirsiniz
                 fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    if(data.durum === "ekli" && favoriBtn) {
-                        favoriBtn.classList.add("aktif");
-                        favoriBtn.innerHTML = "❤️ Favorilerde";
+                    if(favoriBtn) {
+                        if (data.durum === "ekli") {
+                            favoriBtn.classList.add("aktif");
+                            favoriBtn.innerHTML = "❤️ Favorilerde";
+                        } else {
+                            favoriBtn.classList.remove("aktif");
+                            favoriBtn.innerHTML = "🤍 Favorilere Ekle";
+                        }
                     }
                     if(data.toplam !== undefined) {
                         let sayac = document.getElementById("guncelFavoriSayisi");

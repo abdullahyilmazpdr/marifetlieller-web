@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://marifetliel.com/3-boyutlu-canta-17728.html">
     <title>3 Boyutlu Çanta  - Marifetli Eller</title>
+    <link rel="canonical" href="https://marifetliel.com/3-boyutlu-canta-17728.html">
+    <meta property="og:title" content="3 Boyutlu Çanta  - Marifetli Eller">
+    <meta property="og:url" content="https://marifetliel.com/kullanici_model_sablon.html">
+    <meta property="og:image" content="https://drive.google.com/file/d/1wKfncdClQ02M0ZaUK7SDmF1WtX0vyH6I/view?usp=drivesdk">
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     <!-- Google Analytics Kodları Başlangıcı -->
@@ -882,9 +885,14 @@ Modeli kumaşa yerleştirirken düz boy ipliğinin kumaşın tam boyuna Denk gel
                 fetch("https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec?islem=favori_durum&email=" + encodeURIComponent(sorguEmail) + "&model_id=" + encodeURIComponent(modelId))
                 .then(res => res.json())
                 .then(data => {
-                    if(data.durum === "ekli" && favoriBtn) {
-                        favoriBtn.classList.add("aktif");
-                        favoriBtn.innerHTML = "❤️ Favorilerde";
+                    if(favoriBtn) {
+                        if (data.durum === "ekli") {
+                            favoriBtn.classList.add("aktif");
+                            favoriBtn.innerHTML = "❤️ Favorilerde";
+                        } else {
+                            favoriBtn.classList.remove("aktif");
+                            favoriBtn.innerHTML = "🤍 Favorilere Ekle";
+                        }
                     }
                     if(data.toplam !== undefined) {
                         let sayac = document.getElementById("guncelFavoriSayisi");

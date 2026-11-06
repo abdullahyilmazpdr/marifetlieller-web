@@ -605,10 +605,7 @@
                     document.getElementById('kullaniciAdi').innerText = displayName;
                     document.getElementById('kullaniciEmail').innerText = user.email;
 
-                    // Oturum açıldığında hafızayı da güncel tutuyoruz
-                    localStorage.setItem("kullaniciEmail", user.email);
-                    localStorage.setItem("kullaniciAdi", displayName);
-
+                    // YENİ: LocalStorage yerine tüm fonksiyonları direkt buraya bağlıyoruz!
                     modelleriGetir(user.email);
                     favorileriGetir(user.email);
                     profilBilgileriniGetir(user.email, displayName);
@@ -746,8 +743,8 @@
             });
         }
     
-    function favorileriGetir(email) {
-        const userEmail = email || (firebase.auth().currentUser && firebase.auth().currentUser.email) || localStorage.getItem("kullaniciEmail");
+    function favorileriGetir() {
+        const userEmail = localStorage.getItem("kullaniciEmail");
         if(!userEmail) return;
 
         //const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
