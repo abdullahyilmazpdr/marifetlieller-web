@@ -707,18 +707,22 @@
         </div>
     </footer>
 
-        <script>
+            <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
         let islenmisResimBase64 = "";
         let veritabani = [];
         let yuklenenImza = [];
+        let yuklenenImzaKare = [];
+        let yuklenenEnBoyOrani = 1.77;
         let yuklenenRenkler = [];
         let secilenDosyaModelNo = "";
 
         async function veritabaniniYukle() {
-            if (veritabani && veritabani.length > 0) return veritabani;
+            if (veritabani && veritabani.length > 0 && veritabani[0].imza && veritabani[0].imza.length === 48) {
+                return veritabani;
+            }
             try {
-                const res = await fetch('arama_verisi.json');
+                const res = await fetch('arama_verisi.json?v=20261107_4');
                 veritabani = await res.json();
             } catch (e) {
                 console.warn("Veritabanı yüklenirken hata:", e);
@@ -747,38 +751,89 @@
             return [h * 360, s, v];
         }
 
+        function blokOrtalamasi4x4(kaynakData, kaynakW, kaynakH, left, top, cw, ch) {
+            const px = [];
+            for (let y = 0; y < 48; y++) {
+                const sy = Math.min(kaynakH - 1, Math.max(0, top + Math.floor((y + 0.5) * ch / 48.0)));
+                for (let x = 0; x < 48; x++) {
+                    const sx = Math.min(kaynakW - 1, Math.max(0, left + Math.floor((x + 0.5) * cw / 48.0)));
+                    const idx = (sy * kaynakW + sx) * 4;
+                    px.push([kaynakData[idx], kaynakData[idx + 1], kaynakData[idx + 2]]);
+                }
+            }
+            const grid = [];
+            for (let gy = 0; gy < 4; gy++) {
+                for (let gx = 0; gx < 4; gx++) {
+                    let sr = 0, sg = 0, sb = 0;
+                    for (let y = gy * 12; y < (gy + 1) * 12; y++) {
+                        const rowOff = y * 48;
+                        for (let x = gx * 12; x < (gx + 1) * 12; x++) {
+                            const p = px[rowOff + x];
+                            sr += p[0]; sg += p[1]; sb += p[2];
+                        }
+                    }
+                    grid.push(Math.round(sr / 144), Math.round(sg / 144), Math.round(sb / 144));
+                }
+            }
+            return { grid, px };
+        }
+
         function gorselOzellikleriniCikar(img) {
             try {
-                const w = img.width, h = img.height;
-                const sqW = Math.min(w, Math.floor(h * 1.15));
-                const sqH = Math.floor(h * 0.76);
-                const left = Math.floor((w - sqW) / 2);
-                const top = Math.floor((h - sqH) / 2);
+                const tamCanvas = document.createElement('canvas');
+                tamCanvas.width = img.width;
+                tamCanvas.height = img.height;
+                const tamCtx = tamCanvas.getContext('2d');
+                tamCtx.drawImage(img, 0, 0);
+                const tamData = tamCtx.getImageData(0, 0, img.width, img.height).data;
 
-                // 1) 3x3 Perceptual RGB İmza
-                const gridCanvas = document.createElement('canvas');
-                gridCanvas.width = 3; gridCanvas.height = 3;
-                const gCtx = gridCanvas.getContext('2d');
-                gCtx.drawImage(img, left, top, sqW, sqH, 0, 0, 3, 3);
-                const gData = gCtx.getImageData(0, 0, 3, 3).data;
-                yuklenenImza = [];
-                for (let i = 0; i < gData.length; i += 4) {
-                    yuklenenImza.push(gData[i], gData[i + 1], gData[i + 2]);
+                let w = img.width, h = img.height;
+                let yOffset = 0;
+
+                // 4:3 YouTube kapaklarındaki üst/alt siyah bantları otomatik algıla ve kırp
+                if ((w / h) >= 1.25 && (w / h) <= 1.40) {
+                    let topSum = 0, botSum = 0;
+                    const yTop = Math.floor(h * 0.05);
+                    const yBot = Math.floor(h * 0.95);
+                    for (let i = 0; i < 16; i++) {
+                        const sx = Math.floor((i + 0.5) * w / 16);
+                        const idx1 = (yTop * w + sx) * 4;
+                        const idx2 = (yBot * w + sx) * 4;
+                        topSum += tamData[idx1] + tamData[idx1 + 1] + tamData[idx1 + 2];
+                        botSum += tamData[idx2] + tamData[idx2 + 1] + tamData[idx2 + 2];
+                    }
+                    if ((topSum / 48) < 28 && (botSum / 48) < 28) {
+                        yOffset = Math.floor(h * 0.125);
+                        h = Math.floor(h * 0.75);
+                    }
                 }
 
-                // 2) 48x48 HSV Baskın Motif Renk Analizi
-                const hsvCanvas = document.createElement('canvas');
-                hsvCanvas.width = 48; hsvCanvas.height = 48;
-                const hCtx = hsvCanvas.getContext('2d');
-                hCtx.drawImage(img, left, top, sqW, sqH, 0, 0, 48, 48);
-                const hData = hCtx.getImageData(0, 0, 48, 48).data;
+                yuklenenEnBoyOrani = w / h;
 
+                // 1) Dikdörtgen (16:9) 4x4 Blok Ortalaması İmzası (48 sayı)
+                const rectLeft = Math.floor(w * 0.10);
+                const rectTop = yOffset + Math.floor(h * 0.10);
+                const rectW = Math.floor(w * 0.80);
+                const rectH = Math.floor(h * 0.80);
+                const rectSonuc = blokOrtalamasi4x4(tamData, img.width, img.height, rectLeft, rectTop, rectW, rectH);
+                yuklenenImza = rectSonuc.grid;
+
+                // 2) Kare (1:1) Merkez Kırpım 4x4 İmzası (Instagram/kare yüklemeler için)
+                const sqSide = Math.min(w, h);
+                const sqLeft = Math.floor((w - sqSide) / 2) + Math.floor(sqSide * 0.08);
+                const sqTop = yOffset + Math.floor((h - sqSide) / 2) + Math.floor(sqSide * 0.08);
+                const sqLen = Math.floor(sqSide * 0.84);
+                yuklenenImzaKare = blokOrtalamasi4x4(tamData, img.width, img.height, sqLeft, sqTop, sqLen, sqLen).grid;
+
+                // 3) 48x48 HSV Baskın Motif Renk Analizi
                 const counts = {};
                 let darkPx = 0, lightPx = 0;
                 const totalPx = 48 * 48;
+                const pxList = rectSonuc.px;
 
-                for (let i = 0; i < hData.length; i += 4) {
-                    const [deg, s, v] = rgbToHsv(hData[i], hData[i + 1], hData[i + 2]);
+                for (let i = 0; i < pxList.length; i++) {
+                    const [r, g, b] = pxList[i];
+                    const [deg, s, v] = rgbToHsv(r, g, b);
                     if (v < 0.22) darkPx++;
                     else if (s < 0.15 && v > 0.78) lightPx++;
 
@@ -813,8 +868,8 @@
             if (!file) return;
 
             secilenDosyaModelNo = "";
-            const mDosya = (file.name || "").match(/(\d{2,4})/);
-            if (mDosya && parseInt(mDosya[1], 10) < 1200) {
+            const mDosya = (file.name || "").match(/(?:model[_\s-]*|^)(\d{1,4})(?:\D|$)/i);
+            if (mDosya && parseInt(mDosya[1], 10) > 0 && parseInt(mDosya[1], 10) < 1200) {
                 secilenDosyaModelNo = mDosya[1];
             }
 
@@ -844,6 +899,29 @@
             reader.readAsDataURL(file);
         });
 
+        function imzaMesafesiHesapla(v) {
+            if (!v.imza || v.imza.length !== 48 || yuklenenImza.length !== 48) return 999;
+            let sumRect = 0;
+            for (let i = 0; i < 48; i++) {
+                let d = yuklenenImza[i] - v.imza[i];
+                sumRect += d * d;
+            }
+            let distRect = Math.sqrt(sumRect / 48);
+
+            // Eğer yüklenen görsel kareye yakınsa (Instagram vb.), kare imzayı da kontrol et
+            if (yuklenenEnBoyOrani < 1.25 && v.imza_kare && v.imza_kare.length === 48) {
+                let sumKare = 0, sumCapraz = 0;
+                for (let i = 0; i < 48; i++) {
+                    let d1 = yuklenenImzaKare[i] - v.imza_kare[i];
+                    let d2 = yuklenenImza[i] - v.imza_kare[i];
+                    sumKare += d1 * d1;
+                    sumCapraz += d2 * d2;
+                }
+                return Math.min(distRect, Math.sqrt(sumKare / 48), Math.sqrt(sumCapraz / 48));
+            }
+            return distRect;
+        }
+
         async function analiziBaslat() {
             if (!islenmisResimBase64) return;
             document.getElementById('btnAnaliz').style.display = 'none';
@@ -851,13 +929,27 @@
 
             await veritabaniniYukle();
 
+            // ÖN KONTROL: Eğer görsel imzası arşivdeki bir videoyla birebir örtüşüyorsa (dist < 10),
+            // sunucu zaman aşımını beklemeden anında (0.2 saniyede) sonucu göster!
+            let enYakinDist = 999;
+            veritabani.forEach(v => {
+                let d = imzaMesafesiHesapla(v);
+                if (d < enYakinDist) enYakinDist = d;
+            });
+
+            if (enYakinDist < 10.0) {
+                document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif", "yazma kenarı"];
+                await modelleriEkranaBas(yedekTerimler, "İğne Oyası", "Yazma", secilenDosyaModelNo);
+                return;
+            }
+
             const formData = new URLSearchParams();
             formData.append('islem', 'gorsel_arama');
             formData.append('resim_base64', islenmisResimBase64);
 
-            // 4.5 saniyelik zaman aşımı koruması (sunucu gecikirse asla sonsuz döngüde beklemez)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
             try {
                 const res = await fetch(scriptURL, {
@@ -878,7 +970,6 @@
                 }
             } catch (e) {
                 clearTimeout(timeoutId);
-                console.warn("Sunucu yanıt süresi aşıldı, tarayıcı görsel eşleştirme motoru devreye giriyor.");
             }
 
             document.getElementById('yukleniyorGostergesi').style.display = 'none';
@@ -886,7 +977,6 @@
             await modelleriEkranaBas(yedekTerimler, "İğne Oyası", "Yazma", secilenDosyaModelNo);
         }
 
-        // Türkçe karakterleri standartlaştıran akıllı temizleyici
         function turkceTemizle(metin) {
             if (!metin) return "";
             return metin.toLowerCase()
@@ -940,27 +1030,25 @@
 
                     // A) MODEL NUMARASI (TAM İSABET)
                     if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
-                        skor += 5000;
+                        skor += 6000;
                         eslesenKelimeSayisi += 10;
                     }
 
-                    // B) GÖRSEL RGB İMZA BENZERLİĞİ (Kapak / Fotoğraf Doku ve Renk Yakınlığı)
-                    if (yuklenenImza.length === 27 && v.imza && v.imza.length === 27) {
-                        let sumSq = 0;
-                        for (let i = 0; i < 27; i++) {
-                            let d = yuklenenImza[i] - v.imza[i];
-                            sumSq += d * d;
-                        }
-                        let dist = Math.sqrt(sumSq / 27);
-                        if (dist < 15) {
-                            skor += 800; // Çok yüksek görsel örtüşme
-                            eslesenKelimeSayisi += 5;
-                        } else if (dist < 24) {
-                            skor += Math.round((30 - dist) * 8);
-                            eslesenKelimeSayisi += 2;
-                        } else if (dist < 35) {
-                            skor += Math.round((40 - dist) * 2);
-                        }
+                    // B) 4x4 (48-Boyutlu) GÖRSEL RGB BLOK İMZASI BENZERLİĞİ
+                    let dist = imzaMesafesiHesapla(v);
+                    v._gorselDist = dist;
+                    if (dist < 10.0) {
+                        // Birebir aynı model kapağı / fotoğrafı! Kesin 1. sıra!
+                        skor += 7000 + Math.round((10.0 - dist) * 100);
+                        eslesenKelimeSayisi += 12;
+                    } else if (dist < 18.0) {
+                        skor += 1200 + Math.round((18.0 - dist) * 50);
+                        eslesenKelimeSayisi += 6;
+                    } else if (dist < 26.0) {
+                        skor += Math.round((28.0 - dist) * 25);
+                        eslesenKelimeSayisi += 3;
+                    } else if (dist < 34.0) {
+                        skor += Math.round((35.0 - dist) * 8);
                     }
 
                     // C) MOTİF RENK EŞLEŞMESİ
@@ -997,32 +1085,47 @@
                 return gecici;
             }
 
-            sonuclar = puanla(filtrelenmisVeritabani);
-            if (sonuclar.length === 0 && filtrelenmisVeritabani !== veritabani) {
-                sonuclar = puanla(veritabani);
-            }
+            // Önce tüm veritabanında birebir görsel eşleşme (dist < 10) var mı kontrol et (farklı kategoride olsa bile kaçırmasın!)
+            let tumSonuclar = puanla(veritabani);
+            tumSonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
 
-            sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
+            if (tumSonuclar.length > 0 && tumSonuclar[0].arama_skoru >= 6000) {
+                sonuclar = tumSonuclar;
+            } else {
+                sonuclar = puanla(filtrelenmisVeritabani);
+                if (sonuclar.length === 0 && filtrelenmisVeritabani !== veritabani) {
+                    sonuclar = tumSonuclar;
+                }
+                sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
+            }
 
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                let tamIsabet = sonuclar[0].arama_skoru >= 5000 && arananModelNo !== "";
-                let gorselIsabet = !tamIsabet && sonuclar[0].arama_skoru >= 600;
+                let birinci = sonuclar[0];
+                let tamIsabet = birinci.arama_skoru >= 6000;
+                let yakalananNo = arananModelNo;
+                if (!yakalananNo && tamIsabet) {
+                    let mBaslik = (birinci.baslik || "").match(/(\d+)\.\s*Model/i);
+                    if (mBaslik) yakalananNo = mBaslik[1];
+                }
                 
-                if (tamIsabet) {
-                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Resimdeki numarayı (<span style="color:#d6336c;">${arananModelNo}. Model</span>) yakaladık ve videoyu bulduk:`;
-                } else if (gorselIsabet) {
-                    baslik.innerHTML = `🎯 <b>Görsel Eşleşme Bulundu!</b> Yüklediğiniz fotoğrafla en yüksek benzerliğe sahip modeller:`;
+                if (tamIsabet && yakalananNo) {
+                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Görseldeki modeli (<span style="color:#d6336c;">${yakalananNo}. Model</span>) birebir yakaladık ve yapılış videosunu bulduk:`;
+                } else if (tamIsabet) {
+                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Yüklediğiniz görselle birebir eşleşen yapılış videosunu bulduk:`;
                 } else {
                     let renkBilgi = yuklenenRenkler.length > 0 ? ` (${yuklenenRenkler.join(", ")} tonlarında)` : "";
                     baslik.innerHTML = `🎉 <b>${anaKategori || "Arşivimiz"}</b> İçinde Görselinize En Uygun ${Math.min(sonuclar.length, 6)} Video Bulundu${renkBilgi}:`;
                 }
                 
                 grid.innerHTML = sonuclar.slice(0, 6).map((video, idx) => `
-                    <a href="${video.link}" class="video-kart" ${(tamIsabet || gorselIsabet) && idx === 0 ? 'style="border: 2px solid #28a745; box-shadow: 0 0 15px rgba(40,167,69,0.3);"' : ''}>
-                        <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
+                    <a href="${video.link}" class="video-kart" ${tamIsabet && idx === 0 ? 'style="border: 2px solid #28a745; box-shadow: 0 0 18px rgba(40,167,69,0.35);"' : ''}>
+                        <div class="kart-resim">
+                            ${tamIsabet && idx === 0 ? '<div style="position:absolute;top:8px;left:8px;z-index:2;background:#28a745;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">✅ Birebir Eşleşen Model</div>' : ''}
+                            <img src="${video.resim}" alt="${video.baslik}">
+                        </div>
                         <div class="kart-icerik">
                             <h3 class="kart-baslik">${video.baslik}</h3>
                             <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">

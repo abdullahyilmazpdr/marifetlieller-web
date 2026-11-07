@@ -655,6 +655,7 @@ def sayfalari_olustur():
                         "makale": str(video.get('ai_metin', '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
                         "imza": gorsel_verisi.get("imza", []),
+                        "imza_kare": gorsel_verisi.get("imza_kare", []),
                         "renkler": gorsel_verisi.get("renkler", []),
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
                         "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video['id']) # YENİ EKLENEN SATIR  
@@ -751,6 +752,7 @@ def sayfalari_olustur():
                         "makale": str(ek_v.get('ai_metin') or ai_cache.get(ek_id, '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
                         "imza": gorsel_verisi.get("imza", []),
+                        "imza_kare": gorsel_verisi.get("imza_kare", []),
                         "renkler": gorsel_verisi.get("renkler", []),
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", ek_kat_adi),
                         "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, ek_id)
@@ -836,6 +838,7 @@ def sayfalari_olustur():
                     "makale": str(video_data.get('ai_metin', '')),
                     "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
                     "imza": gorsel_verisi.get("imza", []),
+                        "imza_kare": gorsel_verisi.get("imza_kare", []),
                     "renkler": gorsel_verisi.get("renkler", []),
                     "baskin_kategori": gorsel_verisi.get("baskin_kategori", "Popüler Videolar"),
                     "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video_data['id'])
