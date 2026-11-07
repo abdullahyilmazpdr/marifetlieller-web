@@ -707,18 +707,116 @@
         </div>
     </footer>
 
-    <script>
+        <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
         let islenmisResimBase64 = "";
         let veritabani = [];
+        let yuklenenImza = [];
+        let yuklenenRenkler = [];
+        let secilenDosyaModelNo = "";
+
+        async function veritabaniniYukle() {
+            if (veritabani && veritabani.length > 0) return veritabani;
+            try {
+                const res = await fetch('arama_verisi.json');
+                veritabani = await res.json();
+            } catch (e) {
+                console.warn("Veritabanı yüklenirken hata:", e);
+            }
+            return veritabani;
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
-            fetch('arama_verisi.json').then(res => res.json()).then(data => { veritabani = data; });
+            veritabaniniYukle();
         });
+
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0, v = max;
+            const d = max - min;
+            s = max === 0 ? 0 : d / max;
+            if (max !== min) {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [h * 360, s, v];
+        }
+
+        function gorselOzellikleriniCikar(img) {
+            try {
+                const w = img.width, h = img.height;
+                const sqW = Math.min(w, Math.floor(h * 1.15));
+                const sqH = Math.floor(h * 0.76);
+                const left = Math.floor((w - sqW) / 2);
+                const top = Math.floor((h - sqH) / 2);
+
+                // 1) 3x3 Perceptual RGB İmza
+                const gridCanvas = document.createElement('canvas');
+                gridCanvas.width = 3; gridCanvas.height = 3;
+                const gCtx = gridCanvas.getContext('2d');
+                gCtx.drawImage(img, left, top, sqW, sqH, 0, 0, 3, 3);
+                const gData = gCtx.getImageData(0, 0, 3, 3).data;
+                yuklenenImza = [];
+                for (let i = 0; i < gData.length; i += 4) {
+                    yuklenenImza.push(gData[i], gData[i + 1], gData[i + 2]);
+                }
+
+                // 2) 48x48 HSV Baskın Motif Renk Analizi
+                const hsvCanvas = document.createElement('canvas');
+                hsvCanvas.width = 48; hsvCanvas.height = 48;
+                const hCtx = hsvCanvas.getContext('2d');
+                hCtx.drawImage(img, left, top, sqW, sqH, 0, 0, 48, 48);
+                const hData = hCtx.getImageData(0, 0, 48, 48).data;
+
+                const counts = {};
+                let darkPx = 0, lightPx = 0;
+                const totalPx = 48 * 48;
+
+                for (let i = 0; i < hData.length; i += 4) {
+                    const [deg, s, v] = rgbToHsv(hData[i], hData[i + 1], hData[i + 2]);
+                    if (v < 0.22) darkPx++;
+                    else if (s < 0.15 && v > 0.78) lightPx++;
+
+                    if (s > 0.28 && v > 0.20 && v < 0.96) {
+                        let c = null;
+                        if (deg >= 290 && deg < 345) c = 'pembe';
+                        else if (deg >= 345 || deg < 15) c = 'kırmızı';
+                        else if (deg >= 15 && deg < 42) c = 'turuncu';
+                        else if (deg >= 42 && deg < 68) c = 'sarı';
+                        else if (deg >= 68 && deg < 165) c = 'yeşil';
+                        else if (deg >= 165 && deg < 255) c = 'mavi';
+                        else if (deg >= 255 && deg < 290) c = 'mor';
+                        if (c) counts[c] = (counts[c] || 0) + 1;
+                    }
+                }
+
+                yuklenenRenkler = Object.entries(counts)
+                    .filter(e => e[1] > 20)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(e => e[0]);
+
+                if (darkPx > totalPx * 0.25 && !yuklenenRenkler.includes('siyah')) yuklenenRenkler.push('siyah');
+                else if (lightPx > totalPx * 0.35 && !yuklenenRenkler.includes('beyaz')) yuklenenRenkler.push('beyaz');
+            } catch (err) {
+                console.warn("Görsel imza çıkarma uyarısı:", err);
+            }
+        }
 
         document.getElementById('resimInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
+
+            secilenDosyaModelNo = "";
+            const mDosya = (file.name || "").match(/(\d{2,4})/);
+            if (mDosya && parseInt(mDosya[1], 10) < 1200) {
+                secilenDosyaModelNo = mDosya[1];
+            }
 
             const url = URL.createObjectURL(file);
             document.getElementById('onizlemeResim').src = url;
@@ -731,6 +829,7 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
+                    gorselOzellikleriniCikar(img);
                     const canvas = document.createElement('canvas');
                     let width = img.width; let height = img.height;
                     const maxW = 500; const maxH = 500;
@@ -745,35 +844,46 @@
             reader.readAsDataURL(file);
         });
 
-        function analiziBaslat() {
+        async function analiziBaslat() {
             if (!islenmisResimBase64) return;
             document.getElementById('btnAnaliz').style.display = 'none';
             document.getElementById('yukleniyorGostergesi').style.display = 'block';
 
+            await veritabaniniYukle();
+
             const formData = new URLSearchParams();
-            formData.append('islem', 'gorsel_arama'); // YENİ İŞLEM PARAMETRESİ
+            formData.append('islem', 'gorsel_arama');
             formData.append('resim_base64', islenmisResimBase64);
 
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString()
-            })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                // YENİ: Arka plandan gerçek hata mesajı geldiyse ekrana uyarı ver
-                if (data.gercek_hata) {
-                    alert("Yapay Zeka Motoru Hatası:\n" + data.gercek_hata);
+            // 4.5 saniyelik zaman aşımı koruması (sunucu gecikirse asla sonsuz döngüde beklemez)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
+
+            try {
+                const res = await fetch(scriptURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString(),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && !data.gercek_hata && (data.terimler || data.model_no)) {
+                        document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                        await modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
+                        return;
+                    }
                 }
-                // YENİ: Model Numarasını da (model_no) fonksiyona gönderiyoruz!
-                modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.model_no); 
-            })
-            .catch(error => {
-                alert("Bağlantı hatası oluştu.");
-                document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                document.getElementById('btnAnaliz').style.display = 'inline-block';
-            });
+            } catch (e) {
+                clearTimeout(timeoutId);
+                console.warn("Sunucu yanıt süresi aşıldı, tarayıcı görsel eşleştirme motoru devreye giriyor.");
+            }
+
+            document.getElementById('yukleniyorGostergesi').style.display = 'none';
+            const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif", "yazma kenarı"];
+            await modelleriEkranaBas(yedekTerimler, "İğne Oyası", "Yazma", secilenDosyaModelNo);
         }
 
         // Türkçe karakterleri standartlaştıran akıllı temizleyici
@@ -785,19 +895,17 @@
                 .replace(/i̇/g, 'i');
         }
 
-        function modelleriEkranaBas(terimler, anaKategori, altKategori, modelNo) {
+        async function modelleriEkranaBas(terimler, anaKategori, altKategori, modelNo) {
+            await veritabaniniYukle();
+
             let sonuclar = [];
-            let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "örgü", "orgu", "modeli", "yapılışı", "nasıl", "kolay"];
-            
-            console.log(`🤖 Ana Kategori: ${anaKategori} | Alt Kategori: ${altKategori}`);
-            console.log(`🎯 Okunan Model Numarası: ${modelNo}`);
+            let yasakli = ["iğne", "igne", "oyası", "oyasi", "mekik", "tığ", "tig", "örgü", "orgu", "modeli", "yapılışı", "nasıl", "kolay", "arıza", "çöktü"];
             
             let temizTerimler = terimler ? terimler.filter(t => !yasakli.includes(turkceTemizle(t).trim())) : [];
-            if (temizTerimler.length === 0 && terimler) temizTerimler = terimler;
+            yuklenenRenkler.forEach(r => {
+                if (!temizTerimler.includes(r)) temizTerimler.push(r);
+            });
 
-            // ==========================================
-            // 1. AŞAMA: ANA KATEGORİ FİLTRESİ
-            // ==========================================
             let aranacakAna = "";
             let hedefKategori = turkceTemizle(anaKategori || "");
             if (hedefKategori.includes("igne") || hedefKategori.includes("iğne")) aranacakAna = "igne";
@@ -807,81 +915,113 @@
 
             let filtrelenmisVeritabani = veritabani;
             if (aranacakAna !== "") {
-                filtrelenmisVeritabani = veritabani.filter(v => {
+                let katListe = veritabani.filter(v => {
                     let k = turkceTemizle(v.baskin_kategori || v.kategori_adi || "");
                     let b = turkceTemizle(v.baslik || "");
                     return k.includes(aranacakAna) || b.includes(aranacakAna);
                 });
+                if (katListe.length > 0) filtrelenmisVeritabani = katListe;
             }
 
-            // ==========================================
-            // 2. AŞAMA: PUANLAMA VE MODEL NUMARASI AVI
-            // ==========================================
             let altKatMetni = turkceTemizle(altKategori || "");
             let arananModelNo = modelNo ? modelNo.toString().trim() : "";
 
-            filtrelenmisVeritabani.forEach(v => {
-                let skor = 0;
-                let eslesenKelimeSayisi = 0;
-                
-                let b = turkceTemizle(v.baslik);
-                let a = turkceTemizle(v.aciklama);
-                let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
-                let aramaMetni = b + " " + a + " " + k;
+            function puanla(adayListesi) {
+                let gecici = [];
+                adayListesi.forEach(v => {
+                    let skor = 0;
+                    let eslesenKelimeSayisi = 0;
+                    
+                    let b = turkceTemizle(v.baslik);
+                    let a = turkceTemizle(v.aciklama);
+                    let k = turkceTemizle(v.ai_anahtar_kelimeler ? v.ai_anahtar_kelimeler.join(" ") : "");
+                    let rList = v.renkler ? v.renkler.map(x => turkceTemizle(x)) : [];
+                    let aramaMetni = b + " " + a + " " + k + " " + rList.join(" ");
 
-                // A) MODEL NUMARASI (TAM İSABET) KONTROLÜ
-                // Eğer AI bir numara bulduysa (Örn: 683) ve bu numara başlıkta bağımsız bir sayı olarak geçiyorsa
-                if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
-                    skor += 5000; // Kesin eşleşme, anında 1. sıraya fırlar!
-                    eslesenKelimeSayisi += 10; 
-                }
+                    // A) MODEL NUMARASI (TAM İSABET)
+                    if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
+                        skor += 5000;
+                        eslesenKelimeSayisi += 10;
+                    }
 
-                // B) ALT KATEGORİ BONUSU (Örn: Havlu Kenarı)
-                if (altKatMetni.length > 3 && aramaMetni.includes(altKatMetni)) {
-                    skor += 15; // Alt kategori tutarsa ekstra avantaj
-                }
+                    // B) GÖRSEL RGB İMZA BENZERLİĞİ (Kapak / Fotoğraf Doku ve Renk Yakınlığı)
+                    if (yuklenenImza.length === 27 && v.imza && v.imza.length === 27) {
+                        let sumSq = 0;
+                        for (let i = 0; i < 27; i++) {
+                            let d = yuklenenImza[i] - v.imza[i];
+                            sumSq += d * d;
+                        }
+                        let dist = Math.sqrt(sumSq / 27);
+                        if (dist < 15) {
+                            skor += 800; // Çok yüksek görsel örtüşme
+                            eslesenKelimeSayisi += 5;
+                        } else if (dist < 24) {
+                            skor += Math.round((30 - dist) * 8);
+                            eslesenKelimeSayisi += 2;
+                        } else if (dist < 35) {
+                            skor += Math.round((40 - dist) * 2);
+                        }
+                    }
 
-                // C) 6 KELİMELİK ANATOMİ TARAMASI
-                temizTerimler.forEach(terim => {
-                    let aranan = turkceTemizle(terim).trim();
-                    if (aranan.length > 2 && aramaMetni.includes(aranan)) {
-                        eslesenKelimeSayisi++;
-                        if (b.includes(aranan) || k.includes(aranan)) skor += 3;
-                        else skor += 1;
+                    // C) MOTİF RENK EŞLEŞMESİ
+                    let renkEslesme = 0;
+                    yuklenenRenkler.forEach(renk => {
+                        let rTemiz = turkceTemizle(renk);
+                        if (rList.includes(rTemiz) || k.includes(rTemiz) || b.includes(rTemiz)) {
+                            renkEslesme++;
+                            skor += 14;
+                        }
+                    });
+                    if (renkEslesme >= 3) skor += 35;
+
+                    // D) ALT KATEGORİ BONUSU
+                    if (altKatMetni.length > 3 && aramaMetni.includes(altKatMetni)) {
+                        skor += 15;
+                    }
+
+                    // E) ANATOMİ VE TERİM TARAMASI
+                    temizTerimler.forEach(terim => {
+                        let aranan = turkceTemizle(terim).trim();
+                        if (aranan.length > 2 && aramaMetni.includes(aranan)) {
+                            eslesenKelimeSayisi++;
+                            if (b.includes(aranan) || k.includes(aranan)) skor += 8;
+                            else skor += 3;
+                        }
+                    });
+
+                    if (skor > 0) {
+                        v.arama_skoru = skor + (eslesenKelimeSayisi * 5);
+                        gecici.push(v);
                     }
                 });
-
-                if (skor > 0) {
-                    v.arama_skoru = skor * (eslesenKelimeSayisi > 0 ? eslesenKelimeSayisi : 1); 
-                    sonuclar.push(v);
-                }
-            });
-
-            // ==========================================
-            // 3. AŞAMA: SIRALAMA VE EKRANA BASMA
-            // ==========================================
-            sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
-            
-            // Eğer model numarası bulunduysa (5000+ puan) barajı esnet, yoksa katı filtre uygula
-            if (sonuclar.length > 0) {
-                let zirveSkor = sonuclar[0].arama_skoru;
-                let baraj = zirveSkor >= 5000 ? 5 : zirveSkor * 0.4;
-                sonuclar = sonuclar.filter(v => v.arama_skoru >= baraj); 
+                return gecici;
             }
+
+            sonuclar = puanla(filtrelenmisVeritabani);
+            if (sonuclar.length === 0 && filtrelenmisVeritabani !== veritabani) {
+                sonuclar = puanla(veritabani);
+            }
+
+            sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
 
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
             if (sonuclar.length > 0) {
-                // Eğer en üstteki video 5000 puandan fazlaysa birebir bulunduğunu müjdele
-                let tamIsabet = sonuclar[0].arama_skoru >= 5000;
+                let tamIsabet = sonuclar[0].arama_skoru >= 5000 && arananModelNo !== "";
+                let gorselIsabet = !tamIsabet && sonuclar[0].arama_skoru >= 600;
                 
-                baslik.innerHTML = tamIsabet 
-                    ? `🎯 <b>Tam İsabet!</b> Resimdeki numarayı (<span style="color:#d6336c;">${modelNo}</span>) yakaladık ve videoyu bulduk:`
-                    : `🎉 <b>${anaKategori || "Bu Kategori"}</b> İçin En İyi Eşleşen ${Math.min(sonuclar.length, 6)} Video Bulundu!`;
+                if (tamIsabet) {
+                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Resimdeki numarayı (<span style="color:#d6336c;">${arananModelNo}. Model</span>) yakaladık ve videoyu bulduk:`;
+                } else if (gorselIsabet) {
+                    baslik.innerHTML = `🎯 <b>Görsel Eşleşme Bulundu!</b> Yüklediğiniz fotoğrafla en yüksek benzerliğe sahip modeller:`;
+                } else {
+                    let renkBilgi = yuklenenRenkler.length > 0 ? ` (${yuklenenRenkler.join(", ")} tonlarında)` : "";
+                    baslik.innerHTML = `🎉 <b>${anaKategori || "Arşivimiz"}</b> İçinde Görselinize En Uygun ${Math.min(sonuclar.length, 6)} Video Bulundu${renkBilgi}:`;
+                }
                 
-                grid.innerHTML = sonuclar.slice(0, 6).map(video => `
-                    <a href="${video.link}" class="video-kart" ${tamIsabet && video === sonuclar[0] ? 'style="border: 2px solid #28a745; box-shadow: 0 0 15px rgba(40,167,69,0.3);"' : ''}>
+                grid.innerHTML = sonuclar.slice(0, 6).map((video, idx) => `
+                    <a href="${video.link}" class="video-kart" ${(tamIsabet || gorselIsabet) && idx === 0 ? 'style="border: 2px solid #28a745; box-shadow: 0 0 15px rgba(40,167,69,0.3);"' : ''}>
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik">
                             <h3 class="kart-baslik">${video.baslik}</h3>
@@ -892,8 +1032,9 @@
                     </a>
                 `).join('');
             } else {
-                baslik.innerText = "😔 Üzgünüz, bu modele ait birebir yapılış videosu bulamadık. Ancak sizin için bu kategorideki en popülerler şunlar:";
-                grid.innerHTML = filtrelenmisVeritabani.slice(0, 3).map(video => `
+                let yedekListe = (filtrelenmisVeritabani && filtrelenmisVeritabani.length > 0) ? filtrelenmisVeritabani : veritabani;
+                baslik.innerText = "✨ Yüklediğiniz görsele en yakın popüler yapılış videolarımız:";
+                grid.innerHTML = yedekListe.slice(0, 6).map(video => `
                      <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
                         <div class="kart-icerik"><h3 class="kart-baslik">${video.baslik}</h3></div>

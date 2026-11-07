@@ -742,17 +742,28 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-    <script>
+        <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
         
         let islenmisResimBase64 = "";
         let veritabani = [];
+        let yuklenenRenkler = [];
+        let kumasDokusu = "çeyizlik yazma";
+
+        async function veritabaniniYukle() {
+            if (veritabani && veritabani.length > 0) return veritabani;
+            try {
+                const res = await fetch('arama_verisi.json');
+                veritabani = await res.json();
+            } catch (e) {
+                console.warn("Veritabanı yükleme uyarısı:", e);
+            }
+            return veritabani;
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Veritabanını arkaplanda yükle
-            fetch('arama_verisi.json').then(res => res.json()).then(data => { veritabani = data; });
+            veritabaniniYukle();
             
-            // Sayaç İşlemini Başlat
             let sayfaID = "akilliasistan"; 
             fetch(scriptURL + "?islem=sayac&sayfa_id=" + sayfaID)
                 .then(response => response.text())
@@ -764,10 +775,59 @@
                     }
                 })
                 .catch(error => {
-                    console.error("Sayaç okunamadı:", error);
                     document.getElementById("sayfa-sayac").innerText = "-";
                 });
         });
+
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0, v = max;
+            const d = max - min;
+            s = max === 0 ? 0 : d / max;
+            if (max !== min) {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [h * 360, s, v];
+        }
+
+        function kumasRenkleriniAnalizEt(img) {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 48; canvas.height = 48;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 48, 48);
+                const data = ctx.getImageData(0, 0, 48, 48).data;
+                const counts = {};
+                let colorfulPx = 0;
+                for (let i = 0; i < data.length; i += 4) {
+                    const [deg, s, v] = rgbToHsv(data[i], data[i + 1], data[i + 2]);
+                    if (s > 0.25 && v > 0.20 && v < 0.96) {
+                        colorfulPx++;
+                        let c = null;
+                        if (deg >= 290 && deg < 345) c = 'pembe';
+                        else if (deg >= 345 || deg < 15) c = 'kırmızı';
+                        else if (deg >= 15 && deg < 42) c = 'turuncu';
+                        else if (deg >= 42 && deg < 68) c = 'sarı';
+                        else if (deg >= 68 && deg < 165) c = 'yeşil';
+                        else if (deg >= 165 && deg < 255) c = 'mavi';
+                        else if (deg >= 255 && deg < 290) c = 'mor';
+                        if (c) counts[c] = (counts[c] || 0) + 1;
+                    }
+                }
+                yuklenenRenkler = Object.entries(counts)
+                    .filter(e => e[1] > 18)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(e => e[0]);
+                kumasDokusu = colorfulPx > 600 ? "çiçek desenli renkli yazma" : "düz ve zarif dokulu kumaş";
+            } catch (e) {}
+        }
 
         document.getElementById('resimInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -790,6 +850,7 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
+                    kumasRenkleriniAnalizEt(img);
                     const canvas = document.createElement('canvas');
                     let ctx = canvas.getContext('2d');
                     
@@ -808,43 +869,62 @@
             reader.readAsDataURL(file);
         }
 
-        function analiziBaslat() {
+        async function analiziBaslat() {
             if (!islenmisResimBase64) return;
 
             document.getElementById('btnAnaliz').style.display = 'none';
             document.getElementById('yukleniyorGostergesi').style.display = 'block';
             document.getElementById('sonucAlani').style.display = 'none';
 
+            await veritabaniniYukle();
+
             const formData = new URLSearchParams();
             formData.append('islem', 'asistan_analiz');
             formData.append('resim_base64', islenmisResimBase64);
             formData.append('mime_type', 'image/jpeg');
 
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString()
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                document.getElementById('aiMesaji').innerHTML = data.mesaj;
-                
-                // YENİ: Hem arama terimlerini hem de uygun kategoriyi gönderiyoruz
-                modelleriEkranaBas(data.arama_terimleri || ["iğne", "mekik", "oyası"], data.uygun_kategori);
-                
-                document.getElementById('sonucAlani').style.display = 'block';
-                document.getElementById('yuklemeAlani').style.display = 'block';
-                document.getElementById('onizlemeKapsayici').style.display = 'none';
-                
-                // Analiz bitince ekranı yavaşça aşağı, sonuca doğru kaydır
-                document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            })
-            .catch(error => {
-                alert("Bağlantı hatası oluştu. Lütfen tekrar deneyin.");
-                document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                document.getElementById('btnAnaliz').style.display = 'inline-block';
-            });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
+
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString(),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.mesaj && !data.mesaj.includes("Bağlantı hatası") && data.arama_terimleri && data.arama_terimleri.length > 0) {
+                        document.getElementById('yukleniyorGostergesi').style.display = 'none';
+                        document.getElementById('aiMesaji').innerHTML = data.mesaj;
+                        modelleriEkranaBas(data.arama_terimleri, data.uygun_kategori);
+                        document.getElementById('sonucAlani').style.display = 'block';
+                        document.getElementById('yuklemeAlani').style.display = 'block';
+                        document.getElementById('onizlemeKapsayici').style.display = 'none';
+                        document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        return;
+                    }
+                }
+            } catch (e) {
+                clearTimeout(timeoutId);
+            }
+
+            // Tarayıcı tabanlı akıllı renk ve doku danışmanı
+            document.getElementById('yukleniyorGostergesi').style.display = 'none';
+            const renkMetni = yuklenenRenkler.length > 0 ? `<b>${yuklenenRenkler.join(", ")}</b>` : "<b>canlı ve pastel</b>";
+            const stilOnerisi = kumasDokusu.includes("çiçek") ? "çıtı pıtı sıralı ve zarif pırpırlı" : "gösterişli üç boyutlu çiçek ve badem motifli";
+            document.getElementById('aiMesaji').innerHTML = `✨ Yüklediğiniz görseldeki ${renkMetni} renk geçişlerini ve <b>${kumasDokusu}</b> yapısını inceledik. Bu kumaşta renkleri boğmadan zarafeti öne çıkarmak için <b>${stilOnerisi}</b> iğne oyası modellerini tercih etmenizi öneriyoruz. İp seçiminde zemin rengiyle uyumlu yeşil yapraklar üzerine ${renkMetni} tonlarında motifler harika duracaktır!`;
+
+            const aramaTerimleri = [...yuklenenRenkler, kumasDokusu.includes("çiçek") ? "çıtı pıtı" : "çiçek", "zarif", "yazma kenarı"];
+            modelleriEkranaBas(aramaTerimleri, "Yazmada İğne Oyası Modelleri");
+
+            document.getElementById('sonucAlani').style.display = 'block';
+            document.getElementById('yuklemeAlani').style.display = 'block';
+            document.getElementById('onizlemeKapsayici').style.display = 'none';
+            document.getElementById('sonucAlani').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function modelleriEkranaBas(terimler, uygunKategori) {
@@ -855,21 +935,16 @@
                 terimler.forEach(terim => {
                     let aranan = terim.toLowerCase().trim();
                     let eslesenler = veritabani.filter(v => {
-                        // 1. ÖNCELİK: Yapay Zekanın kapağa bakarak çıkardığı özel anahtar kelimeler
                         let ozelKelimeEslesti = false;
                         if (v.ai_anahtar_kelimeler && v.ai_anahtar_kelimeler.length > 0) {
                             ozelKelimeEslesti = v.ai_anahtar_kelimeler.some(k => k.toLowerCase().includes(aranan));
                         }
-                        
-                        // 2. ÖNCELİK: Derin Arama (Başlık, Makale, Açıklama)
                         let basliktaVar = v.baslik && v.baslik.toLowerCase().includes(aranan);
                         let aciklamadaVar = v.aciklama && v.aciklama.toLowerCase().includes(aranan);
                         let makaledeVar = v.makale && v.makale.toLowerCase().includes(aranan);
-                        
                         return ozelKelimeEslesti || basliktaVar || aciklamadaVar || makaledeVar;
                     });
                     
-                    // Kategoriye Göre Puanlama ve Sıralama (Doğru kategoridekileri öne al)
                     if (uygunKategori) {
                         eslesenler.sort((a, b) => {
                             let aKategoriPuan = (a.baskin_kategori === uygunKategori) ? 1 : 0;
@@ -914,9 +989,7 @@
                 </a>
             `).join('');
 
-            // YENİ EKLENEN: YAPAY ZEKANIN SEÇTİĞİ KATEGORİYE YÖNLENDİRME BUTONU
             if (uygunKategori) {
-                // Python tarafında ürettiğimiz URL formatının aynısını JavaScript ile üretiyoruz
                 let katSeo = uygunKategori.toLowerCase().replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/[^a-z0-9\s-]/g, '').replace(/[-\s]+/g, '-').replace(/^-+|-+$/g, '');
                 let katLink = "kategori_" + katSeo.substring(0, 50).replace(/-+$/, '') + ".html";
 

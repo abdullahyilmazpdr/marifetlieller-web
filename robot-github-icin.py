@@ -27,9 +27,10 @@ GEMINI_API_KEYS = gemini_keys_metni.split(',') if gemini_keys_metni else []
 
 # Yöneticinin İstediği Öncelikli Modeller Listesi
 MODELLER = [
-    'gemini-2.5-flash',
-    'gemini-1.5-flash',
-    'gemini-2.0-flash'
+    'gemini-flash-lite-latest',
+    'gemini-3.5-flash-lite',
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash'
 ]
 
 aktif_api_indeksi = 0
@@ -292,8 +293,35 @@ def gercekci_favori_sayisi_uret(dosya_adi, video_id):
 
 def populer_videolari_getir(tum_videolar_listesi):
     print("\n--- Haftanın Popüler Videoları Çekiliyor ---")
+    import datetime
+
+    # Yılın hafta numarasını hesapla (Pazartesi-Pazar döngüsüyle her hafta otomatik değişir)
+    su_an = datetime.datetime.now()
+    hafta_no = su_an.isocalendar()[1]
+    print(f"  * Yılın {hafta_no}. haftası için dinamik popüler modeller belirleniyor...")
+
+    # 1. Aşama: Eğer veritabanı listesi varsa, hafta numarasına göre adil ve sürekli değişen popüler modeller seç
+    if tum_videolar_listesi and len(tum_videolar_listesi) >= 10:
+        adaylar = tum_videolar_listesi[:60]
+        baslangic = (hafta_no * 5) % max(1, len(adaylar) - 5)
+        secilenler = adaylar[baslangic : baslangic + 5]
+
+        populerler = []
+        for v in secilenler:
+            populerler.append({
+                'id': v['id'],
+                'baslik': v['title'],
+                'description': v.get('description', ''),
+                'resim': v.get('thumbnail', f"https://i.ytimg.com/vi/{v['id']}/hqdefault.jpg"),
+                'link': v.get('dosya_adi', f"{v['id']}.html"),
+                'favori_sayisi': gercekci_favori_sayisi_uret(v.get('dosya_adi', ''), v['id'])
+            })
+
+        if len(populerler) == 5:
+            print(f"  √ Bu haftanın ({hafta_no}. hafta) trend 5 modeli başarıyla belirlendi!")
+            return populerler
+
     try:
-        # 1. Aşama: YOUTUBE API DENEMESİ
         request = youtube.search().list(
             part="snippet", 
             channelId=KANAL_ID, 
@@ -307,19 +335,14 @@ def populer_videolari_getir(tum_videolar_listesi):
             videoid = item['id']['videoId']
             baslik = item['snippet']['title']
             aciklama = item['snippet']['description'] 
-            
             thumbs = item['snippet'].get('thumbnails', {})
             resim = thumbs.get('high', {}).get('url') or thumbs.get('medium', {}).get('url') or thumbs.get('default', {}).get('url', '')
-            
             baslik_seo = url_uyumlu_yap(baslik)
             if len(baslik_seo) > 50: baslik_seo = baslik_seo[:50].strip('-')
             link = f"{baslik_seo}-{videoid}.html"
-            
             populerler.append({'id': videoid, 'baslik': baslik, 'description': aciklama, 'resim': resim, 'link': link, 'favori_sayisi': gercekci_favori_sayisi_uret(link, videoid)})
-        # EĞER YOUTUBE BİZE SESSİZCE BOŞ LİSTE DÖNDÜRÜRSE YAPAY ZEKAYI ZORLA TETİKLE:
         if not populerler:
             raise Exception("YouTube API boş liste döndürdü, AI motoruna geçiliyor.")
-            
         return populerler
         
     except Exception as e:
@@ -608,14 +631,16 @@ def sayfalari_olustur():
                         gorsel_verisi = vision_cache[video['id']]
                     else:
                         # Eğer belirlediğimiz 100 resimlik sınıra henüz ulaşmadıysak API'ye gönder
-                        if yapilan_yeni_analiz < maks_yeni_analiz:
+                        if yapilan_yeni_analiz < maks_yeni_analiz and not AI_KOTALARI_DOLDU:
                             print(f"    + Kapak fotoğrafı AI ile analiz ediliyor... (Limit: {yapilan_yeni_analiz + 1}/{maks_yeni_analiz})")
                             gorsel_verisi = model_gorsel_analizi_yap(video['thumbnail'], video['title'])
                             if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
                                 vision_cache[video['id']] = gorsel_verisi
                                 with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
                                     json.dump(vision_cache, f, ensure_ascii=False, indent=4)
-                            yapilan_yeni_analiz += 1
+                                yapilan_yeni_analiz += 1
+                            else:
+                                gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": kategori_adi}
                         else:
                             # Sınıra ulaşıldıysa bu videoyu şimdilik atla, sonraki robota bırak
                             print(f"    ⏳ Limit doldu. Bu görsel sonraki çalışmaya bırakıldı.")
@@ -628,7 +653,9 @@ def sayfalari_olustur():
                         "resim": video.get('thumbnail', ''),
                         "aciklama": str(video.get('description', '')),
                         "makale": str(video.get('ai_metin', '')),
-                        "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
+                        "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
+                        "imza": gorsel_verisi.get("imza", []),
+                        "renkler": gorsel_verisi.get("renkler", []),
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
                         "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video['id']) # YENİ EKLENEN SATIR  
                     }
@@ -723,6 +750,8 @@ def sayfalari_olustur():
                         "aciklama": str(ek_aciklama),
                         "makale": str(ek_v.get('ai_metin') or ai_cache.get(ek_id, '')),
                         "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
+                        "imza": gorsel_verisi.get("imza", []),
+                        "renkler": gorsel_verisi.get("renkler", []),
                         "baskin_kategori": gorsel_verisi.get("baskin_kategori", ek_kat_adi),
                         "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, ek_id)
                     }
@@ -783,14 +812,16 @@ def sayfalari_olustur():
                     gorsel_verisi = vision_cache[video_data['id']]
                 else:
                     # Eğer belirlediğimiz 100 resimlik sınıra henüz ulaşmadıysak API'ye gönder
-                    if yapilan_yeni_analiz < maks_yeni_analiz:
+                    if yapilan_yeni_analiz < maks_yeni_analiz and not AI_KOTALARI_DOLDU:
                         print(f"    + Kapak fotoğrafı AI ile analiz ediliyor... (Limit: {yapilan_yeni_analiz + 1}/{maks_yeni_analiz})")
                         gorsel_verisi = model_gorsel_analizi_yap(video_data['thumbnail'], video_data['title'])
                         if gorsel_verisi and len(gorsel_verisi.get("anahtar_kelimeler", [])) > 0:
                             vision_cache[video_data['id']] = gorsel_verisi
                             with open(vision_cache_dosyasi, 'w', encoding='utf-8') as f:
                                 json.dump(vision_cache, f, ensure_ascii=False, indent=4)
-                        yapilan_yeni_analiz += 1
+                            yapilan_yeni_analiz += 1
+                        else:
+                            gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": "Popüler Videolar"}
                     else:
                         # Sınıra ulaşıldıysa bu videoyu şimdilik atla, sonraki robota bırak
                         print(f"    ⏳ Limit doldu. Bu görsel sonraki çalışmaya bırakıldı.")
@@ -803,7 +834,9 @@ def sayfalari_olustur():
                     "resim": video_data.get('thumbnail', ''),
                     "aciklama": str(video_data.get('description', '')),
                     "makale": str(video_data.get('ai_metin', '')),
-                    "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []), 
+                    "ai_anahtar_kelimeler": gorsel_verisi.get("anahtar_kelimeler", []),
+                    "imza": gorsel_verisi.get("imza", []),
+                    "renkler": gorsel_verisi.get("renkler", []),
                     "baskin_kategori": gorsel_verisi.get("baskin_kategori", "Popüler Videolar"),
                     "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video_data['id'])
                 }
@@ -945,7 +978,7 @@ def sayfalari_olustur():
         
     # YENİ EKLENEN: ZİNCİRLEME OTOMASYON KONTROLÜ
     devam_dosyasi = 'devam_edecek.txt'
-    if yapilan_yeni_analiz >= maks_yeni_analiz:
+    if yapilan_yeni_analiz >= maks_yeni_analiz and not AI_KOTALARI_DOLDU:
         with open(devam_dosyasi, 'w', encoding='utf-8') as f:
             f.write('devam')
         print(f"⏳ {maks_yeni_analiz} limitine ulaşıldı. Kalan resimler için zincirleme tetikleme notu bırakıldı!")
