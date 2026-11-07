@@ -6,16 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    {% if video.description and video.description.strip() %}
+    
     <meta name="description" content="Merhaba Arkadaşlar,  Çok beğeneceğiniz çıtı pıtı harika bir iğne oyası modelinin anlatımlı yapılışını buyrun izleyin....">
     <meta property="og:description" content="Merhaba Arkadaşlar,  Çok beğeneceğiniz çıtı pıtı harika bir iğne oyası modelinin anlatımlı yapılışın...">
-    {% elif video.ai_metin %}
-    <meta name="description" content="Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model yapılışı, püf noktaları ve detaylı anlatımı. {{ video.ai_metin[:120] | striptags | replace('\n', ' ') }}...">
-    <meta property="og:description" content="Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model yapılışı, püf noktaları ve detaylı video anlatımı.">
-    {% else %}
-    <meta name="description" content="Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de.">
-    <meta property="og:description" content="Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model detaylı yapılışı, kullanılan malzemeler ve püf noktaları.">
-    {% endif %}
+    
     <meta name="keywords"
         content="iğne oyası, mekik oyası, oya çiçeği, İğne Oyası Yapılışı, çeyizlik modeller, el işi, Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model">
     <meta name="author" content="Marifetli Eller">
@@ -30,8 +24,8 @@
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      "name": "{{ video.title | replace('"', '\\"') }}",
-      "description": "{% if video.description and video.description.strip() %}{{ video.description[:150] | replace('\n', ' ') | replace('"', '\\"') }}{% else %}{{ video.title | replace('"', '\\"') }} detaylı yapılışı ve anlatımı{% endif %}",
+      "name": "Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model",
+      "description": "Merhaba Arkadaşlar,  Çok beğeneceğiniz çıtı pıtı harika bir iğne oyası modelinin anlatımlı yapılışını buyrun izleyin.",
       "thumbnailUrl": ["https://i.ytimg.com/vi/hWR1VAJ-s14/hqdefault.jpg"],
       "uploadDate": "2024-01-01T08:00:00+03:00",
       "embedUrl": "https://www.youtube.com/embed/hWR1VAJ-s14"
@@ -79,7 +73,6 @@
 
 <!-- Admatic veya diğer reklam ağları meta kodları -->
 <!-- Kodlar buraya gelecek -->
-
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -567,32 +560,93 @@
             <div class="dropdown">
                 <a href="javascript:void(0);" onclick="mobilDropdownAc(this)">Tüm Kategoriler ▾</a>
                 <div class="dropdown-content">
+                    
+                    
                     <a href="kategori_bebek-yuz-ortusu-modelleri.html">Bebek Yüz Örtüsü Modelleri</a>
-<a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
-<a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
-<a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
-<a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
-<a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
-<a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
-<a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
-<a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
-<a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
-<a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
-<a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
-<a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
-<a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
-<a href="kategori_lale-modelleri.html">Lale Modelleri</a>
-<a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
-<a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
-<a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
-<a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
-<a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
-<a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
-<a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
-<a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
-<a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
-<a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
-
+                    
+                    <a href="kategori_boncuklu-igne-oyasi-modelleri.html">Boncuklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_boncuklu-mekik-oyasi-modelleri.html">Boncuklu Mekik Oyası Modelleri</a>
+                    
+                    <a href="kategori_el-isi-taki-tasarimlari.html">El İşi Takı Tasarımları</a>
+                    
+                    <a href="kategori_en-cok-izlenen-igne-oyasi-modelleri.html">En Çok İzlenen İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_etkinlik-modelleri.html">Etkinlik Modelleri</a>
+                    
+                    <a href="kategori_fiyonklu-igne-oyasi-modelleri.html">Fiyonklu İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_fular-modelleri-ve-anlatimli-yapilis-videolari.html">Fular Modelleri ve Anlatımlı Yapılış Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-dag-kaya-modelleri.html">İğne Oyası Dağ/Kaya Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-havlu-kenari-modelleri-ve-yapilislari.html">İğne Oyası Havlu Kenarı Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-modelleri.html">İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_igne-oyasi-namaz-ortusu-modelleri-ve-yapilislari.html">İğne Oyası Namaz Örtüsü Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-dersler.html">İğne Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_igne-oyasi-nasil-yapilir-anlatimli-ders-videolari.html">İğne Oyası Nasıl Yapılır? Anlatımlı Ders Videoları</a>
+                    
+                    <a href="kategori_igne-oyasi-yapilisi.html">İğne Oyası Yapılışı</a>
+                    
+                    <a href="kategori_igne-oyasi-uc-boyutlu-modeller-ve-tutturuluslari.html">İğne Oyası Üç Boyutlu Modeller ve Tutturuluşları</a>
+                    
+                    <a href="kategori_kalp-modelleri.html">Kalp Modelleri</a>
+                    
+                    <a href="kategori_kelebek-modelleri.html">Kelebek Modelleri</a>
+                    
+                    <a href="kategori_keloglan-modelleri.html">Keloğlan Modelleri</a>
+                    
+                    <a href="kategori_lale-modelleri.html">Lale Modelleri</a>
+                    
+                    <a href="kategori_mekik-oyasi-dolgulu-modeller.html">Mekik Oyası Dolgulu Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-kelebek-modeli-yapilisi-4.html">Mekik Oyası Havlu Kenarı Kelebek Modeli Yapılışı 4. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-tum-modeller.html">Mekik Oyası Havlu Kenarı Tüm Modeller</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-2-model.html">Mekik Oyası Havlu Kenarı Yapılışı 2. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-havlu-kenari-yapilisi-3-model.html">Mekik Oyası Havlu Kenarı Yapılışı 3. Model</a>
+                    
+                    <a href="kategori_mekik-oyasi-motiflerinin-eklenisi.html">Mekik Oyası Motiflerinin Eklenişi</a>
+                    
+                    <a href="kategori_mekik-oyasi-nasil-yapilir-dersler.html">Mekik Oyası Nasıl Yapılır Dersler</a>
+                    
+                    <a href="kategori_mekik-oyasi-yapilisi.html">Mekik Oyası Yapılışı</a>
+                    
+                    <a href="kategori_mekik-oyasindan-havlu-kenari-yapilisi.html">Mekik Oyasından Havlu Kenarı Yapılışı</a>
+                    
+                    <a href="kategori_mekik-ve-igne-oyasi-ile-yapilan-modeller.html">Mekik ve İğne Oyası İle Yapılan Modeller</a>
+                    
+                    <a href="kategori_motif-etkinligi-modelleri.html">Motif Etkinliği Modelleri</a>
+                    
+                    <a href="kategori_mutfak-havlusu-modelleri-ve-yapilislari.html">Mutfak Havlusu Modelleri ve Yapılışları</a>
+                    
+                    <a href="kategori_pratik-ve-orjinal-fikirler.html">Pratik ve Orjinal Fikirler</a>
+                    
+                    <a href="kategori_sagdan-sola-igne-oyasi-videolari.html">Sağdan Sola İğne Oyası Videoları</a>
+                    
+                    <a href="kategori_sik-igneli-modeller.html">Sık İğneli Modeller</a>
+                    
+                    <a href="kategori_tek-renk-yazma-modelleri.html">Tek Renk Yazma Modelleri</a>
+                    
+                    <a href="kategori_tesbih-basi-modelleri.html">Tesbih Başı Modelleri</a>
+                    
+                    <a href="kategori_tig-oyasi-modellerinin-yapilislari.html">Tığ Oyası Modellerinin Yapılışları</a>
+                    
+                    <a href="kategori_yazmada-igne-oyasi-modelleri.html">Yazmada İğne Oyası Modelleri</a>
+                    
+                    <a href="kategori_yeni-baslayanlar-icin-igne-oyasi.html">Yeni Başlayanlar İçin İğne Oyası</a>
+                    
+                    <a href="kategori_citi-piti-modeller.html">Çıtı Pıtı Modeller</a>
+                    
+                    <a href="kategori_orgu-modelleri.html">Örgü Modelleri</a>
+                    
+                    
                 </div>
             </div>
         </nav>
@@ -715,7 +769,6 @@
     });
 </script>
 
-
     <main>
         <a href="kategori_igne-oyasi-yapilisi.html" class="geri-don">← İğne Oyası Yapılışı Kategorisine Dön</a>
 
@@ -731,12 +784,12 @@
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <button id="btnFavori_hWR1VAJ-s14" class="favori-btn" onclick="favoriIslemiYap(this, 'hWR1VAJ-s14', '{{ video.title | replace('\"', '\\\"') | replace('\'', '\\\'') }}', 'harika-bir-igne-oyasi-modeli-anlatimli-yapilisi-72-hWR1VAJ-s14.html', 'https://i.ytimg.com/vi/hWR1VAJ-s14/hqdefault.jpg')">
+                <button id="btnFavori_hWR1VAJ-s14" class="favori-btn" onclick="favoriIslemiYap(this, 'hWR1VAJ-s14', 'Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model', 'harika-bir-igne-oyasi-modeli-anlatimli-yapilisi-72-hWR1VAJ-s14.html', 'https://i.ytimg.com/vi/hWR1VAJ-s14/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
                 <!-- DİNAMİK RAKAM ALANI (video_sablon.html içinde) -->
                 <div style="font-size: 14px; color: #d6336c; font-weight: 600;">
-                    ❤️ <span id="guncelFavoriSayisi">545</span> favori
+                    ❤️ <span id="guncelFavoriSayisi">571</span> favori
                 </div>
                 
                 <!-- WhatsApp Paylaş -->
@@ -762,23 +815,25 @@
         </div>
 
             <div style="margin-top: 20px; text-align: center;">
-                
+                <!-- Google AdSense Doğrulama Kodları Başlangıcı -->
+<!-- AdSense veya Admatic Banner Kodları buraya gelecek -->
             </div>
 
-            {% if video.description and video.description.strip() %}
+            
             <div class="aciklama-alani">
                 <div class="aciklama">Merhaba Arkadaşlar,
 
 Çok beğeneceğiniz çıtı pıtı harika bir iğne oyası modelinin anlatımlı yapılışını buyrun izleyin.</div>
             </div>
-            {% endif %}
+            
 
+            
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
-  <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
-    ✨ Model Hakkında İpuçları ve Detaylar
-  </div>
-  <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
-<h3>Modelin Özellikleri ve Zarafeti</h3>
+                <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
+                    ✨ Model Hakkında İpuçları ve Detaylar
+                </div>
+                <div style="line-height: 1.8; font-size: 15px; color: var(--metin-koyu);">
+                    <h3>Modelin Özellikleri ve Zarafeti</h3>
 <p>Merhaba el emeği tutkunları! Bugün sizleri gerçekten büyüleyici bir yolculuğa çıkarmak istiyorum. YouTube'da karşılaştığımız ve adeta kalbimizi çalan <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE" target="_blank" rel="noopener">"Harika Bir İğne Oyası Modeli Anlatımlı Yapılışı | 723. Model"</a> videosu, iğne oyası dünyasına yepyeni bir soluk getiriyor. Bu özel <strong>iğne oyası modeli</strong>, zarafeti ve inceliğiyle gören herkesi kendine hayran bırakıyor.</p>
 <p>723. Model'in en belirgin özelliği, adeta bir dantel edasıyla işlenmiş, göz alıcı desenleri. Her bir ilmeğin titizlikle atılmasıyla ortaya çıkan bu <strong>zarif iğne oyası modeli</strong>, hem geleneksel motifleri modern bir dokunuşla yorumluyor hem de yapımı sırasında büyük bir keyif vaat ediyor. İster bir tülbent kenarında, ister fularınızın ucunda, isterseniz de bir broş olarak kullanın; bu model gittiği her yere ayrı bir hava katacak. Videodaki <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE" target="_blank" rel="noopener"><strong>anlatımlı yapılışı</strong></a> sayesinde adımları takip etmek, düşündüğünüzden çok daha kolay olacak. Emin olun, her aşaması keyif dolu bu el sanatı, yeni bir tutkunuz haline gelecek!</p>
 
@@ -809,8 +864,9 @@
     <strong>Cevap:</strong> Hiç endişelenmeyin! Herkesin el becerisi ve hızı farklıdır. Önemli olan pratik yapmak ve keyif almak. İlk denemeleriniz mükemmel olmayabilir, ancak her yeni ilmekle daha iyi olacaksınız. Sabırlı olun ve kendinize güvenin!</li>
 </ul>
 <p>Sizin de aklınızda başka sorular varsa veya bu modelle ilgili tecrübelerinizi paylaşmak isterseniz, yorumlar kısmına yazmaktan çekinmeyin! Hep birlikte bu güzel <strong>el sanatları</strong> geleneğini yaşatalım.</p>
-  </div>
-</div>
+                </div>
+            </div>
+            
 
         </div>
     </main>
@@ -845,7 +901,6 @@
             </div>
         </div>
     </footer>
-
 
     <!-- SAYAÇ ÇALIŞTIRMA KODU (APPS SCRIPT) -->
     <script>

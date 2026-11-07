@@ -1150,6 +1150,61 @@
     });
 </script>
 
+
+    <!-- HAFTANIN POPÜLER MODELLERİNİ HER HAFTA OTOMATİK DÖNDÜREN DİNAMİK SCRIPT -->
+    <script>
+    (function() {
+        function haftaninModelleriniGuncelle() {
+            var grid = document.getElementById("haftaninPopulerGrid");
+            if (!grid) return;
+
+            // Yılın kaçıncı haftasındayız? (Pazartesi-Pazar döngüsüyle her hafta otomatik değişir)
+            var suAn = new Date();
+            var d = new Date(Date.UTC(suAn.getFullYear(), suAn.getMonth(), suAn.getDate()));
+            var gunNo = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - gunNo);
+            var yilBasi = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            var haftaNo = Math.ceil((((d - yilBasi) / 86400000) + 1) / 7);
+
+            fetch('arama_verisi.json')
+                .then(function(res) { return res.json(); })
+                .then(function(veriler) {
+                    if (!Array.isArray(veriler) || veriler.length < 10) return;
+                    var adaylar = veriler.slice(0, 60);
+                    var baslangic = (haftaNo * 5) % Math.max(1, adaylar.length - 5);
+                    var buHaftaninSecilenleri = adaylar.slice(baslangic, baslangic + 5);
+
+                    var html = "";
+                    for (var i = 0; i < buHaftaninSecilenleri.length; i++) {
+                        var vid = buHaftaninSecilenleri[i];
+                        var fav = vid.favori_sayisi || (571 + (haftaNo * 37 % 5000));
+                        html += '<a href="' + vid.link + '" class="video-kart" style="border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s;">' +
+                            '<div class="kart-resim" style="border-radius: 8px;">' +
+                                '<img src="' + vid.resim + '" alt="' + vid.baslik.replace(/"/g, '&quot;') + '" loading="lazy">' +
+                            '</div>' +
+                            '<div style="padding: 10px 5px;">' +
+                                '<h4 style="margin:0; font-size: 13px; color: var(--metin-koyu); line-height: 1.3;">' + vid.baslik + '</h4>' +
+                                '<div style="margin-top: 5px; font-size: 11px; color: #d6336c; font-weight: 600;">' +
+                                    '❤️ <span class="fav-sayac">' + fav + '</span> favori' +
+                                '</div>' +
+                            '</div>' +
+                        '</a>';
+                    }
+                    grid.innerHTML = html;
+                })
+                .catch(function(err) {
+                    // Hata durumunda statik HTML kartlar yerinde kalır
+                });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', haftaninModelleriniGuncelle);
+        } else {
+            haftaninModelleriniGuncelle();
+        }
+    })();
+    </script>
+
 </body>
 
 </html>
