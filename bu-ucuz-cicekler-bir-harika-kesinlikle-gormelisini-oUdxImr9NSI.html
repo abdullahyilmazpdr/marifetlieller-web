@@ -6,16 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    {% if video.description and video.description.strip() %}
     <meta name="description" content="Merhaba Arkadaşlar,  Üçüz çiçekler ismini verdiğim üç çiçekten oluşan bu harika mekik oyasını eminim sizler de çok beğeneceksiniz. Bu harika modelin t...">
     <meta property="og:description" content="Merhaba Arkadaşlar,  Üçüz çiçekler ismini verdiğim üç çiçekten oluşan bu harika mekik oyasını eminim...">
-    {% elif video.ai_metin %}
-    <meta name="description" content="Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz yapılışı, püf noktaları ve detaylı anlatımı. {{ video.ai_metin[:120] | striptags | replace('\n', ' ') }}...">
-    <meta property="og:description" content="Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz yapılışı, püf noktaları ve detaylı video anlatımı.">
-    {% else %}
-    <meta name="description" content="Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de.">
-    <meta property="og:description" content="Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz detaylı yapılışı, kullanılan malzemeler ve püf noktaları.">
-    {% endif %}
     <meta name="keywords"
         content="iğne oyası, mekik oyası, oya çiçeği, Mekik Oyası Yapılışı, çeyizlik modeller, el işi, Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz">
     <meta name="author" content="Marifetli Eller">
@@ -30,8 +22,8 @@
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      "name": "{{ video.title | replace('"', '\\"') }}",
-      "description": "{% if video.description and video.description.strip() %}{{ video.description[:150] | replace('\n', ' ') | replace('"', '\\"') }}{% else %}{{ video.title | replace('"', '\\"') }} detaylı yapılışı ve anlatımı{% endif %}",
+      "name": "Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz",
+      "description": "Merhaba Arkadaşlar,  Üçüz çiçekler ismini verdiğim üç çiçekten oluşan bu harika mekik oyasını eminim sizler de çok beğeneceksiniz. Bu harika modelin t...",
       "thumbnailUrl": ["https://i.ytimg.com/vi/oUdxImr9NSI/hqdefault.jpg"],
       "uploadDate": "2024-01-01T08:00:00+03:00",
       "embedUrl": "https://www.youtube.com/embed/oUdxImr9NSI"
@@ -731,7 +723,7 @@
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <button id="btnFavori_oUdxImr9NSI" class="favori-btn" onclick="favoriIslemiYap(this, 'oUdxImr9NSI', '{{ video.title | replace('\"', '\\\"') | replace('\'', '\\\'') }}', 'bu-ucuz-cicekler-bir-harika-kesinlikle-gormelisini-oUdxImr9NSI.html', 'https://i.ytimg.com/vi/oUdxImr9NSI/hqdefault.jpg')">
+                <button id="btnFavori_oUdxImr9NSI" class="favori-btn" onclick="favoriIslemiYap(this, 'oUdxImr9NSI', 'Bu Üçüz Çiçekler Bir Harika | Kesinlikle Görmelisiniz', 'bu-ucuz-cicekler-bir-harika-kesinlikle-gormelisini-oUdxImr9NSI.html', 'https://i.ytimg.com/vi/oUdxImr9NSI/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
                 <!-- DİNAMİK RAKAM ALANI (video_sablon.html içinde) -->
@@ -765,7 +757,6 @@
                 
             </div>
 
-            {% if video.description and video.description.strip() %}
             <div class="aciklama-alani">
                 <div class="aciklama">Merhaba Arkadaşlar,
 
@@ -775,8 +766,6 @@ Bu arada bunu yazmaya nasıl ekleyebiliriz diye soranlar için aşağıda mekik 
 
 Mekik Oyası Motiflerinin Eklenişi: https://www.youtube.com/playlist?l</div>
             </div>
-            {% endif %}
-
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
   <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
     ✨ Model Hakkında İpuçları ve Detaylar

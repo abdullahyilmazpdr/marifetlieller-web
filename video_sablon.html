@@ -6,16 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    {% if video.description and video.description.strip() %}
     <meta name="description" content="{{ video.description[:150] | replace('\n', ' ') }}...">
     <meta property="og:description" content="{{ video.description[:100] | replace('\n', ' ') }}...">
-    {% elif video.ai_metin %}
-    <meta name="description" content="{{ video.title }} yapılışı, püf noktaları ve detaylı anlatımı. {{ video.ai_metin[:120] | striptags | replace('\n', ' ') }}...">
-    <meta property="og:description" content="{{ video.title }} yapılışı, püf noktaları ve detaylı video anlatımı.">
-    {% else %}
-    <meta name="description" content="{{ video.title }} detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de.">
-    <meta property="og:description" content="{{ video.title }} detaylı yapılışı, kullanılan malzemeler ve püf noktaları.">
-    {% endif %}
     <meta name="keywords"
         content="iğne oyası, mekik oyası, oya çiçeği, {{ kategori_adi }}, çeyizlik modeller, el işi, {{ video.title }}">
     <meta name="author" content="Marifetli Eller">
@@ -30,8 +22,8 @@
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      "name": "{{ video.title | replace('"', '\\"') }}",
-      "description": "{% if video.description and video.description.strip() %}{{ video.description[:150] | replace('\n', ' ') | replace('"', '\\"') }}{% else %}{{ video.title | replace('"', '\\"') }} detaylı yapılışı ve anlatımı{% endif %}",
+      "name": "{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}",
+      "description": "{{ video.description[:150] | replace('\n', ' ') }}",
       "thumbnailUrl": ["{{ video.thumbnail }}"],
       "uploadDate": "2024-01-01T08:00:00+03:00",
       "embedUrl": "https://www.youtube.com/embed/{{ video.id }}"
@@ -345,6 +337,10 @@
             border-top: 1px solid var(--kenarlik);
         }
 
+        .aciklama-alani:has(.aciklama:empty) {
+            display: none;
+        }
+
         .aciklama {
             font-size: 14px;
             color: var(--metin-acik);
@@ -490,7 +486,7 @@
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <button id="btnFavori_{{ video.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ video.id }}', '{{ video.title | replace('\"', '\\\"') | replace('\'', '\\\'') }}', '{{ video.dosya_adi }}', '{{ video.thumbnail }}')">
+                <button id="btnFavori_{{ video.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ video.id }}', '{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}', '{{ video.dosya_adi }}', '{{ video.thumbnail }}')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
                 <!-- DİNAMİK RAKAM ALANI (video_sablon.html içinde) -->
@@ -524,11 +520,9 @@
                 {% include 'reklam_alani_1.html' ignore missing %}
             </div>
 
-            {% if video.description and video.description.strip() %}
             <div class="aciklama-alani">
                 <div class="aciklama">{{ video.description }}</div>
             </div>
-            {% endif %}
 
             {% if video.ai_metin %}
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">

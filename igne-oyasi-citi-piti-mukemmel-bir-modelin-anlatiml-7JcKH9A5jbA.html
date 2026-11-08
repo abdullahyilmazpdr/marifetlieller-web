@@ -6,16 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    {% if video.description and video.description.strip() %}
     <meta name="description" content="Merhaba Arkadaşlar,  Sizler için bugün mükemmel bir modelin yapılışını videolaştırdım. Gören herkesin beğeneceğini düşündüğüm çıtı pıtı bir model. Yap...">
     <meta property="og:description" content="Merhaba Arkadaşlar,  Sizler için bugün mükemmel bir modelin yapılışını videolaştırdım. Gören herkesi...">
-    {% elif video.ai_metin %}
-    <meta name="description" content="İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model yapılışı, püf noktaları ve detaylı anlatımı. {{ video.ai_metin[:120] | striptags | replace('\n', ' ') }}...">
-    <meta property="og:description" content="İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model yapılışı, püf noktaları ve detaylı video anlatımı.">
-    {% else %}
-    <meta name="description" content="İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de.">
-    <meta property="og:description" content="İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model detaylı yapılışı, kullanılan malzemeler ve püf noktaları.">
-    {% endif %}
     <meta name="keywords"
         content="iğne oyası, mekik oyası, oya çiçeği, Çıtı Pıtı Modeller, çeyizlik modeller, el işi, İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model">
     <meta name="author" content="Marifetli Eller">
@@ -30,8 +22,8 @@
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      "name": "{{ video.title | replace('"', '\\"') }}",
-      "description": "{% if video.description and video.description.strip() %}{{ video.description[:150] | replace('\n', ' ') | replace('"', '\\"') }}{% else %}{{ video.title | replace('"', '\\"') }} detaylı yapılışı ve anlatımı{% endif %}",
+      "name": "İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model",
+      "description": "Merhaba Arkadaşlar,  Sizler için bugün mükemmel bir modelin yapılışını videolaştırdım. Gören herkesin beğeneceğini düşündüğüm çıtı pıtı bir model. Yap...",
       "thumbnailUrl": ["https://i.ytimg.com/vi/7JcKH9A5jbA/hqdefault.jpg"],
       "uploadDate": "2024-01-01T08:00:00+03:00",
       "embedUrl": "https://www.youtube.com/embed/7JcKH9A5jbA"
@@ -731,7 +723,7 @@
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <button id="btnFavori_7JcKH9A5jbA" class="favori-btn" onclick="favoriIslemiYap(this, '7JcKH9A5jbA', '{{ video.title | replace('\"', '\\\"') | replace('\'', '\\\'') }}', 'igne-oyasi-citi-piti-mukemmel-bir-modelin-anlatiml-7JcKH9A5jbA.html', 'https://i.ytimg.com/vi/7JcKH9A5jbA/hqdefault.jpg')">
+                <button id="btnFavori_7JcKH9A5jbA" class="favori-btn" onclick="favoriIslemiYap(this, '7JcKH9A5jbA', 'İğne Oyası Çıtı Pıtı Mükemmel Bir Modelin Anlatımlı Yapılışı | 508. Model', 'igne-oyasi-citi-piti-mukemmel-bir-modelin-anlatiml-7JcKH9A5jbA.html', 'https://i.ytimg.com/vi/7JcKH9A5jbA/hqdefault.jpg')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
                 <!-- DİNAMİK RAKAM ALANI (video_sablon.html içinde) -->
@@ -765,14 +757,11 @@
                 
             </div>
 
-            {% if video.description and video.description.strip() %}
             <div class="aciklama-alani">
                 <div class="aciklama">Merhaba Arkadaşlar,
 
 Sizler için bugün mükemmel bir modelin yapılışını videolaştırdım. Gören herkesin beğeneceğini düşündüğüm çıtı pıtı bir model. Yapacak arkadaşlara şimdiden kolaylıklar dilerim.</div>
             </div>
-            {% endif %}
-
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">
   <div style="font-family: 'Lora', serif; color: var(--ana-renk); font-size: 22px; margin-bottom: 20px;">
     ✨ Model Hakkında İpuçları ve Detaylar

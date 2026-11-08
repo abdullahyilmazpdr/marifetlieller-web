@@ -616,7 +616,13 @@ def sayfalari_olustur():
                             video['ai_metin'] = ""
 
                     video['favori_sayisi'] = gercekci_favori_sayisi_uret(dosya_adi, video['id']) # EKLENDİ
-                    html_icerik = template_video.render(video=video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
+                    render_video = dict(video)
+                    orijinal_aciklama = (video.get('description') or '').strip()
+                    if not orijinal_aciklama:
+                        render_video['description'] = f"{video['title']} detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de."
+                    html_icerik = template_video.render(video=render_video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
+                    if not orijinal_aciklama:
+                        html_icerik = re.sub(r'<div class="aciklama-alani">\s*<div class="aciklama">[\s\S]*?</div>\s*</div>', '', html_icerik)
                     
                     with open(f"{dosya_adi}", 'w', encoding='utf-8') as f: 
                         f.write(html_icerik)
