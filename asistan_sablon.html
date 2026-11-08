@@ -607,11 +607,15 @@
         function modelleriEkranaBas(terimler, uygunKategori) {
             let sonuclar = [];
             let eklenenLinkler = new Set();
+            let katLow = (uygunKategori || "").replace(/İ/g, 'i').toLowerCase();
+            let hedefTeknik = katLow.includes("mekik") ? "mekik" : (katLow.includes("tığ") || katLow.includes("tig") ? "tig" : (katLow.includes("iğne") || katLow.includes("igne") || katLow.includes("yazma") ? "igne" : ""));
+            let havuz = hedefTeknik ? veritabani.filter(v => (v.teknik || (v.baskin_kategori && v.baskin_kategori.toLowerCase().includes("mekik") ? "mekik" : "igne")) === hedefTeknik) : veritabani;
+            if (havuz.length === 0) havuz = veritabani;
 
             if (terimler && terimler.length > 0) {
                 terimler.forEach(terim => {
-                    let aranan = terim.toLowerCase().trim();
-                    let eslesenler = veritabani.filter(v => {
+                    let aranan = terim.replace(/İ/g, 'i').toLowerCase().trim();
+                    let eslesenler = havuz.filter(v => {
                         let ozelKelimeEslesti = false;
                         if (v.ai_anahtar_kelimeler && v.ai_anahtar_kelimeler.length > 0) {
                             ozelKelimeEslesti = v.ai_anahtar_kelimeler.some(k => k.toLowerCase().includes(aranan));
@@ -640,7 +644,7 @@
             }
 
             if (sonuclar.length < 3 && veritabani.length >= 6) {
-                let karisikArsiv = [...veritabani].sort(() => 0.5 - Math.random());
+                let karisikArsiv = [...havuz].sort(() => 0.5 - Math.random());
                 for (let i = 0; i < karisikArsiv.length; i++) {
                     let m = karisikArsiv[i];
                     if (!eklenenLinkler.has(m.link)) {

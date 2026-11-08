@@ -110,6 +110,48 @@ def yapay_zeka_makale_yazdir(baslik, aciklama):
     """
     return gemini_istek_gonder(prompt)
 
+def _tr_kucult(s):
+    if not s:
+        return ""
+    return str(s).replace("İ", "i").replace("I", "ı").lower().replace("i\u0307", "i")
+
+def _temiz_aciklama(aciklama):
+    d = _tr_kucult(aciklama)
+    d = re.sub(r"https?://\S+", " ", d)
+    d = re.sub(r"www\.\S+", " ", d)
+    d = d.replace("elifinmekikoyalari", " ")
+    for pat in [
+        r"kanalımda[^\n.]*paylaşıyorum[^\n.]*",
+        r"daha fazla iğne oyası[^\n.]*",
+        r"iğne oyası öğrenmek için[^\n.]*",
+        r"mekik oyası öğrenmek için[^\n.]*",
+        r"daha fazla mekik oyası[^\n.]*",
+        r"iğne oyası ve mekik oyası modellerinin[^\n.]*",
+        r"dilerseniz mekik oyasıyla[^\n.]*",
+    ]:
+        d = re.sub(pat, " ", d)
+    return d
+
+def video_teknik_belirle(baslik="", aciklama="", kategori_adi=""):
+    t = _tr_kucult(baslik)
+    d = _temiz_aciklama(aciklama)
+    k = _tr_kucult(kategori_adi)
+    if "mekik" in t:
+        return "mekik"
+    if re.search(r"\b(tığ|tig)\b", t) and "iğne" not in t and "igne" not in t:
+        return "tig"
+    if any(w in t for w in ["örgü", "orgu", "patik", "lif modeli"]) and "iğne" not in t:
+        return "orgu"
+    if "iğne" in t or "igne" in t:
+        return "igne"
+    if "mekik" in d and "iğne oyası" not in d:
+        return "mekik"
+    if "mekik" in k:
+        return "mekik"
+    if "tığ" in k or "tig" in k:
+        return "tig"
+    return "igne"
+
 def model_gorsel_analizi_yap(resim_url, baslik):
     global aktif_api_indeksi, aktif_model_indeksi, client, AI_KOTALARI_DOLDU
     if AI_KOTALARI_DOLDU or not client:
@@ -123,9 +165,13 @@ def model_gorsel_analizi_yap(resim_url, baslik):
 
     prompt = f"""
     Sen uzman bir oya ve el işi analistisin. Sana '{baslik}' başlıklı bir eğitim videosunun kapak fotoğrafını gönderiyorum.
+    ÖNEMLİ AYRIM KURALLARI (İĞNE OYASI vs MEKİK OYASI):
+    - MEKİK OYASI (Tatting): Sıkı düğümlü halka/daire/roset formları, halkaların etrafında sık minik kirpik (pırpır) dizileri vardır; açık üçgen zürafa/file gözenekleri YOKTUR ve çoğu zaman bağımsız motif olarak düz siyah/beyaz zeminde sergilenir.
+    - İĞNE OYASI (Needle Lace): İğne ile atılan üçgen/file gözenekli zürafa dokusu, sinek kanadı, keloğlan, badem, kaya/dağ veya tülbent/yazma kenarına doğrudan işlenmiş yeşil yapraklı çiçek motifleri vardır.
+    - Başlıkta 'Mekik' geçiyorsa KESİNLİKLE 'Mekik Oyası Yapılışı' seç; 'İğne Oyası' geçiyorsa KESİNLİKLE İğne Oyası kategorilerinden birini seç.
     Görevlerin:
     1. Resimdeki oya modelini/motifini dikkatlice incele (şekli, tarzı, belirgin renkleri, tekniği).
-    2. Bu modeli bir kullanıcının arama çubuğunda aratabileceği EN BELİRGİN 5-6 spesifik anahtar kelimeyi (Örn: "menekşe", "karanfil", "sıralı", "keloğlan", "zarif yaprak", "sarı lacivert") belirle.
+    2. Bu modeli bir kullanıcının arama çubuğunda aratabileceği EN BELİRGİN 5-6 spesifik anahtar kelimeyi belirle.
     3. Bu modelin aşağıdaki kategorilerden HANGİSİNE en çok (Baskın olarak) ait olduğunu seç:
        ["İğne Oyası Yapılışı", "Mekik Oyası Yapılışı", "Yazmada İğne Oyası Modelleri", "Fular Modelleri ve Anlatımlı Yapılış Videoları", "Keloğlan Modelleri", "Kelebek Modelleri", "İğne Oyası Havlu Kenarı Modelleri ve Yapılışları"]
 
@@ -568,7 +614,7 @@ def sayfalari_olustur():
                 ek_id = ek_v.get('id')
                 if not ek_id or ek_id in mevcut_kat_idler:
                     continue
-                if ek_v.get('kategori_dosya_adi') == kategori_dosya_adi or ek_v.get('kategori_adi') == kategori_adi:
+                if ek_v.get('kategori_dosya_adi') == kategori_dosya_adi or ek_v.get('kategori_adi') == kategori_adi or any(isinstance(k, dict) and (k.get('baslik') == kategori_adi or k.get('dosya_adi') == kategori_dosya_adi) for k in (ek_v.get('kategoriler') or [])):
                     videolar.append({
                         'id': ek_id,
                         'title': ek_v.get('title', ''),
@@ -653,6 +699,12 @@ def sayfalari_olustur():
                             gorsel_verisi = {"anahtar_kelimeler": [], "baskin_kategori": kategori_adi}
                     # -------------------------------------------
 
+                    v_teknik = gorsel_verisi.get("teknik") or video_teknik_belirle(video.get('title', ''), video.get('description', ''), kategori_adi)
+                    v_baskin = gorsel_verisi.get("baskin_kategori") or kategori_adi
+                    if v_teknik == "mekik" and "mekik" not in _tr_kucult(v_baskin):
+                        v_baskin = "Mekik Oyası Yapılışı"
+                    elif v_teknik == "igne" and "mekik" in _tr_kucult(v_baskin):
+                        v_baskin = kategori_adi if "mekik" not in _tr_kucult(kategori_adi) else "İğne Oyası Yapılışı"
                     tum_videolar_arama_icin[dosya_adi] = {
                         "baslik": str(video.get('title', '')),
                         "link": dosya_adi,
@@ -663,8 +715,9 @@ def sayfalari_olustur():
                         "imza": gorsel_verisi.get("imza", []),
                         "imza_kare": gorsel_verisi.get("imza_kare", []),
                         "renkler": gorsel_verisi.get("renkler", []),
-                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", kategori_adi),
-                        "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video['id']) # YENİ EKLENEN SATIR  
+                        "teknik": v_teknik,
+                        "baskin_kategori": v_baskin,
+                        "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, video['id'])
                     }
                 except Exception as e:
                     print(f"  ! Video işlenirken hata (Atlanıyor): {e}")
@@ -750,6 +803,12 @@ def sayfalari_olustur():
 
                 if dosya_adi not in tum_videolar_arama_icin:
                     gorsel_verisi = vision_cache.get(ek_id, {"anahtar_kelimeler": [], "baskin_kategori": ek_kat_adi})
+                    ek_teknik = ek_v.get("teknik") or gorsel_verisi.get("teknik") or video_teknik_belirle(ek_baslik, ek_aciklama, ek_kat_adi)
+                    ek_baskin = ek_kat_adi or gorsel_verisi.get("baskin_kategori", "İğne Oyası Yapılışı")
+                    if ek_teknik == "mekik" and "mekik" not in _tr_kucult(ek_baskin):
+                        ek_baskin = "Mekik Oyası Yapılışı"
+                    elif ek_teknik == "igne" and "mekik" in _tr_kucult(ek_baskin):
+                        ek_baskin = "İğne Oyası Yapılışı"
                     tum_videolar_arama_icin[dosya_adi] = {
                         "baslik": str(ek_baslik),
                         "link": dosya_adi,
@@ -760,7 +819,9 @@ def sayfalari_olustur():
                         "imza": gorsel_verisi.get("imza", []),
                         "imza_kare": gorsel_verisi.get("imza_kare", []),
                         "renkler": gorsel_verisi.get("renkler", []),
-                        "baskin_kategori": gorsel_verisi.get("baskin_kategori", ek_kat_adi),
+                        "teknik": ek_teknik,
+                        "baskin_kategori": ek_baskin,
+                        "kategoriler": ek_v.get("kategoriler", []),
                         "favori_sayisi": gercekci_favori_sayisi_uret(dosya_adi, ek_id)
                     }
             except Exception as e:

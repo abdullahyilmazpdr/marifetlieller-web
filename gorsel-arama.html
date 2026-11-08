@@ -922,6 +922,72 @@
             return distRect;
         }
 
+        function turkceTemizle(metin) {
+            if (!metin) return "";
+            return metin.toString()
+                .replace(/İ/g, 'i').replace(/I/g, 'i').replace(/ı/g, 'i')
+                .toLowerCase()
+                .replace(/i\u0307/g, 'i')
+                .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
+                .replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c');
+        }
+
+        function videoTekniginiBul(v) {
+            if (!v) return "igne";
+            if (v.teknik && ["igne", "mekik", "tig", "orgu"].includes(v.teknik)) {
+                return v.teknik;
+            }
+            let b = turkceTemizle(v.baslik || "");
+            let k = turkceTemizle(v.baskin_kategori || v.kategori_adi || "");
+            let kw = turkceTemizle((v.ai_anahtar_kelimeler || []).join(" "));
+            if (b.includes("mekik") || k.includes("mekik") || kw.includes("mekik")) return "mekik";
+            if (/\btig\b/.test(b) || k.includes("tig")) return "tig";
+            if (b.includes("orgu") || k.includes("orgu") || b.includes("patik") || b.includes("lif modeli")) return "orgu";
+            return "igne";
+        }
+
+        function teknikEtiketiGetir(teknikKod) {
+            if (teknikKod === "mekik") return "Mekik Oyası";
+            if (teknikKod === "tig") return "Tığ Oyası";
+            if (teknikKod === "orgu") return "Örgü Modelleri";
+            return "İğne Oyası";
+        }
+
+        function gorselKnnTeknikTahminEt() {
+            let adaylar = [];
+            veritabani.forEach(v => {
+                let d = imzaMesafesiHesapla(v);
+                if (d < 900) {
+                    adaylar.push({ video: v, dist: d, teknik: videoTekniginiBul(v) });
+                }
+            });
+            adaylar.sort((a, b) => a.dist - b.dist);
+            if (adaylar.length === 0) {
+                return { teknik: "igne", enYakinDist: 999, enYakinVideo: null };
+            }
+            let enYakin = adaylar[0];
+            if (enYakin.dist < 13.5) {
+                return { teknik: enYakin.teknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
+            }
+            let oylar = { igne: 0, mekik: 0, tig: 0, orgu: 0 };
+            let komsular = adaylar.slice(0, 7);
+            komsular.forEach((k, idx) => {
+                let agirlik = 1.0 / Math.pow(k.dist + 2.0, 2);
+                if (idx === 0) agirlik *= 1.35;
+                if (k.teknik === "mekik") agirlik *= 1.45;
+                oylar[k.teknik] = (oylar[k.teknik] || 0) + agirlik;
+            });
+            let secilenTeknik = "igne";
+            let maksOy = -1;
+            for (let tk in oylar) {
+                if (oylar[tk] > maksOy) {
+                    maksOy = oylar[tk];
+                    secilenTeknik = tk;
+                }
+            }
+            return { teknik: secilenTeknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
+        }
+
         async function analiziBaslat() {
             if (!islenmisResimBase64) return;
             document.getElementById('btnAnaliz').style.display = 'none';
@@ -929,18 +995,14 @@
 
             await veritabaniniYukle();
 
-            // ÖN KONTROL: Eğer görsel imzası arşivdeki bir videoyla birebir örtüşüyorsa (dist < 10),
-            // sunucu zaman aşımını beklemeden anında (0.2 saniyede) sonucu göster!
-            let enYakinDist = 999;
-            veritabani.forEach(v => {
-                let d = imzaMesafesiHesapla(v);
-                if (d < enYakinDist) enYakinDist = d;
-            });
+            // ÖN KONTROL: Görsel imzası ve en yakın komşu teknik analizi
+            const knnTahmin = gorselKnnTeknikTahminEt();
+            const yedekKategoriAdi = teknikEtiketiGetir(knnTahmin.teknik);
 
-            if (enYakinDist < 10.0) {
+            if (knnTahmin.enYakinDist < 12.0) {
                 document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif", "yazma kenarı"];
-                await modelleriEkranaBas(yedekTerimler, "İğne Oyası", "Yazma", secilenDosyaModelNo);
+                const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif"];
+                await modelleriEkranaBas(yedekTerimler, yedekKategoriAdi, "", secilenDosyaModelNo);
                 return;
             }
 
@@ -949,7 +1011,7 @@
             formData.append('resim_base64', islenmisResimBase64);
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            const timeoutId = setTimeout(() => controller.abort(), 4500);
 
             try {
                 const res = await fetch(scriptURL, {
@@ -964,7 +1026,8 @@
                     const data = await res.json();
                     if (data && !data.gercek_hata && (data.terimler || data.model_no)) {
                         document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                        await modelleriEkranaBas(data.terimler, data.ana_kategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
+                        let secilenAnaKategori = (knnTahmin.enYakinDist < 16.0) ? yedekKategoriAdi : (data.ana_kategori || yedekKategoriAdi);
+                        await modelleriEkranaBas(data.terimler, secilenAnaKategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
                         return;
                     }
                 }
@@ -973,16 +1036,8 @@
             }
 
             document.getElementById('yukleniyorGostergesi').style.display = 'none';
-            const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif", "yazma kenarı"];
-            await modelleriEkranaBas(yedekTerimler, "İğne Oyası", "Yazma", secilenDosyaModelNo);
-        }
-
-        function turkceTemizle(metin) {
-            if (!metin) return "";
-            return metin.toLowerCase()
-                .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u')
-                .replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
-                .replace(/i̇/g, 'i');
+            const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif"];
+            await modelleriEkranaBas(yedekTerimler, yedekKategoriAdi, "", secilenDosyaModelNo);
         }
 
         async function modelleriEkranaBas(terimler, anaKategori, altKategori, modelNo) {
@@ -998,18 +1053,14 @@
 
             let aranacakAna = "";
             let hedefKategori = turkceTemizle(anaKategori || "");
-            if (hedefKategori.includes("igne") || hedefKategori.includes("iğne")) aranacakAna = "igne";
-            else if (hedefKategori.includes("mekik")) aranacakAna = "mekik";
-            else if (hedefKategori.includes("tig") || hedefKategori.includes("tığ")) aranacakAna = "tig";
-            else if (hedefKategori.includes("orgu") || hedefKategori.includes("örgü")) aranacakAna = "orgu";
+            if (hedefKategori.includes("mekik")) aranacakAna = "mekik";
+            else if (hedefKategori.includes("tig")) aranacakAna = "tig";
+            else if (hedefKategori.includes("orgu")) aranacakAna = "orgu";
+            else if (hedefKategori.includes("igne")) aranacakAna = "igne";
 
             let filtrelenmisVeritabani = veritabani;
             if (aranacakAna !== "") {
-                let katListe = veritabani.filter(v => {
-                    let k = turkceTemizle(v.baskin_kategori || v.kategori_adi || "");
-                    let b = turkceTemizle(v.baslik || "");
-                    return k.includes(aranacakAna) || b.includes(aranacakAna);
-                });
+                let katListe = veritabani.filter(v => videoTekniginiBul(v) === aranacakAna);
                 if (katListe.length > 0) filtrelenmisVeritabani = katListe;
             }
 
@@ -1085,12 +1136,17 @@
                 return gecici;
             }
 
-            // Önce tüm veritabanında birebir görsel eşleşme (dist < 10) var mı kontrol et (farklı kategoride olsa bile kaçırmasın!)
+            // Önce tüm veritabanında birebir görsel eşleşme (dist < 10 veya modelNo) var mı kontrol et
             let tumSonuclar = puanla(veritabani);
             tumSonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
 
             if (tumSonuclar.length > 0 && tumSonuclar[0].arama_skoru >= 6000) {
-                sonuclar = tumSonuclar;
+                // Tam isabet yakalandığında bile 2.-6. sıradaki önerilerin de AYNI TEKNİKTEN (İğne ise İğne, Mekik ise Mekik) olmasını sağla!
+                let birinciTeknik = videoTekniginiBul(tumSonuclar[0]);
+                aranacakAna = birinciTeknik;
+                anaKategori = teknikEtiketiGetir(birinciTeknik);
+                let ayniTeknikSonuclar = tumSonuclar.filter(v => videoTekniginiBul(v) === birinciTeknik);
+                sonuclar = ayniTeknikSonuclar.length > 0 ? ayniTeknikSonuclar : tumSonuclar;
             } else {
                 sonuclar = puanla(filtrelenmisVeritabani);
                 if (sonuclar.length === 0 && filtrelenmisVeritabani !== veritabani) {
