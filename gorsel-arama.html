@@ -709,12 +709,13 @@
 
             <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
-        let islenmisResimBase64 = "";
+                let islenmisResimBase64 = null;
         let veritabani = [];
         let yuklenenImza = [];
         let yuklenenImzaKare = [];
         let yuklenenEnBoyOrani = 1.77;
         let yuklenenRenkler = [];
+        let yuklenenYesilYaprakOrani = 0;
         let secilenDosyaModelNo = "";
 
         async function veritabaniniYukle() {
@@ -722,7 +723,7 @@
                 return veritabani;
             }
             try {
-                const res = await fetch('arama_verisi.json?v=20261107_4');
+                const res = await fetch('arama_verisi.json?v=20261108_5');
                 veritabani = await res.json();
             } catch (e) {
                 console.warn("Veritabanı yüklenirken hata:", e);
@@ -825,30 +826,42 @@
                 const sqLen = Math.floor(sqSide * 0.84);
                 yuklenenImzaKare = blokOrtalamasi4x4(tamData, img.width, img.height, sqLeft, sqTop, sqLen, sqLen).grid;
 
-                // 3) 48x48 HSV Baskın Motif Renk Analizi
+                // 3) 48x48 HSV Baskın Motif Renk Analizi (Ten rengi ve parlak beyaz masa filtresi ile)
                 const counts = {};
-                let darkPx = 0, lightPx = 0;
+                let darkPx = 0, lightPx = 0, greenPx = 0;
                 const totalPx = 48 * 48;
                 const pxList = rectSonuc.px;
 
                 for (let i = 0; i < pxList.length; i++) {
                     const [r, g, b] = pxList[i];
                     const [deg, s, v] = rgbToHsv(r, g, b);
+
+                    // Ten rengi (el, parmak) filtresi: Oyayı tutan eli oyanın rengi olarak sayma!
+                    const isSkin = (deg >= 6 && deg <= 40 && s >= 0.15 && s <= 0.68 && v >= 0.28 && v <= 0.96 && r > g && g > b);
+                    if (isSkin) continue;
+
+                    // Yeşil yaprak / zürafa oranı (İğne oyası için en belirgin doku)
+                    if (deg >= 68 && deg < 165 && s > 0.18 && v > 0.18) {
+                        greenPx++;
+                    }
+
                     if (v < 0.22) darkPx++;
                     else if (s < 0.15 && v > 0.78) lightPx++;
 
-                    if (s > 0.28 && v > 0.20 && v < 0.96) {
+                    if (s > 0.22 && v > 0.18 && v < 0.96) {
                         let c = null;
-                        if (deg >= 290 && deg < 345) c = 'pembe';
+                        if (deg >= 240 && deg < 315) c = 'mor';
+                        else if (deg >= 315 && deg < 345) c = 'pembe';
                         else if (deg >= 345 || deg < 15) c = 'kırmızı';
                         else if (deg >= 15 && deg < 42) c = 'turuncu';
                         else if (deg >= 42 && deg < 68) c = 'sarı';
                         else if (deg >= 68 && deg < 165) c = 'yeşil';
-                        else if (deg >= 165 && deg < 255) c = 'mavi';
-                        else if (deg >= 255 && deg < 290) c = 'mor';
+                        else if (deg >= 165 && deg < 240) c = 'mavi';
                         if (c) counts[c] = (counts[c] || 0) + 1;
                     }
                 }
+
+                yuklenenYesilYaprakOrani = greenPx / totalPx;
 
                 yuklenenRenkler = Object.entries(counts)
                     .filter(e => e[1] > 20)
@@ -958,25 +971,45 @@
             veritabani.forEach(v => {
                 let d = imzaMesafesiHesapla(v);
                 if (d < 900) {
-                    adaylar.push({ video: v, dist: d, teknik: videoTekniginiBul(v) });
+                    let colorBonus = 0;
+                    let rList = v.renkler ? v.renkler.map(x => turkceTemizle(x)) : [];
+                    let kw = turkceTemizle((v.ai_anahtar_kelimeler || []).join(" "));
+                    let b = turkceTemizle(v.baslik || "");
+                    yuklenenRenkler.forEach(renk => {
+                        let rTemiz = turkceTemizle(renk);
+                        if (rList.includes(rTemiz) || kw.includes(rTemiz) || b.includes(rTemiz)) {
+                            colorBonus += 5.0;
+                        }
+                    });
+                    let efektifDist = Math.max(1.0, d - colorBonus);
+                    adaylar.push({ video: v, dist: d, efektifDist: efektifDist, teknik: videoTekniginiBul(v) });
                 }
             });
-            adaylar.sort((a, b) => a.dist - b.dist);
+            adaylar.sort((a, b) => a.efektifDist - b.efektifDist);
             if (adaylar.length === 0) {
                 return { teknik: "igne", enYakinDist: 999, enYakinVideo: null };
             }
             let enYakin = adaylar[0];
-            if (enYakin.dist < 13.5) {
+            // Arşiv kapağıyla birebir veya çok yakın eşleşme (dist < 15.0) varsa o videonun tekniğini doğrudan al
+            if (enYakin.dist < 15.0) {
                 return { teknik: enYakin.teknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
+
+            // Dışarıdan çekilen/Instagram fotoğrafları:
+            // En yakın komşuların oylarını tarafsız topla (Mekik bias kaldırıldı!)
             let oylar = { igne: 0, mekik: 0, tig: 0, orgu: 0 };
             let komsular = adaylar.slice(0, 7);
             komsular.forEach((k, idx) => {
-                let agirlik = 1.0 / Math.pow(k.dist + 2.0, 2);
-                if (idx === 0) agirlik *= 1.35;
-                if (k.teknik === "mekik") agirlik *= 1.45;
+                let agirlik = 1.0 / Math.pow(k.efektifDist + 2.0, 2);
+                if (idx === 0) agirlik *= 1.4;
                 oylar[k.teknik] = (oylar[k.teknik] || 0) + agirlik;
             });
+
+            // Yeşil yaprak veya zürafa dokusu varsa İğne Oyası lehine bonus
+            if (yuklenenYesilYaprakOrani > 0.003) {
+                oylar["igne"] = (oylar["igne"] || 0) + (yuklenenYesilYaprakOrani * 0.6);
+            }
+
             let secilenTeknik = "igne";
             let maksOy = -1;
             for (let tk in oylar) {
@@ -995,7 +1028,7 @@
 
             await veritabaniniYukle();
 
-            // ÖN KONTROL: Görsel imzası ve en yakın komşu teknik analizi
+            // ÖN KONTROL: Görsel imzası ve teknik analizi
             const knnTahmin = gorselKnnTeknikTahminEt();
             const yedekKategoriAdi = teknikEtiketiGetir(knnTahmin.teknik);
 
@@ -1011,7 +1044,7 @@
             formData.append('resim_base64', islenmisResimBase64);
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4500);
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
 
             try {
                 const res = await fetch(scriptURL, {
@@ -1024,10 +1057,10 @@
 
                 if (res.ok) {
                     const data = await res.json();
-                    if (data && !data.gercek_hata && (data.terimler || data.model_no)) {
+                    if (data && !data.gercek_hata && (data.terimler || data.model_no || data.ana_kategori)) {
                         document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                        let secilenAnaKategori = (knnTahmin.enYakinDist < 16.0) ? yedekKategoriAdi : (data.ana_kategori || yedekKategoriAdi);
-                        await modelleriEkranaBas(data.terimler, secilenAnaKategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
+                        let secilenAnaKategori = data.ana_kategori ? data.ana_kategori : yedekKategoriAdi;
+                        await modelleriEkranaBas(data.terimler || yuklenenRenkler, secilenAnaKategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
                         return;
                     }
                 }
@@ -1108,14 +1141,17 @@
                         let rTemiz = turkceTemizle(renk);
                         if (rList.includes(rTemiz) || k.includes(rTemiz) || b.includes(rTemiz)) {
                             renkEslesme++;
-                            skor += 14;
+                            skor += 35;
+                            if (b.includes(rTemiz)) skor += 20;
                         }
                     });
-                    if (renkEslesme >= 3) skor += 35;
+                    if (renkEslesme >= 2) skor += 50;
 
-                    // D) ALT KATEGORİ BONUSU
-                    if (altKatMetni.length > 3 && aramaMetni.includes(altKatMetni)) {
-                        skor += 15;
+                    // D) ALT KATEGORİ VE MOTİF TÜRÜ BONUSU
+                    if (altKatMetni.length > 2) {
+                        if (b.includes(altKatMetni)) skor += 120;
+                        else if (k.includes(altKatMetni)) skor += 60;
+                        else if (a.includes(altKatMetni)) skor += 20;
                     }
 
                     // E) ANATOMİ VE TERİM TARAMASI
@@ -1123,8 +1159,9 @@
                         let aranan = turkceTemizle(terim).trim();
                         if (aranan.length > 2 && aramaMetni.includes(aranan)) {
                             eslesenKelimeSayisi++;
-                            if (b.includes(aranan) || k.includes(aranan)) skor += 8;
-                            else skor += 3;
+                            if (b.includes(aranan)) skor += 30;
+                            else if (k.includes(aranan)) skor += 15;
+                            else skor += 5;
                         }
                     });
 
@@ -1141,7 +1178,7 @@
             tumSonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
 
             if (tumSonuclar.length > 0 && tumSonuclar[0].arama_skoru >= 6000) {
-                // Tam isabet yakalandığında bile 2.-6. sıradaki önerilerin de AYNI TEKNİKTEN (İğne ise İğne, Mekik ise Mekik) olmasını sağla!
+                // Tam isabet yakalandığında bile 2.-6. sıradaki önerilerin de AYNI TEKNİKTEN olmasını sağla!
                 let birinciTeknik = videoTekniginiBul(tumSonuclar[0]);
                 aranacakAna = birinciTeknik;
                 anaKategori = teknikEtiketiGetir(birinciTeknik);
