@@ -1040,6 +1040,21 @@ def sayfalari_olustur():
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
     sitemap_olustur(uretilen_sayfalar)
 
+    # Mevcut arama_verisi.json içindeki gelişmiş görsel imzaları (imza_odak, doku, imza_ek vb.) koru
+    if os.path.exists('arama_verisi.json'):
+        try:
+            with open('arama_verisi.json', 'r', encoding='utf-8') as f:
+                eski_arama_listesi = json.load(f)
+            eski_arama_map = {item.get('link'): item for item in eski_arama_listesi if isinstance(item, dict) and item.get('link')}
+            for link_key, yeni_item in tum_videolar_arama_icin.items():
+                eski_item = eski_arama_map.get(link_key)
+                if eski_item:
+                    for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek'):
+                        if eski_item.get(korunan_alan) and not yeni_item.get(korunan_alan):
+                            yeni_item[korunan_alan] = eski_item[korunan_alan]
+        except Exception as e:
+            print(f"Eski arama_verisi imzaları korunurken uyarı: {e}")
+
     with open('arama_verisi.json', 'w', encoding='utf-8') as f:
         json.dump(list(tum_videolar_arama_icin.values()), f, ensure_ascii=False)
         
