@@ -688,13 +688,19 @@
                     const [r, g, b] = renkPxList[i];
                     const [deg, s, v] = rgbToHsv(r, g, b);
 
+                    // Sağ üst köşedeki sarı gülen yüz oyuncağını ve kenar gölgesini atla
+                    const pxIdx = i % 4096;
+                    const pxX = pxIdx % 64;
+                    const pxY = Math.floor(pxIdx / 64);
+                    if (pxX > 44 && pxY < 24 && deg >= 24 && deg <= 72 && s > 0.28) continue;
+
                     // Ten rengi (el, parmak) filtresi
                     const isSkin = (deg >= 5 && deg <= 43 && s >= 0.14 && s <= 0.62 && v >= 0.25 && v <= 0.96 && r > g && g > b);
                     if (isSkin) continue;
 
                     // Yeşil yaprak / zürafa oranı (koyu zeytin yeşili ve açık çağla yeşili dahil)
-                    if (deg >= 48 && deg < 168 && s > 0.11 && v > 0.14) {
-                        if (deg >= 62 || v < 0.68 || s < 0.65) {
+                    if (deg >= 55 && deg < 168 && s > 0.14 && v > 0.15) {
+                        if (deg >= 65 || v < 0.64 || s < 0.60) {
                             greenPx++;
                         }
                     }
@@ -1126,8 +1132,14 @@
 
         function gorselKnnTeknikTahminEt() {
             let adaylar = [];
+            let enIyiAi = null;
             veritabani.forEach(v => {
                 let d = imzaMesafesiHesapla(v);
+                let aiSim = aiBenzerlikHesapla(v);
+                let tek = videoTekniginiBul(v);
+                if (!enIyiAi || aiSim > enIyiAi.aiSim) {
+                    enIyiAi = { video: v, aiSim: aiSim, dist: d, teknik: tek };
+                }
                 if (d < 900) {
                     let colorBonus = 0;
                     let rList = v.renkler ? v.renkler.map(x => turkceTemizle(x)) : [];
@@ -1141,8 +1153,9 @@
                     });
                     let dokuD = dokuMesafesiHesapla(v);
                     let dokuBonus = (dokuD < 18.0) ? (18.0 - dokuD) * 0.45 : 0;
-                    let efektifDist = Math.max(1.0, d - colorBonus - dokuBonus);
-                    adaylar.push({ video: v, dist: d, efektifDist: efektifDist, teknik: videoTekniginiBul(v) });
+                    let aiBonus = (aiSim > 0.45) ? (aiSim - 0.45) * 35.0 : 0;
+                    let efektifDist = Math.max(0.5, d - colorBonus - dokuBonus - aiBonus);
+                    adaylar.push({ video: v, dist: d, aiSim: aiSim, efektifDist: efektifDist, teknik: tek });
                 }
             });
             adaylar.sort((a, b) => a.efektifDist - b.efektifDist);
@@ -1150,21 +1163,37 @@
                 return { teknik: "igne", enYakinDist: 999, enYakinVideo: null };
             }
             let enYakin = adaylar[0];
-            // Arşiv kapağıyla veya referans fotoğraflarıyla birebir/çok yakın eşleşme (dist < 14.5) varsa doğrudan o videonun tekniğini al
+
+            // 1) Derin Öğrenme (ONNX 64-D) ile yüksek güvenli model eşleşmesi varsa doğrudan o modelin tekniğini seç
+            if (enIyiAi && enIyiAi.aiSim >= 0.72) {
+                return { teknik: enIyiAi.teknik, enYakinDist: enIyiAi.dist, enYakinVideo: enIyiAi.video };
+            }
+
+            // 2) Arşiv kapağıyla veya referans fotoğraflarıyla çok yakın imza eşleşmesi (dist < 14.5) varsa doğrudan o videonun tekniğini al
             if (enYakin.dist < 14.5) {
                 return { teknik: enYakin.teknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
 
-            // Yeşil yaprak veya zürafa dokusu varsa kesinlikle İğne Oyası
-            if (yuklenenYesilYaprakOrani >= 0.002) {
+            // 3) Eğitilmiş ONNX Modelinin 0. Boyutu (Denetimli Mekik [+] vs İğne [-] Ayırıcı Ekseni)
+            if (yuklenenAiEmbMean && yuklenenAiEmbMean.length === 64) {
+                const aiTekSkor = yuklenenAiEmbMean[0];
+                if ((aiTekSkor > 0.08 && yuklenenYesilYaprakOrani < 0.008) || aiTekSkor > 0.22) {
+                    return { teknik: "mekik", enYakinDist: enYakin.dist, enYakinVideo: (enIyiAi ? enIyiAi.video : enYakin.video) };
+                }
+                if (aiTekSkor < -0.05 || yuklenenYesilYaprakOrani >= 0.006) {
+                    return { teknik: "igne", enYakinDist: enYakin.dist, enYakinVideo: (enIyiAi ? enIyiAi.video : enYakin.video) };
+                }
+            }
+
+            // 4) Belirgin yeşil yaprak veya zürafa dokusu varsa İğne Oyası
+            if (yuklenenYesilYaprakOrani >= 0.005) {
                 return { teknik: "igne", enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
 
-            // Eşleşme zayıfsa veya belirsizse varsayılan her zaman İğne Oyası ağırlıklı olsun (Madde 2.2)
-            // Sadece ilk 7 komşunun en az 5'i Mekik ise ve mesafe yeterince yakınsa Mekik seç
+            // 5) İlk 7 komşunun çoğunluğu Mekik ise ve mesafe yakınsa Mekik seç, aksi halde İğne Oyası (Madde 2.2)
             let komsular = adaylar.slice(0, 7);
             let mekikSayisi = komsular.filter(k => k.teknik === "mekik").length;
-            if (mekikSayisi >= 5 && enYakin.dist < 20.0) {
+            if (mekikSayisi >= 4 && enYakin.dist < 22.0) {
                 return { teknik: "mekik", enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
 
