@@ -380,6 +380,7 @@
         }
 
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/ort.min.js"></script>
 </head>
 <body>
 
@@ -716,17 +717,42 @@
         let yuklenenImzalar = [];
         let yuklenenDokular = [];
         let yuklenenHoglar = [];
+        let yuklenenMotifPencereleri256 = [];
+        let yuklenenAiEmbMean = null;
+        let yuklenenAiEmbList = [];
+        let ortSession = null;
+        let ortYukleniyorPromise = null;
+        let sonSecilenImg = null;
         let yuklenenEnBoyOrani = 1.77;
         let yuklenenRenkler = [];
         let yuklenenYesilYaprakOrani = 0;
         let secilenDosyaModelNo = "";
+
+        async function aiModeliYukle() {
+            if (ortSession) return ortSession;
+            if (ortYukleniyorPromise) return ortYukleniyorPromise;
+            if (typeof ort === "undefined") return null;
+            ortYukleniyorPromise = (async () => {
+                try {
+                    ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.3/dist/";
+                    ortSession = await ort.InferenceSession.create('oya_ai_model.onnx?v=20261114_3', {
+                        executionProviders: ['wasm']
+                    });
+                    return ortSession;
+                } catch (e) {
+                    console.warn("Oya AI ONNX modeli yüklenirken uyarı:", e);
+                    return null;
+                }
+            })();
+            return ortYukleniyorPromise;
+        }
 
         async function veritabaniniYukle() {
             if (veritabani && veritabani.length > 0 && veritabani[0].imza && veritabani[0].imza.length === 48) {
                 return veritabani;
             }
             try {
-                const res = await fetch('arama_verisi.json?v=20261114_2');
+                const res = await fetch('arama_verisi.json?v=20261114_3');
                 veritabani = await res.json();
             } catch (e) {
                 console.warn("Veritabanı yüklenirken hata:", e);
@@ -736,6 +762,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             veritabaniniYukle();
+            aiModeliYukle();
         });
 
         function rgbToHsv(r, g, b) {
@@ -984,13 +1011,15 @@
                     const [r, g, b] = renkPxList[i];
                     const [deg, s, v] = rgbToHsv(r, g, b);
 
-                    // Ten rengi (el, parmak) filtresi (s <= 0.48 ile canlı turuncu oya iplerini korur)
-                    const isSkin = (deg >= 6 && deg <= 40 && s >= 0.15 && s <= 0.48 && v >= 0.28 && v <= 0.96 && r > g && g > b);
+                    // Ten rengi (el, parmak) filtresi
+                    const isSkin = (deg >= 5 && deg <= 43 && s >= 0.14 && s <= 0.62 && v >= 0.25 && v <= 0.96 && r > g && g > b);
                     if (isSkin) continue;
 
                     // Yeşil yaprak / zürafa oranı (koyu zeytin yeşili ve açık çağla yeşili dahil)
-                    if (deg >= 62 && deg < 168 && s > 0.11 && v > 0.14) {
-                        greenPx++;
+                    if (deg >= 48 && deg < 168 && s > 0.11 && v > 0.14) {
+                        if (deg >= 62 || v < 0.68 || s < 0.65) {
+                            greenPx++;
+                        }
                     }
 
                     if (v < 0.22) darkPx++;
@@ -998,11 +1027,11 @@
 
                     if (s > 0.16 && v > 0.16 && v < 0.96) {
                         let c = null;
-                        if (deg >= 240 && deg < 315) c = 'mor';
-                        else if (deg >= 315 && deg < 345) c = 'pembe';
-                        else if (deg >= 345 || deg < 15) c = 'kırmızı';
-                        else if (deg >= 15 && deg < 42) c = 'turuncu';
-                        else if (deg >= 42 && deg < 65) c = 'sarı';
+                        if (deg >= 240 && deg < 308) c = 'mor';
+                        else if (deg >= 308 && deg < 348) c = 'pembe';
+                        else if (deg >= 348 || deg < 16) c = (s < 0.68 && v > 0.45) ? 'pembe' : 'kırmızı';
+                        else if (deg >= 16 && deg < 40) c = 'turuncu';
+                        else if (deg >= 40 && deg < 65) c = (deg >= 48 && (v < 0.68 || s < 0.65)) ? 'yeşil' : 'sarı';
                         else if (deg >= 65 && deg < 168) c = 'yeşil';
                         else if (deg >= 168 && deg < 240) c = 'mavi';
                         if (c) counts[c] = (counts[c] || 0) + 1;
@@ -1046,6 +1075,9 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
+                    sonSecilenImg = img;
+                    yuklenenAiEmbMean = null;
+                    yuklenenAiEmbList = [];
                     gorselOzellikleriniCikar(img);
                     const canvas = document.createElement('canvas');
                     // Telefon ekran görüntüsü ise AI'ya sadece orta fotoğraf bölgesini gönder (UI barlarını kırp)
@@ -1066,6 +1098,246 @@
             }
             reader.readAsDataURL(file);
         });
+
+        function yapisalMotifPencereleriCikar256(img) {
+            const w0 = img.width, h0 = img.height;
+            let sx = 0, sy = 0, sw = w0, sh = h0;
+
+            const tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = w0; tmpCanvas.height = h0;
+            const tmpCtx = tmpCanvas.getContext('2d');
+            tmpCtx.drawImage(img, 0, 0);
+            const rawData = tmpCtx.getImageData(0, 0, w0, h0).data;
+
+            if ((w0 / h0) >= 1.25 && (w0 / h0) <= 1.40) {
+                let topSum = 0, botSum = 0;
+                const yT = Math.floor(h0 * 0.05), yB = Math.floor(h0 * 0.95);
+                for (let i = 0; i < 16; i++) {
+                    const xS = Math.floor((i + 0.5) * w0 / 16);
+                    const i1 = (yT * w0 + xS) * 4, i2 = (yB * w0 + xS) * 4;
+                    topSum += rawData[i1] + rawData[i1 + 1] + rawData[i1 + 2];
+                    botSum += rawData[i2] + rawData[i2 + 1] + rawData[i2 + 2];
+                }
+                if ((topSum / 48) < 28 && (botSum / 48) < 28) {
+                    sy = Math.floor(h0 * 0.125);
+                    sh = Math.floor(h0 * 0.75);
+                }
+            }
+            if ((sw / sh) < 0.68) {
+                sy += Math.floor(sh * 0.16);
+                sh = Math.floor(sh * 0.64);
+            }
+
+            const c256 = document.createElement('canvas');
+            c256.width = 256; c256.height = 256;
+            const ctx256 = c256.getContext('2d');
+            ctx256.drawImage(img, sx, sy, sw, sh, 0, 0, 256, 256);
+            const d256 = ctx256.getImageData(0, 0, 256, 256).data;
+
+            const N = 256 * 256;
+            const R = new Float32Array(N);
+            const G = new Float32Array(N);
+            const B = new Float32Array(N);
+            const lum = new Float32Array(N);
+            const sat = new Float32Array(N);
+            const val = new Float32Array(N);
+
+            for (let i = 0; i < N; i++) {
+                const r = d256[i * 4], g = d256[i * 4 + 1], b = d256[i * 4 + 2];
+                R[i] = r; G[i] = g; B[i] = b;
+                lum[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+                const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+                sat[i] = mx > 1.0 ? (mx - mn) / mx : 0.0;
+                val[i] = mx / 255.0;
+            }
+
+            const grad = new Float32Array(N);
+            for (let y = 0; y < 256; y++) {
+                for (let x = 0; x < 256; x++) {
+                    const idx = y * 256 + x;
+                    const gx = (x > 0 && x < 255) ? Math.abs(lum[idx + 1] - lum[idx - 1]) * 0.5 : 0;
+                    const gy = (y > 0 && y < 255) ? Math.abs(lum[idx + 256] - lum[idx - 256]) * 0.5 : 0;
+                    grad[idx] = Math.sqrt(gx * gx + gy * gy);
+                }
+            }
+
+            function boxBlur256(src, radius) {
+                const diam = radius * 2 + 1;
+                const tmp = new Float32Array(N);
+                const out = new Float32Array(N);
+                for (let y = 0; y < 256; y++) {
+                    const row = y * 256;
+                    for (let x = 0; x < 256; x++) {
+                        let s = 0;
+                        for (let k = -radius; k <= radius; k++) {
+                            const xx = Math.min(255, Math.max(0, x + k));
+                            s += src[row + xx];
+                        }
+                        tmp[row + x] = s / diam;
+                    }
+                }
+                for (let y = 0; y < 256; y++) {
+                    for (let x = 0; x < 256; x++) {
+                        let s = 0;
+                        for (let k = -radius; k <= radius; k++) {
+                            const yy = Math.min(255, Math.max(0, y + k));
+                            s += tmp[yy * 256 + x];
+                        }
+                        out[y * 256 + x] = s / diam;
+                    }
+                }
+                return out;
+            }
+
+            const lumBlur9 = boxBlur256(lum, 4);
+            const gradDensity = boxBlur256(grad, 6);
+
+            const structB = new Uint8Array(N);
+            const structG = new Uint8Array(N);
+            const structR = new Uint8Array(N);
+            const density = new Float32Array(N);
+
+            for (let y = 0; y < 256; y++) {
+                for (let x = 0; x < 256; x++) {
+                    const i = y * 256 + x;
+                    const r = R[i], g = G[i], b = B[i], s = sat[i], v = val[i], gd = gradDensity[i], gr = grad[i];
+                    const isSkin = (r > g + 8) && (g > b * 0.85) && (s >= 0.10) && (s <= 0.56) && (v >= 0.28) && (gd < 17.0);
+                    const isToy = (x > 170) && (y < 125) && (r > 140) && (g > 110) && (b < 90) && (s > 0.32);
+                    let w = (isSkin || isToy) ? 0.08 : 1.0;
+                    if (gd < 6.5) w *= 0.15;
+                    const dog = Math.abs(lum[i] - lumBlur9[i]);
+                    structR[i] = Math.min(255, Math.max(0, Math.round(gr * w * 3.2)));
+                    structG[i] = Math.min(255, Math.max(0, Math.round(dog * w * 4.0)));
+                    structB[i] = Math.min(255, Math.max(0, Math.round((s * 180.0 + gr * 1.5) * w)));
+                    density[i] = gd * w;
+                }
+            }
+
+            // 6 Pencere: Merkez (0° & 180°), Motif 1 (0° & 180°), Motif 2 (0° & 180°)
+            const winCoords = [{ x: 24, y: 24, sz: 208 }];
+            const candidates = [];
+            const winSz = 120;
+            for (let y = 18; y <= 226 - winSz; y += 16) {
+                for (let x = 12; x <= 244 - winSz; x += 16) {
+                    let sum = 0;
+                    for (let yy = y; yy < y + winSz; yy++) {
+                        const rOff = yy * 256;
+                        for (let xx = x; xx < x + winSz; xx++) sum += density[rOff + xx];
+                    }
+                    candidates.push({ sc: sum / (winSz * winSz), x, y });
+                }
+            }
+            candidates.sort((a, b) => b.sc - a.sc);
+            const picked = [];
+            for (let i = 0; i < candidates.length; i++) {
+                const c = candidates[i];
+                if (picked.every(p => Math.abs(c.x - p.x) + Math.abs(c.y - p.y) >= 56)) {
+                    picked.push(c);
+                    winCoords.push({ x: c.x, y: c.y, sz: winSz });
+                    if (picked.length >= 2) break;
+                }
+            }
+            while (winCoords.length < 3) winCoords.push({ x: 24, y: 24, sz: 208 });
+
+            function cropTo224Tensor(wx, wy, wsz, rot180) {
+                const tensorData = new Float32Array(3 * 224 * 224);
+                const plane = 224 * 224;
+                for (let ty = 0; ty < 224; ty++) {
+                    const fy = (ty + 0.5) * wsz / 224.0 - 0.5;
+                    const y0 = Math.max(0, Math.min(wsz - 1, Math.floor(fy)));
+                    const y1 = Math.max(0, Math.min(wsz - 1, y0 + 1));
+                    const wyFrac = fy - Math.floor(fy);
+                    for (let tx = 0; tx < 224; tx++) {
+                        const fx = (tx + 0.5) * wsz / 224.0 - 0.5;
+                        const x0 = Math.max(0, Math.min(wsz - 1, Math.floor(fx)));
+                        const x1 = Math.max(0, Math.min(wsz - 1, x0 + 1));
+                        const wxFrac = fx - Math.floor(fx);
+
+                        const sy0 = rot180 ? (wy + wsz - 1 - y0) : (wy + y0);
+                        const sy1 = rot180 ? (wy + wsz - 1 - y1) : (wy + y1);
+                        const sx0 = rot180 ? (wx + wsz - 1 - x0) : (wx + x0);
+                        const sx1 = rot180 ? (wx + wsz - 1 - x1) : (wx + x1);
+
+                        const i00 = sy0 * 256 + sx0, i01 = sy0 * 256 + sx1;
+                        const i10 = sy1 * 256 + sx0, i11 = sy1 * 256 + sx1;
+
+                        const bVal = (1 - wyFrac) * ((1 - wxFrac) * structB[i00] + wxFrac * structB[i01]) + wyFrac * ((1 - wxFrac) * structB[i10] + wxFrac * structB[i11]);
+                        const gVal = (1 - wyFrac) * ((1 - wxFrac) * structG[i00] + wxFrac * structG[i01]) + wyFrac * ((1 - wxFrac) * structG[i10] + wxFrac * structG[i11]);
+                        const rVal = (1 - wyFrac) * ((1 - wxFrac) * structR[i00] + wxFrac * structR[i01]) + wyFrac * ((1 - wxFrac) * structR[i10] + wxFrac * structR[i11]);
+
+                        const outIdx = ty * 224 + tx;
+                        tensorData[outIdx] = bVal - 104.0;
+                        tensorData[plane + outIdx] = gVal - 117.0;
+                        tensorData[2 * plane + outIdx] = rVal - 123.0;
+                    }
+                }
+                return tensorData;
+            }
+
+            const tensors = [];
+            for (let i = 0; i < 3; i++) {
+                const wc = winCoords[i];
+                tensors.push(cropTo224Tensor(wc.x, wc.y, wc.sz, false));
+                tensors.push(cropTo224Tensor(wc.x, wc.y, wc.sz, true));
+            }
+            return tensors;
+        }
+
+        async function oyaAiEmbeddingCikar(img) {
+            try {
+                const sess = await aiModeliYukle();
+                if (!sess || !img) return false;
+                const tensors = yapisalMotifPencereleriCikar256(img);
+                const embList = [];
+                const meanEmb = new Float32Array(64);
+
+                for (let w = 0; w < tensors.length; w++) {
+                    const inputTensor = new ort.Tensor('float32', tensors[w], [1, 3, 224, 224]);
+                    const outMap = await sess.run({ data_0: inputTensor });
+                    const raw = outMap.emb_out.data;
+                    let norm = 0;
+                    for (let i = 0; i < 64; i++) norm += raw[i] * raw[i];
+                    norm = Math.sqrt(norm) + 1e-8;
+                    const vec = new Float32Array(64);
+                    for (let i = 0; i < 64; i++) {
+                        vec[i] = raw[i] / norm;
+                        meanEmb[i] += vec[i];
+                    }
+                    embList.push(vec);
+                }
+                let mNorm = 0;
+                for (let i = 0; i < 64; i++) mNorm += meanEmb[i] * meanEmb[i];
+                mNorm = Math.sqrt(mNorm) + 1e-8;
+                for (let i = 0; i < 64; i++) meanEmb[i] /= mNorm;
+
+                yuklenenAiEmbMean = meanEmb;
+                yuklenenAiEmbList = embList;
+                return true;
+            } catch (e) {
+                console.warn("Oya AI embedding çıkarma uyarısı:", e);
+                return false;
+            }
+        }
+
+        function aiBenzerlikHesapla(v) {
+            if (!yuklenenAiEmbMean || !Array.isArray(v.ai_emb) || v.ai_emb.length !== 64) return -1;
+            const dbVec = v.ai_emb;
+            let dbNorm = 0;
+            for (let i = 0; i < 64; i++) dbNorm += dbVec[i] * dbVec[i];
+            dbNorm = Math.sqrt(dbNorm) + 1e-8;
+
+            let dotMean = 0;
+            for (let i = 0; i < 64; i++) dotMean += yuklenenAiEmbMean[i] * (dbVec[i] / dbNorm);
+
+            let maxWinDot = -1;
+            for (let w = 0; w < yuklenenAiEmbList.length; w++) {
+                const wVec = yuklenenAiEmbList[w];
+                let d = 0;
+                for (let i = 0; i < 64; i++) d += wVec[i] * (dbVec[i] / dbNorm);
+                if (d > maxWinDot) maxWinDot = d;
+            }
+            return 0.65 * dotMean + 0.35 * maxWinDot;
+        }
 
         function tekImzaMesafesi(a, b) {
             if (!a || !b || a.length !== 48 || b.length !== 48) return 999;
@@ -1229,49 +1501,17 @@
 
             await veritabaniniYukle();
 
-            // ÖN KONTROL: Görsel imzası ve teknik analizi
+            // 1. Eğitilmiş Oya Derin Öğrenme Modelini (oya_ai_model.onnx) tarayıcıda çalıştır
+            if (sonSecilenImg && !yuklenenAiEmbMean) {
+                await Promise.race([
+                    oyaAiEmbeddingCikar(sonSecilenImg),
+                    new Promise(r => setTimeout(r, 4000))
+                ]);
+            }
+
+            // 2. Görsel imzası ve teknik analizi
             const knnTahmin = gorselKnnTeknikTahminEt();
             const yedekKategoriAdi = teknikEtiketiGetir(knnTahmin.teknik);
-
-            if (knnTahmin.enYakinDist < 12.5) {
-                document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif"];
-                await modelleriEkranaBas(yedekTerimler, yedekKategoriAdi, "", secilenDosyaModelNo);
-                return;
-            }
-
-            const formData = new URLSearchParams();
-            formData.append('islem', 'gorsel_arama');
-            formData.append('resim_base64', islenmisResimBase64);
-
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2800);
-
-            try {
-                const res = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString(),
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && !data.gercek_hata && (data.terimler || data.model_no || data.ana_kategori)) {
-                        document.getElementById('yukleniyorGostergesi').style.display = 'none';
-                        let secilenAnaKategori = data.ana_kategori ? data.ana_kategori : yedekKategoriAdi;
-                        // Yeşil yaprak/zürafa varsa veya KNN İğne Oyası dediyse AI yanılıp Mekik demesin
-                        if (knnTahmin.teknik === "igne" && turkceTemizle(secilenAnaKategori).includes("mekik")) {
-                            secilenAnaKategori = "İğne Oyası";
-                        }
-                        await modelleriEkranaBas(data.terimler || yuklenenRenkler, secilenAnaKategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
-                        return;
-                    }
-                }
-            } catch (e) {
-                clearTimeout(timeoutId);
-            }
 
             document.getElementById('yukleniyorGostergesi').style.display = 'none';
             const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif"];
@@ -1319,6 +1559,20 @@
                     if (arananModelNo !== "" && new RegExp("\\b" + arananModelNo + "\\b").test(b)) {
                         skor += 6000;
                         eslesenKelimeSayisi += 10;
+                    }
+
+                    // A2) EĞİTİLMİŞ OYA DERİN SİNİR AĞI (64-D ONNX MOTİF EMBEDDING) BENZERLİĞİ
+                    let aiSim = aiBenzerlikHesapla(v);
+                    v._aiSim = aiSim;
+                    if (aiSim >= 0.85) {
+                        skor += 7500 + Math.round(aiSim * 1500);
+                        eslesenKelimeSayisi += 14;
+                    } else if (aiSim >= 0.65) {
+                        skor += 2400 + Math.round(aiSim * 2200);
+                        eslesenKelimeSayisi += 8;
+                    } else if (aiSim >= 0.50) {
+                        skor += Math.round(aiSim * 1400);
+                        eslesenKelimeSayisi += 4;
                     }
 
                     // B) ÇOKLU PENCERE GÖRSEL İMZA BENZERLİĞİ
@@ -1430,6 +1684,24 @@
                 sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             }
 
+            // 1. sıradaki modelin yapısal/anatomik ikizleri (yakin_modeller) varsa 2. ve 3. sıraya Yakın Eşleşme olarak yerleştir
+            if (sonuclar.length > 1 && Array.isArray(sonuclar[0].yakin_modeller) && sonuclar[0].yakin_modeller.length > 0) {
+                const birinciVideo = sonuclar[0];
+                const yakinLinkler = birinciVideo.yakin_modeller;
+                const yakinVideolar = [];
+                for (let y = 0; y < yakinLinkler.length; y++) {
+                    const bulunan = veritabani.find(item => item.link === yakinLinkler[y]);
+                    if (bulunan && bulunan.link !== birinciVideo.link) {
+                        bulunan._yakinEslesme = true;
+                        yakinVideolar.push(bulunan);
+                    }
+                }
+                if (yakinVideolar.length > 0) {
+                    const digerleri = sonuclar.slice(1).filter(item => !yakinVideolar.some(yv => yv.link === item.link));
+                    sonuclar = [birinciVideo, ...yakinVideolar, ...digerleri];
+                }
+            }
+
             const grid = document.getElementById('oneriGrid');
             const baslik = document.getElementById('sonucBaslik');
 
@@ -1443,18 +1715,27 @@
                 }
                 
                 if (tamIsabet && yakalananNo) {
-                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Görseldeki modeli (<span style="color:#d6336c;">${yakalananNo}. Model</span>) birebir yakaladık ve yapılış videosunu bulduk:`;
+                    baslik.innerHTML = `🎯 <b>Tam Eşleşme!</b> Görseldeki modeli (<span style="color:#d6336c;">${yakalananNo}. Model</span>) ve en yakın benzer modelleri bulduk:`;
                 } else if (tamIsabet) {
-                    baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Yüklediğiniz görselle birebir eşleşen yapılış videosunu bulduk:`;
+                    baslik.innerHTML = `🎯 <b>Tam Eşleşme!</b> Yüklediğiniz görselle eşleşen yapılış videosunu ve en yakın modelleri bulduk:`;
                 } else {
                     let renkBilgi = yuklenenRenkler.length > 0 ? ` (${yuklenenRenkler.join(", ")} tonlarında)` : "";
                     baslik.innerHTML = `🎉 <b>${anaKategori || "İğne Oyası"}</b> İçinde Görselinize En Uygun ${Math.min(sonuclar.length, 6)} Video Bulundu${renkBilgi}:`;
                 }
                 
-                grid.innerHTML = sonuclar.slice(0, 6).map((video, idx) => `
-                    <a href="${video.link}" class="video-kart" ${tamIsabet && idx === 0 ? 'style="border: 2px solid #28a745; box-shadow: 0 0 18px rgba(40,167,69,0.35);"' : ''}>
+                grid.innerHTML = sonuclar.slice(0, 6).map((video, idx) => {
+                    const isTam = tamIsabet && idx === 0;
+                    const isYakin = !isTam && (video._yakinEslesme || (video._aiSim && video._aiSim >= 0.62) || (tamIsabet && idx <= 2));
+                    const kartStil = isTam
+                        ? 'style="border: 2px solid #28a745; box-shadow: 0 0 18px rgba(40,167,69,0.35);"'
+                        : (isYakin ? 'style="border: 2px solid #d6336c; box-shadow: 0 0 14px rgba(214,51,108,0.22);"' : '');
+                    const rozetHtml = isTam
+                        ? '<div style="position:absolute;top:8px;left:8px;z-index:2;background:#28a745;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">✅ Tam Eşleşen Model</div>'
+                        : (isYakin ? '<div style="position:absolute;top:8px;left:8px;z-index:2;background:#d6336c;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">✨ Yakın Eşleşme</div>' : '');
+                    return `
+                    <a href="${video.link}" class="video-kart" ${kartStil}>
                         <div class="kart-resim">
-                            ${tamIsabet && idx === 0 ? '<div style="position:absolute;top:8px;left:8px;z-index:2;background:#28a745;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.25);">✅ Birebir Eşleşen Model</div>' : ''}
+                            ${rozetHtml}
                             <img src="${video.resim}" alt="${video.baslik}">
                         </div>
                         <div class="kart-icerik">
@@ -1464,7 +1745,7 @@
                             </div>
                         </div>
                     </a>
-                `).join('');
+                `}).join('');
             } else {
                 // Hiçbir değerle eşleşme sağlanmazsa İğne Oyası ağırlıklı popüler modeller göster (Madde 2.2)
                 let igneYedek = veritabani.filter(v => videoTekniginiBul(v) === "igne");
