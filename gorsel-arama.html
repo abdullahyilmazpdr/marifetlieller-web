@@ -713,6 +713,8 @@
         let veritabani = [];
         let yuklenenImza = [];
         let yuklenenImzaKare = [];
+        let yuklenenImzalar = [];
+        let yuklenenDokular = [];
         let yuklenenEnBoyOrani = 1.77;
         let yuklenenRenkler = [];
         let yuklenenYesilYaprakOrani = 0;
@@ -723,7 +725,7 @@
                 return veritabani;
             }
             try {
-                const res = await fetch('arama_verisi.json?v=20261108_5');
+                const res = await fetch('arama_verisi.json?v=20261114_1');
                 veritabani = await res.json();
             } catch (e) {
                 console.warn("Veritabanı yüklenirken hata:", e);
@@ -779,6 +781,31 @@
             return { grid, px };
         }
 
+        function doku4x4Hesapla(px) {
+            if (!px || px.length !== 48 * 48) return null;
+            const lum = new Float32Array(48 * 48);
+            for (let i = 0; i < px.length; i++) {
+                lum[i] = 0.299 * px[i][0] + 0.587 * px[i][1] + 0.114 * px[i][2];
+            }
+            const cells = [];
+            for (let gy = 0; gy < 4; gy++) {
+                for (let gx = 0; gx < 4; gx++) {
+                    let edgeSum = 0;
+                    for (let y = gy * 12; y < (gy + 1) * 12; y++) {
+                        for (let x = gx * 12; x < (gx + 1) * 12; x++) {
+                            const idx = y * 48 + x;
+                            const gxVal = (x + 1 < 48) ? Math.abs(lum[idx + 1] - lum[idx]) : 0;
+                            const gyVal = (y + 1 < 48) ? Math.abs(lum[idx + 48] - lum[idx]) : 0;
+                            edgeSum += (gxVal + gyVal);
+                        }
+                    }
+                    cells.push(edgeSum / 144.0);
+                }
+            }
+            const maxE = Math.max(...cells, 1.0);
+            return cells.map(c => Math.round((c / maxE) * 100));
+        }
+
         function gorselOzellikleriniCikar(img) {
             try {
                 const tamCanvas = document.createElement('canvas');
@@ -812,11 +839,11 @@
                 yuklenenEnBoyOrani = w / h;
 
                 // 1) Dikdörtgen (16:9) 4x4 Blok Ortalaması İmzası (48 sayı)
-                const rectLeft = Math.floor(w * 0.10);
-                const rectTop = yOffset + Math.floor(h * 0.10);
-                const rectW = Math.floor(w * 0.80);
-                const rectH = Math.floor(h * 0.80);
-                const rectSonuc = blokOrtalamasi4x4(tamData, img.width, img.height, rectLeft, rectTop, rectW, rectH);
+                const rectSonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.10), yOffset + Math.floor(h * 0.10),
+                    Math.floor(w * 0.80), Math.floor(h * 0.80)
+                );
                 yuklenenImza = rectSonuc.grid;
 
                 // 2) Kare (1:1) Merkez Kırpım 4x4 İmzası (Instagram/kare yüklemeler için)
@@ -824,53 +851,105 @@
                 const sqLeft = Math.floor((w - sqSide) / 2) + Math.floor(sqSide * 0.08);
                 const sqTop = yOffset + Math.floor((h - sqSide) / 2) + Math.floor(sqSide * 0.08);
                 const sqLen = Math.floor(sqSide * 0.84);
-                yuklenenImzaKare = blokOrtalamasi4x4(tamData, img.width, img.height, sqLeft, sqTop, sqLen, sqLen).grid;
+                const kareSonuc = blokOrtalamasi4x4(tamData, img.width, img.height, sqLeft, sqTop, sqLen, sqLen);
+                yuklenenImzaKare = kareSonuc.grid;
 
-                // 3) 48x48 HSV Baskın Motif Renk Analizi (Ten rengi ve parlak beyaz masa filtresi ile)
+                // 3) Odak (Merkez Motif) İmzası
+                const odakSonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.20), yOffset + Math.floor(h * 0.18),
+                    Math.floor(w * 0.60), Math.floor(h * 0.68)
+                );
+
+                // 4) Telefon Ekran Görüntüsü (Pinterest / Instagram) Orta Motif Pencereleri
+                const ekran1Sonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.08), yOffset + Math.floor(h * 0.18),
+                    Math.floor(w * 0.84), Math.floor(h * 0.44)
+                );
+                const ekran2Sonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.08), yOffset + Math.floor(h * 0.28),
+                    Math.floor(w * 0.84), Math.floor(h * 0.44)
+                );
+
+                // 5) Tam Yazma / Kare Çevre Alt Kenar Motif Penceresi
+                const altSonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.25), yOffset + Math.floor(h * 0.62),
+                    Math.floor(w * 0.50), Math.floor(h * 0.36)
+                );
+
+                yuklenenImzalar = [
+                    yuklenenImza,
+                    yuklenenImzaKare,
+                    odakSonuc.grid,
+                    ekran1Sonuc.grid,
+                    ekran2Sonuc.grid,
+                    altSonuc.grid
+                ];
+
+                yuklenenDokular = [
+                    doku4x4Hesapla(odakSonuc.px),
+                    doku4x4Hesapla(kareSonuc.px),
+                    doku4x4Hesapla(ekran1Sonuc.px),
+                    doku4x4Hesapla(ekran2Sonuc.px),
+                    doku4x4Hesapla(altSonuc.px)
+                ].filter(Boolean);
+
+                // 6) HSV Baskın Motif Renk Analizi
+                // Telefon ekran görüntüsü ise (dikey) üst/alt barları ve Pinterest kırmızı 'Kaydet' butonunu atla
+                let renkPxList = rectSonuc.px;
+                if (yuklenenEnBoyOrani < 0.68) {
+                    renkPxList = ekran1Sonuc.px.concat(ekran2Sonuc.px);
+                } else if (yuklenenEnBoyOrani >= 0.85 && yuklenenEnBoyOrani <= 1.15) {
+                    renkPxList = kareSonuc.px.concat(altSonuc.px);
+                }
+
                 const counts = {};
                 let darkPx = 0, lightPx = 0, greenPx = 0;
-                const totalPx = 48 * 48;
-                const pxList = rectSonuc.px;
+                const totalPx = renkPxList.length;
 
-                for (let i = 0; i < pxList.length; i++) {
-                    const [r, g, b] = pxList[i];
+                for (let i = 0; i < totalPx; i++) {
+                    const [r, g, b] = renkPxList[i];
                     const [deg, s, v] = rgbToHsv(r, g, b);
 
                     // Ten rengi (el, parmak) filtresi: Oyayı tutan eli oyanın rengi olarak sayma!
                     const isSkin = (deg >= 6 && deg <= 40 && s >= 0.15 && s <= 0.68 && v >= 0.28 && v <= 0.96 && r > g && g > b);
                     if (isSkin) continue;
 
-                    // Yeşil yaprak / zürafa oranı (İğne oyası için en belirgin doku)
-                    if (deg >= 68 && deg < 165 && s > 0.18 && v > 0.18) {
+                    // Yeşil yaprak / zürafa oranı (koyu zeytin yeşili ve açık çağla yeşili dahil)
+                    if (deg >= 62 && deg < 168 && s > 0.11 && v > 0.14) {
                         greenPx++;
                     }
 
                     if (v < 0.22) darkPx++;
                     else if (s < 0.15 && v > 0.78) lightPx++;
 
-                    if (s > 0.22 && v > 0.18 && v < 0.96) {
+                    if (s > 0.16 && v > 0.16 && v < 0.96) {
                         let c = null;
                         if (deg >= 240 && deg < 315) c = 'mor';
                         else if (deg >= 315 && deg < 345) c = 'pembe';
                         else if (deg >= 345 || deg < 15) c = 'kırmızı';
                         else if (deg >= 15 && deg < 42) c = 'turuncu';
-                        else if (deg >= 42 && deg < 68) c = 'sarı';
-                        else if (deg >= 68 && deg < 165) c = 'yeşil';
-                        else if (deg >= 165 && deg < 240) c = 'mavi';
+                        else if (deg >= 42 && deg < 65) c = 'sarı';
+                        else if (deg >= 65 && deg < 168) c = 'yeşil';
+                        else if (deg >= 168 && deg < 240) c = 'mavi';
                         if (c) counts[c] = (counts[c] || 0) + 1;
                     }
                 }
 
-                yuklenenYesilYaprakOrani = greenPx / totalPx;
+                yuklenenYesilYaprakOrani = greenPx / Math.max(1, totalPx);
 
+                const minCount = Math.max(18, Math.floor(totalPx * 0.008));
                 yuklenenRenkler = Object.entries(counts)
-                    .filter(e => e[1] > 20)
+                    .filter(e => e[1] > minCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 3)
                     .map(e => e[0]);
 
                 if (darkPx > totalPx * 0.25 && !yuklenenRenkler.includes('siyah')) yuklenenRenkler.push('siyah');
-                else if (lightPx > totalPx * 0.35 && !yuklenenRenkler.includes('beyaz')) yuklenenRenkler.push('beyaz');
+                else if (lightPx > totalPx * 0.32 && !yuklenenRenkler.includes('beyaz')) yuklenenRenkler.push('beyaz');
             } catch (err) {
                 console.warn("Görsel imza çıkarma uyarısı:", err);
             }
@@ -899,40 +978,84 @@
                 img.onload = function() {
                     gorselOzellikleriniCikar(img);
                     const canvas = document.createElement('canvas');
-                    let width = img.width; let height = img.height;
+                    // Telefon ekran görüntüsü ise AI'ya sadece orta fotoğraf bölgesini gönder (UI barlarını kırp)
+                    let sx = 0, sy = 0, sw = img.width, sh = img.height;
+                    if ((img.width / img.height) < 0.68) {
+                        sy = Math.floor(img.height * 0.16);
+                        sh = Math.floor(img.height * 0.64);
+                    }
+                    let width = sw; let height = sh;
                     const maxW = 500; const maxH = 500;
                     if (width > height) { if (width > maxW) { height *= maxW / width; width = maxW; } } 
                     else { if (height > maxH) { width *= maxH / height; height = maxH; } }
                     canvas.width = width; canvas.height = height;
-                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                    islenmisResimBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, width, height);
+                    islenmisResimBase64 = canvas.toDataURL('image/jpeg', 0.65);
                 }
                 img.src = event.target.result;
             }
             reader.readAsDataURL(file);
         });
 
-        function imzaMesafesiHesapla(v) {
-            if (!v.imza || v.imza.length !== 48 || yuklenenImza.length !== 48) return 999;
-            let sumRect = 0;
+        function tekImzaMesafesi(a, b) {
+            if (!a || !b || a.length !== 48 || b.length !== 48) return 999;
+            let sum = 0;
             for (let i = 0; i < 48; i++) {
-                let d = yuklenenImza[i] - v.imza[i];
-                sumRect += d * d;
+                const d = a[i] - b[i];
+                sum += d * d;
             }
-            let distRect = Math.sqrt(sumRect / 48);
+            return Math.sqrt(sum / 48);
+        }
 
-            // Eğer yüklenen görsel kareye yakınsa (Instagram vb.), kare imzayı da kontrol et
-            if (yuklenenEnBoyOrani < 1.25 && v.imza_kare && v.imza_kare.length === 48) {
-                let sumKare = 0, sumCapraz = 0;
-                for (let i = 0; i < 48; i++) {
-                    let d1 = yuklenenImzaKare[i] - v.imza_kare[i];
-                    let d2 = yuklenenImza[i] - v.imza_kare[i];
-                    sumKare += d1 * d1;
-                    sumCapraz += d2 * d2;
+        function imzaMesafesiHesapla(v) {
+            const adayImzalar = [];
+            if (v.imza && v.imza.length === 48) adayImzalar.push(v.imza);
+            if (v.imza_kare && v.imza_kare.length === 48) adayImzalar.push(v.imza_kare);
+            if (v.imza_odak && v.imza_odak.length === 48) adayImzalar.push(v.imza_odak);
+            if (Array.isArray(v.imza_ek)) {
+                for (let k = 0; k < v.imza_ek.length; k++) {
+                    if (v.imza_ek[k] && v.imza_ek[k].length === 48) adayImzalar.push(v.imza_ek[k]);
                 }
-                return Math.min(distRect, Math.sqrt(sumKare / 48), Math.sqrt(sumCapraz / 48));
             }
-            return distRect;
+            if (adayImzalar.length === 0) return 999;
+            const kaynakImzalar = (yuklenenImzalar && yuklenenImzalar.length > 0) ? yuklenenImzalar : [yuklenenImza];
+            let minDist = 999;
+            for (let i = 0; i < kaynakImzalar.length; i++) {
+                const u = kaynakImzalar[i];
+                if (!u || u.length !== 48) continue;
+                for (let j = 0; j < adayImzalar.length; j++) {
+                    const d = tekImzaMesafesi(u, adayImzalar[j]);
+                    if (d < minDist) minDist = d;
+                }
+            }
+            return minDist;
+        }
+
+        function dokuMesafesiHesapla(v) {
+            if (!v.doku || v.doku.length !== 16 || !yuklenenDokular || yuklenenDokular.length === 0) return 999;
+            const vd = v.doku;
+            // Sarkık vs dik duran motifler için dikey simetri (alt-üst çevrilmiş) dokusunu da kontrol et
+            const vdTers = [
+                vd[12], vd[13], vd[14], vd[15],
+                vd[8],  vd[9],  vd[10], vd[11],
+                vd[4],  vd[5],  vd[6],  vd[7],
+                vd[0],  vd[1],  vd[2],  vd[3]
+            ];
+            let minD = 999;
+            for (let k = 0; k < yuklenenDokular.length; k++) {
+                const ud = yuklenenDokular[k];
+                if (!ud || ud.length !== 16) continue;
+                let s1 = 0, s2 = 0;
+                for (let i = 0; i < 16; i++) {
+                    const d1 = ud[i] - vd[i];
+                    const d2 = ud[i] - vdTers[i];
+                    s1 += d1 * d1;
+                    s2 += d2 * d2;
+                }
+                const dist = Math.min(Math.sqrt(s1 / 16), Math.sqrt(s2 / 16));
+                if (dist < minD) minD = dist;
+            }
+            return minD;
         }
 
         function turkceTemizle(metin) {
@@ -981,7 +1104,9 @@
                             colorBonus += 5.0;
                         }
                     });
-                    let efektifDist = Math.max(1.0, d - colorBonus);
+                    let dokuD = dokuMesafesiHesapla(v);
+                    let dokuBonus = (dokuD < 18.0) ? (18.0 - dokuD) * 0.45 : 0;
+                    let efektifDist = Math.max(1.0, d - colorBonus - dokuBonus);
                     adaylar.push({ video: v, dist: d, efektifDist: efektifDist, teknik: videoTekniginiBul(v) });
                 }
             });
@@ -990,35 +1115,25 @@
                 return { teknik: "igne", enYakinDist: 999, enYakinVideo: null };
             }
             let enYakin = adaylar[0];
-            // Arşiv kapağıyla birebir veya çok yakın eşleşme (dist < 15.0) varsa o videonun tekniğini doğrudan al
-            if (enYakin.dist < 15.0) {
+            // Arşiv kapağıyla veya referans fotoğraflarıyla birebir/çok yakın eşleşme (dist < 14.5) varsa doğrudan o videonun tekniğini al
+            if (enYakin.dist < 14.5) {
                 return { teknik: enYakin.teknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
 
-            // Dışarıdan çekilen/Instagram fotoğrafları:
-            // En yakın komşuların oylarını tarafsız topla (Mekik bias kaldırıldı!)
-            let oylar = { igne: 0, mekik: 0, tig: 0, orgu: 0 };
+            // Yeşil yaprak veya zürafa dokusu varsa kesinlikle İğne Oyası
+            if (yuklenenYesilYaprakOrani >= 0.002) {
+                return { teknik: "igne", enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
+            }
+
+            // Eşleşme zayıfsa veya belirsizse varsayılan her zaman İğne Oyası ağırlıklı olsun (Madde 2.2)
+            // Sadece ilk 7 komşunun en az 5'i Mekik ise ve mesafe yeterince yakınsa Mekik seç
             let komsular = adaylar.slice(0, 7);
-            komsular.forEach((k, idx) => {
-                let agirlik = 1.0 / Math.pow(k.efektifDist + 2.0, 2);
-                if (idx === 0) agirlik *= 1.4;
-                oylar[k.teknik] = (oylar[k.teknik] || 0) + agirlik;
-            });
-
-            // Yeşil yaprak veya zürafa dokusu varsa İğne Oyası lehine bonus
-            if (yuklenenYesilYaprakOrani > 0.003) {
-                oylar["igne"] = (oylar["igne"] || 0) + (yuklenenYesilYaprakOrani * 0.6);
+            let mekikSayisi = komsular.filter(k => k.teknik === "mekik").length;
+            if (mekikSayisi >= 5 && enYakin.dist < 20.0) {
+                return { teknik: "mekik", enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
             }
 
-            let secilenTeknik = "igne";
-            let maksOy = -1;
-            for (let tk in oylar) {
-                if (oylar[tk] > maksOy) {
-                    maksOy = oylar[tk];
-                    secilenTeknik = tk;
-                }
-            }
-            return { teknik: secilenTeknik, enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
+            return { teknik: "igne", enYakinDist: enYakin.dist, enYakinVideo: enYakin.video };
         }
 
         async function analiziBaslat() {
@@ -1032,7 +1147,7 @@
             const knnTahmin = gorselKnnTeknikTahminEt();
             const yedekKategoriAdi = teknikEtiketiGetir(knnTahmin.teknik);
 
-            if (knnTahmin.enYakinDist < 12.0) {
+            if (knnTahmin.enYakinDist < 12.5) {
                 document.getElementById('yukleniyorGostergesi').style.display = 'none';
                 const yedekTerimler = [...yuklenenRenkler, "çiçek", "zarif"];
                 await modelleriEkranaBas(yedekTerimler, yedekKategoriAdi, "", secilenDosyaModelNo);
@@ -1044,7 +1159,7 @@
             formData.append('resim_base64', islenmisResimBase64);
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 6000);
+            const timeoutId = setTimeout(() => controller.abort(), 2800);
 
             try {
                 const res = await fetch(scriptURL, {
@@ -1060,6 +1175,10 @@
                     if (data && !data.gercek_hata && (data.terimler || data.model_no || data.ana_kategori)) {
                         document.getElementById('yukleniyorGostergesi').style.display = 'none';
                         let secilenAnaKategori = data.ana_kategori ? data.ana_kategori : yedekKategoriAdi;
+                        // Yeşil yaprak/zürafa varsa veya KNN İğne Oyası dediyse AI yanılıp Mekik demesin
+                        if (knnTahmin.teknik === "igne" && turkceTemizle(secilenAnaKategori).includes("mekik")) {
+                            secilenAnaKategori = "İğne Oyası";
+                        }
                         await modelleriEkranaBas(data.terimler || yuklenenRenkler, secilenAnaKategori, data.alt_kategori, data.model_no || secilenDosyaModelNo);
                         return;
                     }
@@ -1084,18 +1203,16 @@
                 if (!temizTerimler.includes(r)) temizTerimler.push(r);
             });
 
-            let aranacakAna = "";
+            // Madde 2.2: Eşleşme yoksa veya kategori belirsizse varsayılan İğne Oyası ağırlıklı olsun
+            let aranacakAna = "igne";
             let hedefKategori = turkceTemizle(anaKategori || "");
             if (hedefKategori.includes("mekik")) aranacakAna = "mekik";
             else if (hedefKategori.includes("tig")) aranacakAna = "tig";
             else if (hedefKategori.includes("orgu")) aranacakAna = "orgu";
-            else if (hedefKategori.includes("igne")) aranacakAna = "igne";
+            else aranacakAna = "igne";
 
-            let filtrelenmisVeritabani = veritabani;
-            if (aranacakAna !== "") {
-                let katListe = veritabani.filter(v => videoTekniginiBul(v) === aranacakAna);
-                if (katListe.length > 0) filtrelenmisVeritabani = katListe;
-            }
+            let filtrelenmisVeritabani = veritabani.filter(v => videoTekniginiBul(v) === aranacakAna);
+            if (filtrelenmisVeritabani.length === 0) filtrelenmisVeritabani = veritabani;
 
             let altKatMetni = turkceTemizle(altKategori || "");
             let arananModelNo = modelNo ? modelNo.toString().trim() : "";
@@ -1118,12 +1235,12 @@
                         eslesenKelimeSayisi += 10;
                     }
 
-                    // B) 4x4 (48-Boyutlu) GÖRSEL RGB BLOK İMZASI BENZERLİĞİ
+                    // B) ÇOKLU PENCERE GÖRSEL İMZA BENZERLİĞİ
                     let dist = imzaMesafesiHesapla(v);
                     v._gorselDist = dist;
-                    if (dist < 10.0) {
-                        // Birebir aynı model kapağı / fotoğrafı! Kesin 1. sıra!
-                        skor += 7000 + Math.round((10.0 - dist) * 100);
+                    if (dist < 10.5) {
+                        // Birebir aynı model kapağı veya referans fotoğrafı! Kesin 1. sıra!
+                        skor += 7000 + Math.round((10.5 - dist) * 100);
                         eslesenKelimeSayisi += 12;
                     } else if (dist < 18.0) {
                         skor += 1200 + Math.round((18.0 - dist) * 50);
@@ -1133,6 +1250,17 @@
                         eslesenKelimeSayisi += 3;
                     } else if (dist < 34.0) {
                         skor += Math.round((35.0 - dist) * 8);
+                    }
+
+                    // B2) RENKTEN BAĞIMSIZ 4x4 İLMEK / KENAR DOKUSU BENZERLİĞİ (Farklı renkte örülmüş aynı modelleri yakalar)
+                    let dokuDist = dokuMesafesiHesapla(v);
+                    v._dokuDist = dokuDist;
+                    if (dokuDist < 12.0) {
+                        skor += 280 + Math.round((12.0 - dokuDist) * 25);
+                        eslesenKelimeSayisi += 3;
+                    } else if (dokuDist < 19.0) {
+                        skor += Math.round((19.0 - dokuDist) * 14);
+                        eslesenKelimeSayisi += 1;
                     }
 
                     // C) MOTİF RENK EŞLEŞMESİ
@@ -1159,11 +1287,16 @@
                         let aranan = turkceTemizle(terim).trim();
                         if (aranan.length > 2 && aramaMetni.includes(aranan)) {
                             eslesenKelimeSayisi++;
-                            if (b.includes(aranan)) skor += 30;
-                            else if (k.includes(aranan)) skor += 15;
-                            else skor += 5;
+                            if (b.includes(aranan)) skor += 35;
+                            else if (k.includes(aranan)) skor += 22;
+                            else skor += 6;
                         }
                     });
+
+                    // Madde 2.2: Düşük skorlu/genel eşleşmelerde İğne Oyası ağırlığı
+                    if (videoTekniginiBul(v) === "igne") {
+                        skor += 15;
+                    }
 
                     if (skor > 0) {
                         v.arama_skoru = skor + (eslesenKelimeSayisi * 5);
@@ -1173,7 +1306,7 @@
                 return gecici;
             }
 
-            // Önce tüm veritabanında birebir görsel eşleşme (dist < 10 veya modelNo) var mı kontrol et
+            // Önce tüm veritabanında birebir görsel eşleşme (dist < 10.5 veya modelNo) var mı kontrol et
             let tumSonuclar = puanla(veritabani);
             tumSonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
 
@@ -1186,8 +1319,9 @@
                 sonuclar = ayniTeknikSonuclar.length > 0 ? ayniTeknikSonuclar : tumSonuclar;
             } else {
                 sonuclar = puanla(filtrelenmisVeritabani);
-                if (sonuclar.length === 0 && filtrelenmisVeritabani !== veritabani) {
-                    sonuclar = tumSonuclar;
+                if (sonuclar.length === 0) {
+                    sonuclar = tumSonuclar.filter(v => videoTekniginiBul(v) === "igne");
+                    if (sonuclar.length === 0) sonuclar = tumSonuclar;
                 }
                 sonuclar.sort((a, b) => b.arama_skoru - a.arama_skoru);
             }
@@ -1210,7 +1344,7 @@
                     baslik.innerHTML = `🎯 <b>Tam İsabet!</b> Yüklediğiniz görselle birebir eşleşen yapılış videosunu bulduk:`;
                 } else {
                     let renkBilgi = yuklenenRenkler.length > 0 ? ` (${yuklenenRenkler.join(", ")} tonlarında)` : "";
-                    baslik.innerHTML = `🎉 <b>${anaKategori || "Arşivimiz"}</b> İçinde Görselinize En Uygun ${Math.min(sonuclar.length, 6)} Video Bulundu${renkBilgi}:`;
+                    baslik.innerHTML = `🎉 <b>${anaKategori || "İğne Oyası"}</b> İçinde Görselinize En Uygun ${Math.min(sonuclar.length, 6)} Video Bulundu${renkBilgi}:`;
                 }
                 
                 grid.innerHTML = sonuclar.slice(0, 6).map((video, idx) => `
@@ -1228,8 +1362,10 @@
                     </a>
                 `).join('');
             } else {
-                let yedekListe = (filtrelenmisVeritabani && filtrelenmisVeritabani.length > 0) ? filtrelenmisVeritabani : veritabani;
-                baslik.innerText = "✨ Yüklediğiniz görsele en yakın popüler yapılış videolarımız:";
+                // Hiçbir değerle eşleşme sağlanmazsa İğne Oyası ağırlıklı popüler modeller göster (Madde 2.2)
+                let igneYedek = veritabani.filter(v => videoTekniginiBul(v) === "igne");
+                let yedekListe = igneYedek.length > 0 ? igneYedek : veritabani;
+                baslik.innerText = "✨ İğne Oyası Arşivimizden En Popüler Yapılış Videolarımız:";
                 grid.innerHTML = yedekListe.slice(0, 6).map(video => `
                      <a href="${video.link}" class="video-kart">
                         <div class="kart-resim"><img src="${video.resim}" alt="${video.baslik}"></div>
