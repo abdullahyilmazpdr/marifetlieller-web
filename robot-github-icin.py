@@ -1049,7 +1049,7 @@ def sayfalari_olustur():
             for link_key, yeni_item in tum_videolar_arama_icin.items():
                 eski_item = eski_arama_map.get(link_key)
                 if eski_item:
-                    for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek'):
+                    for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek', 'hog', 'renkler'):
                         if eski_item.get(korunan_alan) and not yeni_item.get(korunan_alan):
                             yeni_item[korunan_alan] = eski_item[korunan_alan]
         except Exception as e:

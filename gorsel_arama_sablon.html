@@ -392,6 +392,7 @@
         let yuklenenImzaKare = [];
         let yuklenenImzalar = [];
         let yuklenenDokular = [];
+        let yuklenenHoglar = [];
         let yuklenenEnBoyOrani = 1.77;
         let yuklenenRenkler = [];
         let yuklenenYesilYaprakOrani = 0;
@@ -402,7 +403,7 @@
                 return veritabani;
             }
             try {
-                const res = await fetch('arama_verisi.json?v=20261114_1');
+                const res = await fetch('arama_verisi.json?v=20261114_2');
                 veritabani = await res.json();
             } catch (e) {
                 console.warn("Veritabanı yüklenirken hata:", e);
@@ -483,6 +484,48 @@
             return cells.map(c => Math.round((c / maxE) * 100));
         }
 
+        function hog4x4Hesapla(px) {
+            if (!px || px.length !== 48 * 48) return null;
+            const lum = new Float32Array(48 * 48);
+            for (let i = 0; i < px.length; i++) {
+                lum[i] = 0.299 * px[i][0] + 0.587 * px[i][1] + 0.114 * px[i][2];
+            }
+            const cellLums = [];
+            const cellGx = [];
+            const cellGy = [];
+            for (let gy = 0; gy < 4; gy++) {
+                for (let gx = 0; gx < 4; gx++) {
+                    let sLum = 0, sGx = 0, sGy = 0;
+                    for (let y = gy * 12; y < (gy + 1) * 12; y++) {
+                        for (let x = gx * 12; x < (gx + 1) * 12; x++) {
+                            const idx = y * 48 + x;
+                            sLum += lum[idx];
+                            if (x + 1 < 48) sGx += Math.abs(lum[idx + 1] - lum[idx]);
+                            if (y + 1 < 48) sGy += Math.abs(lum[idx + 48] - lum[idx]);
+                        }
+                    }
+                    cellLums.push(sLum / 144.0);
+                    cellGx.push(sGx / 144.0);
+                    cellGy.push(sGy / 144.0);
+                }
+            }
+            let meanL = 0;
+            for (let i = 0; i < 16; i++) meanL += cellLums[i];
+            meanL /= 16.0;
+            let varL = 0;
+            for (let i = 0; i < 16; i++) varL += (cellLums[i] - meanL) * (cellLums[i] - meanL);
+            const stdL = Math.max(8.0, Math.sqrt(varL / 16.0));
+            const maxEdge = Math.max(...cellGx, ...cellGy, 4.0);
+            const vec = [];
+            for (let i = 0; i < 16; i++) {
+                const nl = Math.max(0, Math.min(255, Math.round(((cellLums[i] - meanL) / stdL) * 32.0 + 128.0)));
+                const ngx = Math.max(0, Math.min(100, Math.round((cellGx[i] / maxEdge) * 100.0)));
+                const ngy = Math.max(0, Math.min(100, Math.round((cellGy[i] / maxEdge) * 100.0)));
+                vec.push(nl, ngx, ngy);
+            }
+            return vec;
+        }
+
         function gorselOzellikleriniCikar(img) {
             try {
                 const tamCanvas = document.createElement('canvas');
@@ -557,13 +600,29 @@
                     Math.floor(w * 0.50), Math.floor(h * 0.36)
                 );
 
+                // 6) Üst Yazı Bandı Kırpılmış Parça Resim Penceresi ("Yapılışını Youtube..." vb. üst yazıları atlar)
+                const afisSonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.04), yOffset + Math.floor(h * 0.18),
+                    Math.floor(w * 0.92), Math.floor(h * 0.78)
+                );
+
+                // 7) Tam Çerçeve Parça Resim Penceresi (Videodan kırpılmış parçaları tekrar kırpmadan eşleştirir)
+                const tamSonuc = blokOrtalamasi4x4(
+                    tamData, img.width, img.height,
+                    Math.floor(w * 0.02), yOffset + Math.floor(h * 0.02),
+                    Math.floor(w * 0.96), Math.floor(h * 0.96)
+                );
+
                 yuklenenImzalar = [
                     yuklenenImza,
                     yuklenenImzaKare,
                     odakSonuc.grid,
                     ekran1Sonuc.grid,
                     ekran2Sonuc.grid,
-                    altSonuc.grid
+                    altSonuc.grid,
+                    afisSonuc.grid,
+                    tamSonuc.grid
                 ];
 
                 yuklenenDokular = [
@@ -571,16 +630,27 @@
                     doku4x4Hesapla(kareSonuc.px),
                     doku4x4Hesapla(ekran1Sonuc.px),
                     doku4x4Hesapla(ekran2Sonuc.px),
-                    doku4x4Hesapla(altSonuc.px)
+                    doku4x4Hesapla(altSonuc.px),
+                    doku4x4Hesapla(afisSonuc.px),
+                    doku4x4Hesapla(tamSonuc.px)
                 ].filter(Boolean);
 
-                // 6) HSV Baskın Motif Renk Analizi
+                yuklenenHoglar = [
+                    hog4x4Hesapla(kareSonuc.px),
+                    hog4x4Hesapla(odakSonuc.px),
+                    hog4x4Hesapla(afisSonuc.px),
+                    hog4x4Hesapla(tamSonuc.px),
+                    hog4x4Hesapla(ekran1Sonuc.px),
+                    hog4x4Hesapla(ekran2Sonuc.px)
+                ].filter(Boolean);
+
+                // 8) HSV Baskın Motif Renk Analizi
                 // Telefon ekran görüntüsü ise (dikey) üst/alt barları ve Pinterest kırmızı 'Kaydet' butonunu atla
                 let renkPxList = rectSonuc.px;
                 if (yuklenenEnBoyOrani < 0.68) {
                     renkPxList = ekran1Sonuc.px.concat(ekran2Sonuc.px);
                 } else if (yuklenenEnBoyOrani >= 0.85 && yuklenenEnBoyOrani <= 1.15) {
-                    renkPxList = kareSonuc.px.concat(altSonuc.px);
+                    renkPxList = kareSonuc.px.concat(afisSonuc.px);
                 }
 
                 const counts = {};
@@ -591,8 +661,8 @@
                     const [r, g, b] = renkPxList[i];
                     const [deg, s, v] = rgbToHsv(r, g, b);
 
-                    // Ten rengi (el, parmak) filtresi: Oyayı tutan eli oyanın rengi olarak sayma!
-                    const isSkin = (deg >= 6 && deg <= 40 && s >= 0.15 && s <= 0.68 && v >= 0.28 && v <= 0.96 && r > g && g > b);
+                    // Ten rengi (el, parmak) filtresi (s <= 0.48 ile canlı turuncu oya iplerini korur)
+                    const isSkin = (deg >= 6 && deg <= 40 && s >= 0.15 && s <= 0.48 && v >= 0.28 && v <= 0.96 && r > g && g > b);
                     if (isSkin) continue;
 
                     // Yeşil yaprak / zürafa oranı (koyu zeytin yeşili ve açık çağla yeşili dahil)
@@ -733,6 +803,22 @@
                 if (dist < minD) minD = dist;
             }
             return minD;
+        }
+
+        function hogMesafesiHesapla(v) {
+            if (!Array.isArray(v.hog) || v.hog.length === 0 || !yuklenenHoglar || yuklenenHoglar.length === 0) return 999;
+            let minH = 999;
+            for (let i = 0; i < yuklenenHoglar.length; i++) {
+                const uh = yuklenenHoglar[i];
+                if (!uh || uh.length !== 48) continue;
+                for (let j = 0; j < v.hog.length; j++) {
+                    const vh = v.hog[j];
+                    if (!vh || vh.length !== 48) continue;
+                    const d = tekImzaMesafesi(uh, vh);
+                    if (d < minH) minH = d;
+                }
+            }
+            return minH;
         }
 
         function turkceTemizle(metin) {
@@ -927,6 +1013,24 @@
                         eslesenKelimeSayisi += 3;
                     } else if (dist < 34.0) {
                         skor += Math.round((35.0 - dist) * 8);
+                    }
+
+                    // B1) YAPISAL / KENAR YÖNÜ (HOG 4x4) VE ALT-PENCERE PARÇA RESİM BENZERLİĞİ
+                    let hogDist = hogMesafesiHesapla(v);
+                    v._hogDist = hogDist;
+                    if (hogDist < 14.0) {
+                        skor += 1400 + Math.round((14.0 - hogDist) * 80);
+                        eslesenKelimeSayisi += 5;
+                    } else if (hogDist < 19.5) {
+                        skor += 650 + Math.round((19.5 - hogDist) * 65);
+                        eslesenKelimeSayisi += 3;
+                    } else if (hogDist < 24.5) {
+                        skor += Math.round((24.5 - hogDist) * 28);
+                        eslesenKelimeSayisi += 1;
+                    }
+                    let birlesikParcaDist = dist + hogDist * 1.45;
+                    if (birlesikParcaDist < 56.0) {
+                        skor += Math.round((56.0 - birlesikParcaDist) * 45);
                     }
 
                     // B2) RENKTEN BAĞIMSIZ 4x4 İLMEK / KENAR DOKUSU BENZERLİĞİ (Farklı renkte örülmüş aynı modelleri yakalar)
