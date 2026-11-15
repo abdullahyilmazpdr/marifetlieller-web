@@ -584,6 +584,43 @@ def sayfalari_olustur():
     else:
         vision_cache = {}
 
+    meta_cache_dosyasi = 'video_metadata_cache.json'
+    meta_cache = {}
+    if os.path.exists(meta_cache_dosyasi):
+        try:
+            with open(meta_cache_dosyasi, 'r', encoding='utf-8') as f:
+                meta_cache = json.load(f)
+        except Exception:
+            meta_cache = {}
+    meta_cache_degisti = False
+
+    def video_meta_doldur(v_dict):
+        nonlocal meta_cache_degisti
+        vid = v_dict.get('id')
+        if not vid:
+            return
+        kayit = meta_cache.get(vid, {})
+        if kayit.get('upload_date'):
+            v_dict['upload_date'] = kayit['upload_date']
+        if kayit.get('duration'):
+            v_dict['duration'] = kayit['duration']
+        if not v_dict.get('upload_date') or not v_dict.get('duration'):
+            try:
+                res = youtube.videos().list(part="snippet,contentDetails", id=vid).execute()
+                items = res.get('items', [])
+                if items:
+                    pub = items[0].get('snippet', {}).get('publishedAt') or ''
+                    dur = items[0].get('contentDetails', {}).get('duration') or ''
+                    if pub:
+                        v_dict['upload_date'] = pub
+                    if dur:
+                        v_dict['duration'] = dur
+                    if pub or dur:
+                        meta_cache[vid] = {'upload_date': v_dict.get('upload_date', ''), 'duration': v_dict.get('duration', '')}
+                        meta_cache_degisti = True
+            except Exception:
+                pass
+
     # YENİ: Admin Panelinden veya AI Stüdyodan Eklenen Oynatma Listesi Dışı YouTube Videoları
     eklenen_yt_dosyasi = 'eklenen_youtube_videolari.json'
     eklenen_yt_videolari = []
@@ -703,6 +740,7 @@ def sayfalari_olustur():
 
                     video['favori_sayisi'] = gercekci_favori_sayisi_uret(dosya_adi, video['id']) # EKLENDİ
                     render_video = dict(video)
+                    video_meta_doldur(render_video)
                     orijinal_aciklama = (video.get('description') or '').strip()
                     if not orijinal_aciklama:
                         render_video['description'] = f"{video['title']} detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de."
@@ -825,6 +863,7 @@ def sayfalari_olustur():
                         'ai_metin': ek_v.get('ai_metin') or ai_cache.get(ek_id, ''),
                         'favori_sayisi': gercekci_favori_sayisi_uret(dosya_adi, ek_id)
                     }
+                    video_meta_doldur(video_obj)
                     if not video_obj['ai_metin']:
                         yeni_m = yapay_zeka_makale_yazdir(ek_baslik, ek_aciklama)
                         if yeni_m:
@@ -919,6 +958,7 @@ def sayfalari_olustur():
                         video_data['ai_metin'] = ""
 
                 video_data['favori_sayisi'] = gercekci_favori_sayisi_uret(dosya_adi, video_data['id']) # EKLENDİ
+                video_meta_doldur(video_data)
                 html_icerik = template_video.render(
                     video=video_data, 
                     kategori_adi="Popüler Videolar", 
@@ -1106,7 +1146,14 @@ def sayfalari_olustur():
                 uretilen_sayfalar.append(mevcut_html)
     sitemap_olustur(uretilen_sayfalar)
 
-    # Mevcut arama_verisi.json içindeki gelişmiş görsel imzaları (imza_odak, doku, imza_ek vb.) koru
+    if meta_cache_degisti:
+        try:
+            with open(meta_cache_dosyasi, 'w', encoding='utf-8') as f:
+                json.dump(meta_cache, f, ensure_ascii=False, indent=2, sort_keys=True)
+        except Exception as e:
+            print(f"video_metadata_cache.json kaydedilirken uyarı: {e}")
+
+    # Mevcut arama_verisi.json içindeki gelişmiş görsel imzaları ve sitedeki arşiv videolarını koru
     if os.path.exists('arama_verisi.json'):
         try:
             with open('arama_verisi.json', 'r', encoding='utf-8') as f:
@@ -1115,9 +1162,13 @@ def sayfalari_olustur():
             for link_key, yeni_item in tum_videolar_arama_icin.items():
                 eski_item = eski_arama_map.get(link_key)
                 if eski_item:
-                    for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek', 'hog', 'renkler', 'ai_emb', 'yakin_modeller'):
+                    for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek', 'hog', 'renkler', 'ai_emb', 'yakin_modeller', 'teknik'):
                         if eski_item.get(korunan_alan):
                             yeni_item[korunan_alan] = eski_item[korunan_alan]
+            # Sitede HTML dosyası hala mevcut olan ama oynatma listesi dışında kalmış videoları arama indeksinden düşürme
+            for link_key, eski_item in eski_arama_map.items():
+                if link_key not in tum_videolar_arama_icin and os.path.exists(link_key):
+                    tum_videolar_arama_icin[link_key] = eski_item
         except Exception as e:
             print(f"Eski arama_verisi imzaları korunurken uyarı: {e}")
 

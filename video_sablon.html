@@ -49,6 +49,9 @@
       "description": {{ seo_desc | tojson }},
       "thumbnailUrl": [{{ video.thumbnail | tojson }}],
       "uploadDate": {{ (video.upload_date or '2024-01-01T08:00:00+03:00') | tojson }},
+      {% if video.duration %}
+      "duration": {{ video.duration | tojson }},
+      {% endif %}
       "embedUrl": {{ ('https://www.youtube.com/embed/' ~ video.id) | tojson }},
       "contentUrl": {{ ('https://www.youtube.com/watch?v=' ~ video.id) | tojson }},
       "mainEntityOfPage": {

@@ -79,7 +79,10 @@
       "name": {{ model.baslik | tojson }},
       "description": {{ seo_desc | tojson }},
       "thumbnailUrl": [{{ ns.img_url | tojson }}],
-      "uploadDate": "2025-01-01T08:00:00+03:00",
+      "uploadDate": {{ (model.upload_date or '2025-01-01T08:00:00+03:00') | tojson }},
+      {% if model.duration %}
+      "duration": {{ model.duration | tojson }},
+      {% endif %}
       "embedUrl": {{ ('https://www.youtube.com/embed/' ~ ns.yt_id) | tojson }},
       "contentUrl": {{ ('https://www.youtube.com/watch?v=' ~ ns.yt_id) | tojson }},
       "mainEntityOfPage": {
