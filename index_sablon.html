@@ -4,12 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if not sayfa_yayinda %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% set canonical_url = 'https://marifetliel.com/' if is_ana_sayfa else ('https://marifetliel.com/' ~ (sayfa_dosya_adi or 'index.html')) %}
+    {% set page_title = 'Marifetli Eller - İğne Oyası, Mekik Oyası ve El İşi Modelleri' if is_ana_sayfa else ((sayfa_basligi ~ ' - Marifetli Eller') if sayfa_basligi else 'Marifetli Eller') %}
+    {% set page_desc = (sayfa_basligi ~ ' modelleri, anlatımlı yapılış videoları ve püf noktaları Marifetli Eller arşivinde.') if (sayfa_basligi and not is_ana_sayfa) else 'Marifetli Eller ile en güzel iğne oyası, mekik oyası ve yöresel el sanatları modelleri, adım adım anlatımlı videoları.' %}
 
     <!-- Dinamik SEO Etiketleri -->
-    <meta name="description"
-        content="{% if sayfa_basligi %}{{ sayfa_basligi }} modelleri, anlatımlı yapılış videoları ve ipuçları.{% else %}Marifetli Eller ile en güzel iğne oyası, mekik oyası ve yöresel el sanatları modelleri, adım adım anlatımlı videoları.{% endif %}">
+    <meta name="description" content="{{ page_desc | e }}">
+    <link rel="canonical" href="{{ canonical_url | e }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Marifetli Eller">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:title" content="{{ page_title | e }}">
+    <meta property="og:description" content="{{ page_desc | e }}">
+    <meta property="og:url" content="{{ canonical_url | e }}">
+    <meta property="og:image" content="{{ og_resim | default('https://marifetliel.com/assets/img/logo-igne.png', true) | e }}">
+    <meta name="twitter:card" content="summary_large_image">
 
-    <title>{% if sayfa_basligi %}{{ sayfa_basligi }} - {% endif %}Marifetli Eller</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": {{ ('WebSite' if is_ana_sayfa else 'CollectionPage') | tojson }},
+      "name": {{ page_title | tojson }},
+      "description": {{ page_desc | tojson }},
+      "url": {{ canonical_url | tojson }}
+    }
+    </script>
+
+    <title>{{ page_title | e }}</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">

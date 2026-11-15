@@ -5,32 +5,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if not sayfa_yayinda %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% set raw_desc = (video.description or '') | replace('\r', ' ') | replace('\n', ' ') | trim %}
+    {% set raw_low = raw_desc | lower %}
+    {% set is_generic_desc = (not raw_desc) or (raw_desc | length < 45) or ('yaptığınız ürünleri' in raw_low) or raw_low.startswith('facebook') or raw_low.startswith('merhaba arkadaşlar') or raw_low.startswith('merhaba sevgili') or ('instagram hesabım' in raw_low and raw_desc | length < 140) %}
+    {% if video.seo_description %}
+      {% set seo_desc = video.seo_description %}
+    {% elif not is_generic_desc %}
+      {% set seo_desc = (raw_desc[:155] ~ ('...' if raw_desc | length > 155 else '')) %}
+    {% elif video.ai_metin %}
+      {% set ai_plain = video.ai_metin | striptags | replace('\r', ' ') | replace('\n', ' ') | trim %}
+      {% set seo_desc = video.title ~ ' anlatımlı yapılışı (' ~ kategori_adi ~ '). ' ~ ai_plain[:110] ~ '...' %}
+    {% else %}
+      {% set seo_desc = video.title ~ ' anlatımlı yapılış videosu, kullanılan malzemeler ve püf noktaları Marifetli Eller ' ~ kategori_adi ~ ' kategorisinde.' %}
+    {% endif %}
+
     <!-- Dinamik SEO Etiketleri İçeri Alındı -->
-    <meta name="description" content="{{ video.description[:150] | replace('\n', ' ') }}...">
-    <meta property="og:description" content="{{ video.description[:100] | replace('\n', ' ') }}...">
+    <meta name="description" content="{{ seo_desc | e }}">
+    <meta property="og:type" content="video.other">
+    <meta property="og:site_name" content="Marifetli Eller">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:description" content="{{ seo_desc | e }}">
     <meta name="keywords"
-        content="iğne oyası, mekik oyası, oya çiçeği, {{ kategori_adi }}, çeyizlik modeller, el işi, {{ video.title }}">
+        content="iğne oyası, mekik oyası, oya modeli, {{ kategori_adi | e }}, çeyizlik modeller, el işi, {{ video.title | e }}">
     <meta name="author" content="Marifetli Eller">
 
-    <link rel="canonical" href="https://marifetliel.com/{{ video.dosya_adi }}">
-    <meta property="og:title" content="{{ video.title }} - Marifetli Eller">
-    <meta property="og:image" content="{{ video.thumbnail }}">
-    <meta property="og:url" content="https://marifetliel.com/{{ video.dosya_adi }}">
+    <link rel="canonical" href="https://marifetliel.com/{{ video.dosya_adi | e }}">
+    <meta property="og:title" content="{{ video.title | e }} - Marifetli Eller">
+    <meta property="og:image" content="{{ video.thumbnail | e }}">
+    <meta property="og:url" content="https://marifetliel.com/{{ video.dosya_adi | e }}">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Video SEO Şeması (Schema.org) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      "name": "{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}",
-      "description": "{{ video.description[:150] | replace('\n', ' ') }}",
-      "thumbnailUrl": ["{{ video.thumbnail }}"],
-      "uploadDate": "2024-01-01T08:00:00+03:00",
-      "embedUrl": "https://www.youtube.com/embed/{{ video.id }}"
+      "name": {{ video.title | tojson }},
+      "description": {{ seo_desc | tojson }},
+      "thumbnailUrl": [{{ video.thumbnail | tojson }}],
+      "uploadDate": {{ (video.upload_date or '2024-01-01T08:00:00+03:00') | tojson }},
+      "embedUrl": {{ ('https://www.youtube.com/embed/' ~ video.id) | tojson }},
+      "contentUrl": {{ ('https://www.youtube.com/watch?v=' ~ video.id) | tojson }},
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ ('https://marifetliel.com/' ~ video.dosya_adi) | tojson }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Marifetli Eller",
+        "url": "https://marifetliel.com/"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ana Sayfa",
+          "item": "https://marifetliel.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ kategori_adi | tojson }},
+          "item": {{ ('https://marifetliel.com/' ~ ('' if kategori_dosya_adi == 'index.html' else kategori_dosya_adi)) | tojson }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ video.title | tojson }},
+          "item": {{ ('https://marifetliel.com/' ~ video.dosya_adi) | tojson }}
+        }
+      ]
     }
     </script>
 
-    <title>{{ video.title }} - Marifetli Eller</title>
+    <title>{{ (video.seo_title or video.title) | e }} - Marifetli Eller</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -478,7 +537,7 @@
             <h1>{{ video.title }}</h1>
 
             <div class="video-iframe">
-                <iframe src="https://www.youtube.com/embed/{{ video.id }}" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/{{ video.id }}" title="{{ video.title | e }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
             <!-- SOSYAL MEDYA PAYLAŞIM ALANI -->
@@ -486,7 +545,7 @@
             <p style="font-size: 14px; font-weight: 600; color: var(--metin-koyu); margin-bottom: 15px;">Bu el emeği modeli beğendiniz mi? Arkadaşlarınızla paylaşın!</p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
-                <button id="btnFavori_{{ video.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ video.id }}', '{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}', '{{ video.dosya_adi }}', '{{ video.thumbnail }}')">
+                <button id="btnFavori_{{ video.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ video.id }}', '{{ video.title | replace('\\', '\\\\') | replace("'", "\\'") | replace('"', '&quot;') | replace('\r', ' ') | replace('\n', ' ') }}', '{{ video.dosya_adi }}', '{{ video.thumbnail }}')">
                   <span class="kalp-ikon">🤍</span> Favorilere Ekle
                 </button>
                 <!-- DİNAMİK RAKAM ALANI (video_sablon.html içinde) -->
@@ -495,7 +554,7 @@
                 </div>
                 
                 <!-- WhatsApp Paylaş -->
-                <button onclick="whatsappPaylas('{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                <button onclick="whatsappPaylas('{{ video.title | replace('\\', '\\\\') | replace("'", "\\'") | replace('"', '&quot;') | replace('\r', ' ') | replace('\n', ' ') }}')" style="background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
                     💬 WhatsApp
                 </button>
                 
@@ -505,7 +564,7 @@
                 </button>
 
                 <!-- Pinterest Paylaş -->
-                <button onclick="pinterestPaylas('{{ video.title | replace("'", "\\'") | replace('"', '&quot;') }}')" style="background-color: #E60023; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
+                <button onclick="pinterestPaylas('{{ video.title | replace('\\', '\\\\') | replace("'", "\\'") | replace('"', '&quot;') | replace('\r', ' ') | replace('\n', ' ') }}')" style="background-color: #E60023; color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; font-family: inherit;">
                     📌 Pinterest
                 </button>
 
@@ -520,9 +579,11 @@
                 {% include 'reklam_alani_1.html' ignore missing %}
             </div>
 
+            {% if video.description and video.description.strip() %}
             <div class="aciklama-alani">
                 <div class="aciklama">{{ video.description }}</div>
             </div>
+            {% endif %}
 
             {% if video.ai_metin %}
             <div style="margin-top: 40px; padding-top: 30px; border-top: 2px dashed var(--kenarlik);">

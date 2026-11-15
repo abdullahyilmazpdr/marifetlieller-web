@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /header_sablon.html
+Disallow: /footer_sablon.html
+Disallow: /izleme_kodlari.html
+Disallow: /reklam_alani_1.html
 
 Sitemap: https://marifetliel.com/sitemap.xml

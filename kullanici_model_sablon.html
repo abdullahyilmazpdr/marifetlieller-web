@@ -4,11 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ model.baslik }} - Marifetli Eller</title>
-    <link rel="canonical" href="https://marifetliel.com/{{ model.dosya_adi }}">
-    <meta property="og:title" content="{{ model.baslik }} - Marifetli Eller">
-    <meta property="og:url" content="https://marifetliel.com/kullanici_model_sablon.html">
-    <meta property="og:image" content="{{ model.medya }}">
+    {% if not sayfa_yayinda %}
+    <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+
+    {% set site_base = SITE_URL or 'https://marifetliel.com/' %}
+    {% set media_str = (model.medya or '') | trim %}
+    {% set ns = namespace(yt_id='', img_url='https://marifetliel.com/assets/img/logo-igne.png') %}
+    {% if 'youtube.com' in media_str or 'youtu.be' in media_str %}
+      {% if 'youtu.be/' in media_str %}
+        {% set ns.yt_id = media_str.split('youtu.be/')[1].split('?')[0].split('/')[0][:11] %}
+      {% elif 'v=' in media_str %}
+        {% set ns.yt_id = media_str.split('v=')[1].split('&')[0][:11] %}
+      {% elif '/shorts/' in media_str %}
+        {% set ns.yt_id = media_str.split('/shorts/')[1].split('?')[0][:11] %}
+      {% elif '/embed/' in media_str %}
+        {% set ns.yt_id = media_str.split('/embed/')[1].split('?')[0][:11] %}
+      {% endif %}
+      {% if ns.yt_id %}
+        {% set ns.img_url = 'https://i.ytimg.com/vi/' ~ ns.yt_id ~ '/hqdefault.jpg' %}
+      {% endif %}
+    {% elif 'file/d/' in media_str %}
+      {% set resim_id = media_str.split('file/d/')[1].split('/')[0] %}
+      {% set ns.img_url = 'https://lh3.googleusercontent.com/d/' ~ resim_id %}
+    {% elif 'id=' in media_str %}
+      {% set resim_id = media_str.split('id=')[1].split('&')[0] %}
+      {% set ns.img_url = 'https://lh3.googleusercontent.com/d/' ~ resim_id %}
+    {% elif media_str and not media_str.endswith('.mp4') %}
+      {% set ns.img_url = media_str %}
+    {% endif %}
+
+    {% set raw_makale = (model.makale or '') | striptags | replace('\r', ' ') | replace('\n', ' ') | trim %}
+    {% set seo_desc = (model.baslik ~ ' (' ~ model.kategori ~ ') anlatımı - ' ~ raw_makale[:115] ~ '...') if raw_makale else (model.baslik ~ ' el işi modeli ve yapılış detayları Marifetli Eller topluluğunda.') %}
+
+    <title>{{ model.baslik | e }} - Marifetli Eller</title>
+    <meta name="description" content="{{ seo_desc | e }}">
+    <link rel="canonical" href="https://marifetliel.com/{{ model.dosya_adi | e }}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Marifetli Eller">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:title" content="{{ model.baslik | e }} - Marifetli Eller">
+    <meta property="og:description" content="{{ seo_desc | e }}">
+    <meta property="og:url" content="https://marifetliel.com/{{ model.dosya_adi | e }}">
+    <meta property="og:image" content="{{ ns.img_url | e }}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": {{ model.baslik | tojson }},
+      "description": {{ seo_desc | tojson }},
+      "image": [{{ ns.img_url | tojson }}],
+      "author": {
+        "@type": "Person",
+        "name": {{ model.yazar | tojson }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Marifetli Eller",
+        "url": "https://marifetliel.com/"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ ('https://marifetliel.com/' ~ model.dosya_adi) | tojson }}
+      }
+    }
+    </script>
+    {% if ns.yt_id %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": {{ model.baslik | tojson }},
+      "description": {{ seo_desc | tojson }},
+      "thumbnailUrl": [{{ ns.img_url | tojson }}],
+      "uploadDate": "2025-01-01T08:00:00+03:00",
+      "embedUrl": {{ ('https://www.youtube.com/embed/' ~ ns.yt_id) | tojson }},
+      "contentUrl": {{ ('https://www.youtube.com/watch?v=' ~ ns.yt_id) | tojson }},
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ ('https://marifetliel.com/' ~ model.dosya_adi) | tojson }}
+      }
+    }
+    </script>
+    {% endif %}
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
     {% include 'izleme_kodlari.html' ignore missing %}
@@ -546,9 +626,9 @@
             {% if model.medya %}
 <div style="width: 100%; margin-bottom: 25px; text-align: center; background-color: #fcfcfc; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 12px; padding: 10px;">
     
-    {% if "youtube.com" in model.medya or "youtu.be" in model.medya %}
-    <!-- YouTube videosu için güvenli ID ayırma (v= parametresini alır) -->
-    <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ model.medya.split('v=')[-1][:11] }}"
+    {% if ns.yt_id %}
+    <!-- YouTube videosu için tüm link tipleri (youtu.be, v=, shorts, embed) güvenli bağlandı -->
+    <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ ns.yt_id }}" title="{{ model.baslik | e }}"
         frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
         
     {% elif model.medya.endswith('.mp4') %}
@@ -571,7 +651,7 @@
     {% endif %}
     
     <!-- FOTOĞRAFLARIN SÜNMESİNİ VE TAŞMASINI ENGELLEYEN ASIL KISIM (object-fit: contain) -->
-    <img src="{{ img_url }}" alt="{{ model.baslik }}"
+    <img src="{{ img_url }}" alt="{{ model.baslik | e }}"
         style="width: 100%; max-height: 550px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
         
     {% endif %}
@@ -583,7 +663,7 @@
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
 
                 <!-- Jinja değişkenleri modele göre ayarlandı -->
-<button id="btnFavori_{{ model.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ model.id }}', '{{ model.baslik | replace('\"', '\\\"') | replace('\'', '\\\'') }}', '{{ model.dosya_adi }}', '{{ model.medya }}')">
+<button id="btnFavori_{{ model.id }}" class="favori-btn" onclick="favoriIslemiYap(this, '{{ model.id }}', '{{ model.baslik | replace('\\', '\\\\') | replace("'", "\\'") | replace('"', '&quot;') | replace('\r', ' ') | replace('\n', ' ') }}', '{{ model.dosya_adi }}', '{{ ns.img_url }}')">
   <span class="kalp-ikon">🤍</span> Favorilere Ekle
 </button>
                 <div style="margin-top: 10px; font-size: 13px; color: #d6336c; font-weight: 600; display: flex; align-items: center; gap: 5px;">
@@ -591,17 +671,17 @@
                         </div>
                 
                 <!-- WhatsApp Paylaş -->
-                <a href="https://api.whatsapp.com/send?text={{ model.baslik }} - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: {{ SITE_URL }}{{ model.dosya_adi }}" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                <a href="https://api.whatsapp.com/send?text={{ model.baslik | urlencode }} - Marifetli Eller'de harika bir el işi modeli gördüm! Mutlaka incele: {{ site_base }}{{ model.dosya_adi }}" target="_blank" style="background-color: #25D366; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     💬 WhatsApp
                 </a>
                 
                 <!-- Facebook Paylaş -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ SITE_URL }}{{ model.dosya_adi }}" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_base }}{{ model.dosya_adi }}" target="_blank" style="background-color: #1877F2; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     📘 Facebook
                 </a>
 
                 <!-- Pinterest Paylaş -->
-                <a href="https://pinterest.com/pin/create/button/?url={{ SITE_URL }}{{ model.dosya_adi }}&description={{ model.baslik }}" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
+                <a href="https://pinterest.com/pin/create/button/?url={{ site_base }}{{ model.dosya_adi }}&description={{ model.baslik | urlencode }}" target="_blank" style="background-color: #E60023; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px;">
                     📌 Pinterest
                 </a>
 

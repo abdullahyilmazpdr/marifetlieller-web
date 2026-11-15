@@ -459,31 +459,48 @@ def oynatma_listelerini_getir():
     return request.execute().get('items', [])
 
 def listedeki_videolari_getir(playlist_id):
-    request = youtube.playlistItems().list(part="snippet", playlistId=playlist_id, maxResults=50)
     videolar = []
-    response = None
-    for deneme in range(3): 
-        try:
-            response = request.execute()
-            break 
-        except Exception as e:
-            print(f"YouTube bağlantısı yoruldu (Deneme {deneme+1}/3). 2 saniye bekleniyor... Hata: {e}")
-            time.sleep(2)  
-            
-    if not response:
-        return []
+    gorulen_idler = set()
+    page_token = None
 
-    for item in request.execute().get('items', []):
-        snippet = item['snippet']
-        if 'videoId' in snippet['resourceId']:
-            thumbs = snippet.get('thumbnails', {})
-            resim_url = thumbs.get('high', {}).get('url') or thumbs.get('medium', {}).get('url') or thumbs.get('default', {}).get('url', '')
-            videolar.append({
-                'id': snippet['resourceId']['videoId'],
-                'title': snippet['title'],
-                'description': snippet['description'],
-                'thumbnail': resim_url
-            })
+    while True:
+        request = youtube.playlistItems().list(
+            part="snippet",
+            playlistId=playlist_id,
+            maxResults=50,
+            pageToken=page_token
+        )
+        response = None
+        for deneme in range(3):
+            try:
+                response = request.execute()
+                break
+            except Exception as e:
+                print(f"YouTube bağlantısı yoruldu (Deneme {deneme+1}/3). 2 saniye bekleniyor... Hata: {e}")
+                time.sleep(2)
+
+        if not response:
+            break
+
+        for item in response.get('items', []):
+            snippet = item.get('snippet', {})
+            resource_id = snippet.get('resourceId', {})
+            vid = resource_id.get('videoId')
+            if vid and vid not in gorulen_idler:
+                gorulen_idler.add(vid)
+                thumbs = snippet.get('thumbnails', {})
+                resim_url = thumbs.get('high', {}).get('url') or thumbs.get('medium', {}).get('url') or thumbs.get('default', {}).get('url', '')
+                videolar.append({
+                    'id': vid,
+                    'title': snippet.get('title', ''),
+                    'description': snippet.get('description', ''),
+                    'thumbnail': resim_url,
+                    'upload_date': snippet.get('publishedAt') or '2024-01-01T08:00:00+03:00'
+                })
+
+        page_token = response.get('nextPageToken')
+        if not page_token:
+            break
     return videolar
 
 def url_uyumlu_yap(metin):
@@ -501,13 +518,36 @@ def guvenli_dosya_adi(isim):
     isim = re.sub(r'[^a-z0-9]+', '-', isim)
     return isim.strip('-')[:50]
 
+SITEMAP_HARIC_SAYFALAR = {
+    '404.html', 'giris.html', 'profil.html', 'model-gonder.html',
+    'izleme_kodlari.html', 'reklam_alani_1.html',
+    'dolgulu-mekik-oyasi-yapilisi-66655.html',
+    'kolay-sirali-ve-cok-guzel-bir-igne-oyasi-modeli-99-ebQA91fDs4Q.html',
+}
+
 def sitemap_olustur(sayfa_listesi):
     bugun = datetime.now().strftime("%Y-%m-%d")
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    gorulen = set()
+    temiz_liste = []
     for sayfa in sayfa_listesi:
-        xml += f'  <url>\n    <loc>{SITE_URL}{sayfa.replace(" ", "%20")}</loc>\n    <lastmod>{bugun}</lastmod>\n  </url>\n'
+        s = (sayfa or '').strip().lstrip('/')
+        if not s or s == 'index.html':
+            kanonik_yol = ''
+        else:
+            if s in SITEMAP_HARIC_SAYFALAR or s.endswith('_sablon.html'):
+                continue
+            kanonik_yol = s
+        if kanonik_yol not in gorulen:
+            gorulen.add(kanonik_yol)
+            temiz_liste.append(kanonik_yol)
+
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for kanonik_yol in temiz_liste:
+        tam_url = f"{SITE_URL}{kanonik_yol.replace(' ', '%20')}"
+        xml += f'  <url>\n    <loc>{tam_url}</loc>\n    <lastmod>{bugun}</lastmod>\n  </url>\n'
     xml += '</urlset>'
-    with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(xml)
+    with open('sitemap.xml', 'w', encoding='utf-8') as f:
+        f.write(xml)
 
 ISTENEN_SIRALAMA = [
     "İğne Oyası Yapılışı",
@@ -666,7 +706,13 @@ def sayfalari_olustur():
                     orijinal_aciklama = (video.get('description') or '').strip()
                     if not orijinal_aciklama:
                         render_video['description'] = f"{video['title']} detaylı yapılışı, kullanılan malzemeler ve püf noktaları Marifetli Eller'de."
-                    html_icerik = template_video.render(video=render_video, kategori_adi=kategori_adi, kategori_dosya_adi=kategori_dosya_adi, tum_kategoriler=tum_kategoriler)
+                    html_icerik = template_video.render(
+                        video=render_video,
+                        kategori_adi=kategori_adi,
+                        kategori_dosya_adi=kategori_dosya_adi,
+                        tum_kategoriler=tum_kategoriler,
+                        sayfa_yayinda=True
+                    )
                     if not orijinal_aciklama:
                         html_icerik = re.sub(r'<div class="aciklama-alani">\s*<div class="aciklama">[\s\S]*?</div>\s*</div>', '', html_icerik)
                     
@@ -734,7 +780,16 @@ def sayfalari_olustur():
             
             kat_seo_metni = kategori_seo_sozluk.get(kategori_adi, "")
                 
-            kategori_html = template_index.render(is_ana_sayfa=False, sayfa_basligi=kategori_adi, videolar=video_verileri_kategori_icin, tum_kategoriler=tum_kategoriler,kategori_seo_metni=kat_seo_metni)
+            kategori_html = template_index.render(
+                is_ana_sayfa=False,
+                sayfa_basligi=kategori_adi,
+                sayfa_dosya_adi=kategori_dosya_adi,
+                og_resim=site_verisi[kategori_adi]['ilk_resim'],
+                videolar=video_verileri_kategori_icin,
+                tum_kategoriler=tum_kategoriler,
+                kategori_seo_metni=kat_seo_metni,
+                sayfa_yayinda=True
+            )
             with open(f"{kategori_dosya_adi}", 'w', encoding='utf-8') as f: f.write(kategori_html)
             
         except Exception as e:
@@ -782,7 +837,8 @@ def sayfalari_olustur():
                         video=video_obj,
                         kategori_adi=ek_kat_adi,
                         kategori_dosya_adi=ek_kat_dosya,
-                        tum_kategoriler=tum_kategoriler
+                        tum_kategoriler=tum_kategoriler,
+                        sayfa_yayinda=True
                     )
                     with open(dosya_adi, 'w', encoding='utf-8') as f:
                         f.write(html_icerik)
@@ -867,7 +923,8 @@ def sayfalari_olustur():
                     video=video_data, 
                     kategori_adi="Popüler Videolar", 
                     kategori_dosya_adi="index.html", 
-                    tum_kategoriler=tum_kategoriler
+                    tum_kategoriler=tum_kategoriler,
+                    sayfa_yayinda=True
                 )
                 
                 with open(dosya_adi, 'w', encoding='utf-8') as f: 
@@ -920,7 +977,12 @@ def sayfalari_olustur():
 
     for model in onayli_modeller:
       try:
-          model_html = template_kullanici_model.render(model=model)
+          model_html = template_kullanici_model.render(
+              model=model,
+              tum_kategoriler=tum_kategoriler,
+              SITE_URL=SITE_URL,
+              sayfa_yayinda=True
+          )
           dosya_yolu = os.path.join('', model['dosya_adi'])
     
           with open(dosya_yolu, 'w', encoding='utf-8') as f:
@@ -978,9 +1040,12 @@ def sayfalari_olustur():
             kat_html = template_index.render(
                 is_ana_sayfa=False, 
                 sayfa_basligi=f"{kat_adi} (Sizden Gelenler)", 
+                sayfa_dosya_adi=dosya_adi,
+                og_resim=(kategori_modelleri[kat_adi][0]['thumbnail'] if kategori_modelleri[kat_adi] else 'https://marifetliel.com/assets/img/logo-igne.png'),
                 videolar=kategori_modelleri[kat_adi], 
                 tum_kategoriler=tum_kategoriler,
-                kategori_seo_metni=kat_seo_metni
+                kategori_seo_metni=kat_seo_metni,
+                sayfa_yayinda=True
             )
             with open(dosya_adi, 'w', encoding='utf-8') as f:
                 f.write(kat_html)
@@ -996,48 +1061,49 @@ def sayfalari_olustur():
         index_icerik = template_index.render(
             is_ana_sayfa=True, 
             sayfa_basligi="Ana Sayfa", 
+            sayfa_dosya_adi="index.html",
             site_verisi=site_verisi, 
             tum_kategoriler=tum_kategoriler,
             populer_videolar=populer_videolar,  
-            son_modeller=son_5_model            
+            son_modeller=son_5_model,
+            sayfa_yayinda=True
         )
         with open('index.html', 'w', encoding='utf-8') as f: f.write(index_icerik)
     except Exception as e:
         print(f"Ana sayfa üretilirken hata: {e}")
-        
-    sitemap_olustur(uretilen_sayfalar)
 
     template_giris = env.get_template('giris_sablon.html')
     giris_icerik = template_giris.render()
     with open('giris.html', 'w', encoding='utf-8') as f: f.write(giris_icerik)
-    uretilen_sayfalar.append('giris.html') 
 
     template_profil = env.get_template('profil_sablon.html')
     profil_icerik = template_profil.render(tum_kategoriler=tum_kategoriler)
     with open('profil.html', 'w', encoding='utf-8') as f: f.write(profil_icerik)
-    uretilen_sayfalar.append('profil.html') 
 
     template_model = env.get_template('model_sablon.html')
     model_icerik = template_model.render(tum_kategoriler=tum_kategoriler)
     with open('model-gonder.html', 'w', encoding='utf-8') as f: 
         f.write(model_icerik)
-    uretilen_sayfalar.append('model-gonder.html')
 
     # Yapay Zeka Asistan Sayfasını Oluştur
     template_asistan = env.get_template('asistan_sablon.html')
-    asistan_icerik = template_asistan.render(tum_kategoriler=tum_kategoriler)
-    with open('akilli-asistan.html', 'w', encoding='utf-8') as f: 
+    asistan_icerik = template_asistan.render(tum_kategoriler=tum_kategoriler, sayfa_yayinda=True)
+    with open('akilli-asistan.html', 'w', encoding='utf-8') as f:
         f.write(asistan_icerik)
     uretilen_sayfalar.append('akilli-asistan.html')
 
     # Görsel Arama Sayfasını Oluştur
     template_gorsel_arama = env.get_template('gorsel_arama_sablon.html')
-    gorsel_arama_icerik = template_gorsel_arama.render(tum_kategoriler=tum_kategoriler)
+    gorsel_arama_icerik = template_gorsel_arama.render(tum_kategoriler=tum_kategoriler, sayfa_yayinda=True)
     with open('gorsel-arama.html', 'w', encoding='utf-8') as f: 
         f.write(gorsel_arama_icerik)
     uretilen_sayfalar.append('gorsel-arama.html')
     
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
+    for mevcut_html in sorted(os.listdir('.')):
+        if mevcut_html.endswith('.html') and mevcut_html not in SITEMAP_HARIC_SAYFALAR and not mevcut_html.endswith('_sablon.html'):
+            if mevcut_html not in uretilen_sayfalar:
+                uretilen_sayfalar.append(mevcut_html)
     sitemap_olustur(uretilen_sayfalar)
 
     # Mevcut arama_verisi.json içindeki gelişmiş görsel imzaları (imza_odak, doku, imza_ek vb.) koru
