@@ -6,43 +6,15 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://marifetliel.com/profil.html">
     <title>Kullanıcı Paneli - Marifetli Eller</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Allura&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/site.css?v=20261116_1">
     {% include 'izleme_kodlari.html' ignore missing %}
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
     <style>
-        /* 1. GENEL DEĞİŞKENLER VE GÖVDE */
-        *, *::before, *::after { box-sizing: border-box; }
-        :root { --ana-renk: #d6336c; --arka-plan: #fdfbfb; --kutu-arka-plan: #ffffff; --metin-koyu: #333333; --kenarlik: #f0e6e6; --hover-renk: #fff0f3; }
-        html, body { max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--arka-plan); color: var(--metin-koyu); display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* 2. HEADER VE MENÜ CSS (Eksik olan kısım) */
-        header { background-color: var(--kutu-arka-plan); border-bottom: 1px solid var(--kenarlik); padding: 15px 0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); position: sticky; top: 0; z-index: 100; }
-        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-wrap: wrap; gap: 15px; }
-        .logo a { font-family: 'Lora', serif; font-size: 24px; font-weight: 600; color: var(--ana-renk); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .nav-links { display: flex; gap: 20px; align-items: center; flex: 1; justify-content: flex-end; }
-        .nav-links a { text-decoration: none; color: var(--metin-koyu); font-weight: 500; font-size: 14px; transition: color 0.3s ease; white-space: nowrap; }
-        .nav-links a:hover { color: var(--ana-renk); }
-        .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
-        .hamburger span { width: 25px; height: 3px; background-color: var(--ana-renk); border-radius: 3px; transition: all 0.3s ease; }
-        
-        /* Arama ve Dropdown CSS */
-        .arama-alani { position: relative; margin-left: auto; width: 220px; }
-        .arama-kutu { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--kenarlik); outline: none; font-family: inherit; }
-        .arama-sonuclari { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 10px; display: none; z-index: 1000; max-height: 400px; overflow-y: auto; margin-top: 5px;}
-        .arama-sonuc-oge { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-decoration: none; color: var(--metin-koyu); transition: background 0.2s; }
-        .arama-sonuc-oge:hover { background: var(--hover-renk); color: var(--ana-renk); }
-        .dropdown { position: relative; display: flex; align-items: center; }
-        .dropdown > a { padding-right: 15px; cursor: pointer; }
-        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: var(--kutu-arka-plan); min-width: 250px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-radius: 8px; overflow-y: auto; max-height: 500px; z-index: 1000; border: 1px solid var(--kenarlik); }
-        .dropdown-content a { display: block; padding: 12px 16px; color: var(--metin-koyu); border-bottom: 1px solid var(--kenarlik); white-space: normal; line-height: 1.4; margin: 0; font-size: 13px; }
-        .dropdown-content a:hover { background-color: var(--hover-renk); color: var(--ana-renk); padding-left: 22px; transition: all 0.2s; }
-        .dropdown:hover .dropdown-content { display: block; }
-
-        /* 3. PROFİL PANELİ CSS */
         main { flex: 1; max-width: 1000px; margin: 40px auto; width: 100%; padding: 0 20px; }
         .panel-kutu { background: var(--kutu-arka-plan); padding: 30px; border-radius: 12px; border: 1px solid var(--kenarlik); box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -51,41 +23,18 @@
         .durum-onayli { background-color: #d4edda; color: #155724; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .durum-bekliyor { background-color: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
         .durum-red { background-color: #f8d7da; color: #721c24; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        
-        /* Buton Stilleri */
         .btn-grup { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn-duzelt { background: var(--arka-plan); color: var(--metin-koyu); padding: 6px 12px; border-radius: 5px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
         .btn-duzelt:hover { background: #eee; }
-        .btn-goruntule { background: var(--ana-renk); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; transition: 0.2s; border: none;}
+        .btn-goruntule { background: var(--ana-renk); color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; transition: 0.2s; border: none; }
         .btn-goruntule:hover { filter: brightness(1.1); }
-
-        /* 4. FOOTER VE MOBİL CSS */
-        footer { background-color: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px; margin-top: auto; }
-        .footer-container { max-width: 1200px; margin: 0 auto; text-align: center; }
-        .sosyal-medya { margin-bottom: 20px; display: flex; justify-content: center; gap: 15px; }
-        .sosyal-medya a { display: inline-block; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.1); color: #fff; text-decoration: none; border-radius: 5px; font-size: 14px; transition: background 0.3s; }
-        .sosyal-medya a:hover { background-color: var(--ana-renk); }
-        .footer-alt { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; font-size: 13px; color: #bdc3c7; }
-
-        /* MODAL (AÇILIR PENCERE) CSS */
         .modal-arkaplan { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-kutu { background: var(--kutu-arka-plan); width: 90%; max-width: 600px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-kapat { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
         .form-grup { margin-bottom: 15px; }
         .form-grup label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
         .form-grup input, .form-grup select, .form-grup textarea { width: 100%; padding: 10px; border: 1px solid var(--kenarlik); border-radius: 8px; font-family: inherit; }
-        .btn-kaydet { background: var(--ana-renk); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px;}
-
-        @media (max-width: 860px) {
-            .hamburger { display: flex; }
-            .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 15px; align-items: flex-start; gap: 15px; padding-top: 15px; border-top: 1px solid var(--kenarlik); }
-            .nav-links.aktif { display: flex; }
-            .arama-alani { width: 100%; margin-left: 0; }
-            .dropdown { width: 100%; flex-direction: column; align-items: flex-start; }
-            .dropdown > a { width: 100%; padding-right: 0; }
-            .dropdown-content { position: static; display: none; box-shadow: none; border: none; border-left: 2px solid var(--kenarlik); border-radius: 0; max-height: none; width: 100%; margin-top: 10px; }
-            .dropdown.aktif .dropdown-content { display: block; }
-        }
+        .btn-kaydet { background: var(--ana-renk); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -253,9 +202,7 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUwJTckSQ52vHT9GAKOFTOvyryxRyoeR32q7yIZt9MhPYBwO1VikmIosC-VzyqUd33/exec"; 
 
         let globalModeller = []; // Modalları doldurmak için verileri hafızada tutuyoruz
-        
-        function menuGoster() { document.getElementById('navLinks').classList.toggle('aktif'); }
-        function mobilDropdownAc(e, element) { if (window.innerWidth <= 860) { e.preventDefault(); element.parentElement.classList.toggle('aktif'); } }
+
         function cikisYap() { firebase.auth().signOut().then(() => { window.location.href = "index.html"; }); }
 
         // 2. Kimlik Doğrulama ve Veri Çekme

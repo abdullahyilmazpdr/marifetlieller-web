@@ -1,5 +1,6 @@
 import os
 import json
+import html as _html
 import time
 import re
 from datetime import datetime
@@ -1172,8 +1173,44 @@ def sayfalari_olustur():
         except Exception as e:
             print(f"Eski arama_verisi imzaları korunurken uyarı: {e}")
 
+    arama_listesi = list(tum_videolar_arama_icin.values())
     with open('arama_verisi.json', 'w', encoding='utf-8') as f:
-        json.dump(list(tum_videolar_arama_icin.values()), f, ensure_ascii=False)
+        json.dump(arama_listesi, f, ensure_ascii=False)
+
+    # Hafif arama indeksi: header arama, ana sayfa haftanın modelleri ve asistan için (<1 MB)
+    _tag_re = re.compile(r'<[^>]+>')
+    _ws_re = re.compile(r'\s+')
+    arama_indeks = []
+    for _it in arama_listesi:
+        if not isinstance(_it, dict) or not _it.get('link'):
+            continue
+        _parcalar = []
+        _gorulen = set()
+        for _ham in (_it.get('ai_anahtar_kelimeler'), _it.get('aciklama'), _it.get('makale')):
+            if not _ham:
+                continue
+            _metin = ' '.join(str(x) for x in _ham if x) if isinstance(_ham, list) else str(_ham)
+            _temiz = _ws_re.sub(' ', _tag_re.sub(' ', _html.unescape(_metin))).strip()
+            if _temiz and _temiz not in _gorulen:
+                _gorulen.add(_temiz)
+                _parcalar.append(_temiz)
+        _ozet = ' '.join(_parcalar)
+        if len(_ozet) > 380:
+            _ozet = _ozet[:380].rsplit(' ', 1)[0]
+        _kisa = {
+            'baslik': _it.get('baslik') or '',
+            'link': _it.get('link') or '',
+            'resim': _it.get('resim') or '',
+            'favori_sayisi': _it.get('favori_sayisi') or '980',
+        }
+        for _alan in ('teknik', 'baskin_kategori', 'renkler'):
+            if _it.get(_alan):
+                _kisa[_alan] = _it[_alan]
+        if _ozet:
+            _kisa['ozet'] = _ozet
+        arama_indeks.append(_kisa)
+    with open('arama_index.json', 'w', encoding='utf-8') as f:
+        json.dump(arama_indeks, f, ensure_ascii=False, separators=(',', ':'))
         
     with open('tum_videolar_ham.json', 'w', encoding='utf-8') as f:
         json.dump(tum_videolar_ham, f, ensure_ascii=False)
