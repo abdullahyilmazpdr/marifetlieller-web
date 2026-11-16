@@ -393,6 +393,7 @@ main.orta-sayfa {
 
 .video-iframe {
     position: relative;
+    aspect-ratio: 16 / 9;
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
@@ -471,6 +472,27 @@ main.orta-sayfa {
     font-size: 22px;
     margin-top: 0;
     margin-bottom: 15px;
+}
+
+.reklam-kapsayici {
+    margin: 20px auto;
+    text-align: center;
+    min-height: 100px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.adm-ads-area {
+    display: block;
+    width: 100%;
+    max-width: 970px;
+    min-height: 90px;
+    margin: 16px auto;
+    text-align: center;
+    overflow: hidden;
 }
 
 footer {
