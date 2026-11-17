@@ -622,6 +622,19 @@ def sayfalari_olustur():
             except Exception:
                 pass
 
+    # Hariç tutulan videolar (Bayram/Kandil mesajları veya Liste Dışı seçilenler site listelerinden düşürülür)
+    haric_idler = set()
+    if os.path.exists('haric_tutulan_videolar.json'):
+        try:
+            with open('haric_tutulan_videolar.json', 'r', encoding='utf-8') as f:
+                _h_list = json.load(f)
+                if isinstance(_h_list, list):
+                    haric_idler = {str(x.get('id')).strip() for x in _h_list if isinstance(x, dict) and x.get('id')}
+            if haric_idler:
+                print(f"Hariç tutulan {len(haric_idler)} video site listelerinden filtrelenecek.")
+        except Exception as e:
+            print(f"haric_tutulan_videolar.json okuma uyarısı: {e}")
+
     # YENİ: Admin Panelinden veya AI Stüdyodan Eklenen Oynatma Listesi Dışı YouTube Videoları
     eklenen_yt_dosyasi = 'eklenen_youtube_videolari.json'
     eklenen_yt_videolari = []
@@ -687,10 +700,12 @@ def sayfalari_olustur():
             
             print(f"\n--- [{kategori_adi}] İşleniyor ---")
             videolar = listedeki_videolari_getir(playlist_id)
+            if haric_idler:
+                videolar = [v for v in videolar if v.get('id') not in haric_idler]
             mevcut_kat_idler = {v['id'] for v in videolar if 'id' in v}
             for ek_v in eklenen_yt_videolari:
                 ek_id = ek_v.get('id')
-                if not ek_id or ek_id in mevcut_kat_idler:
+                if not ek_id or ek_id in haric_idler or ek_id in mevcut_kat_idler:
                     continue
                 if ek_v.get('kategori_dosya_adi') == kategori_dosya_adi or ek_v.get('kategori_adi') == kategori_adi or any(isinstance(k, dict) and (k.get('baslik') == kategori_adi or k.get('dosya_adi') == kategori_dosya_adi) for k in (ek_v.get('kategoriler') or [])):
                     videolar.append({
@@ -841,7 +856,7 @@ def sayfalari_olustur():
         for ek_v in eklenen_yt_videolari:
             try:
                 ek_id = ek_v.get('id')
-                if not ek_id:
+                if not ek_id or ek_id in haric_idler:
                     continue
                 ek_baslik = ek_v.get('title', f'Model {ek_id}')
                 ek_aciklama = ek_v.get('description', f'{ek_baslik} anlatımlı yapılış videosu.')
@@ -930,6 +945,8 @@ def sayfalari_olustur():
     print("\n--- Serbest Popüler Videolar Kontrol Ediliyor ---")
     for pop_vid in populer_videolar:
         try:
+            if pop_vid.get('id') in haric_idler:
+                continue
             dosya_adi = pop_vid['link']
             
             if dosya_adi not in uretilen_sayfalar:
@@ -1143,6 +1160,16 @@ def sayfalari_olustur():
     uretilen_sayfalar.extend(['hakkimizda.html', 'iletisim.html', 'gizlilik-politikasi.html'])
     for mevcut_html in sorted(os.listdir('.')):
         if mevcut_html.endswith('.html') and mevcut_html not in SITEMAP_HARIC_SAYFALAR and not mevcut_html.endswith('_sablon.html'):
+            if haric_idler and any(mevcut_html.endswith(f'-{hid}.html') for hid in haric_idler):
+                try:
+                    _htxt = open(mevcut_html, 'r', encoding='utf-8', errors='ignore').read()
+                    if 'noindex' not in _htxt.lower():
+                        _htxt = _htxt.replace('<head>', '<head>\n    <meta name="robots" content="noindex, nofollow">', 1)
+                        with open(mevcut_html, 'w', encoding='utf-8') as _hf:
+                            _hf.write(_htxt)
+                except Exception:
+                    pass
+                continue
             if mevcut_html not in uretilen_sayfalar:
                 uretilen_sayfalar.append(mevcut_html)
     sitemap_olustur(uretilen_sayfalar)
@@ -1166,8 +1193,10 @@ def sayfalari_olustur():
                     for korunan_alan in ('imza', 'imza_kare', 'imza_odak', 'doku', 'imza_ek', 'hog', 'renkler', 'ai_emb', 'yakin_modeller', 'teknik'):
                         if eski_item.get(korunan_alan):
                             yeni_item[korunan_alan] = eski_item[korunan_alan]
-            # Sitede HTML dosyası hala mevcut olan ama oynatma listesi dışında kalmış videoları arama indeksinden düşürme
+            # Sitede HTML dosyası hala mevcut olan ama oynatma listesi dışında kalmış videoları arama indeksinden düşürme (Hariç tutulanlar hariç)
             for link_key, eski_item in eski_arama_map.items():
+                if haric_idler and any(link_key.endswith(f'-{hid}.html') for hid in haric_idler):
+                    continue
                 if link_key not in tum_videolar_arama_icin and os.path.exists(link_key):
                     tum_videolar_arama_icin[link_key] = eski_item
         except Exception as e:
